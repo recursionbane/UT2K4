@@ -163,6 +163,7 @@ body.pages-touch #pages-gpu{line-height:1.4;font-size:12px}
  .replace('Join multiplayer</button>','Restart local session</button>')
  .replace(/<p><a href="\?interactive=1&map=DM-Rankin">[\s\S]*?<button id="stop" type="button">Stop client<\/button><\/p>/, '<p><button id="stop" type="button">Stop client</button></p>')
  .replace('const options = new URLSearchParams(location.search);',setup)
+ .replace("const canvas = document.getElementById('canvas');", "const canvas = document.getElementById('canvas'); if(touchPreferred)canvas.requestPointerLock=()=>Promise.reject(new DOMException('Touch controls use relative input without pointer lock','NotSupportedError'));")
  .replace("[options.get('res'), savedResolution, '1280x720']", "[options.get('res'), powerProfile.defaultResolution]")
  .replace("const initialSize = activeResolution === 'dynamic' ? dynamicSize() : activeResolution.split('x').map(Number);", "const initialSize = budgetPixels(...(activeResolution === 'dynamic' ? dynamicSize() : activeResolution.split('x').map(Number)),powerProfile);")
  .replace("const [width, height] = value === 'dynamic' ? dynamicSize() : value.split('x').map(Number);", "const [width,height] = budgetPixels(...(value === 'dynamic' ? dynamicSize() : value.split('x').map(Number)),powerProfile);")

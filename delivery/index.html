@@ -1,13 +1,174 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="data:,"><title>UT2K4 · Full game for WebAssembly</title><link rel="stylesheet" href="style.css"><script defer src="media.js"></script><script defer src="full-game.js"></script><script defer src="native-import.js"></script><script defer src="stream.js"></script><script defer src="launch.js"></script></head>
-<body><header><a class="brand" href="./">UT2K4</a><nav><a href="arena/">Movement arena</a><a href="https://github.com/recursionbane/UT2K4">Source ↗</a></nav></header>
-<main><section class="hero"><div><p class="edition">FULL GAME &nbsp; / &nbsp; WEBASSEMBLY</p><h1>Unreal<br>Tournament <em>2004</em></h1><p class="intro">Play your full installation in the browser, with the original maps, bots and Monkey Matrix Moves.</p></div><figure class="cover"><img src="rankin.jpg" alt="First-person view of the industrial DM-Rankin arena in the native WASM client"><figcaption>DM-Rankin &nbsp; / &nbsp; Deathmatch</figcaption></figure></section>
-<section class="panel"><div><h2>Set up the full game</h2><p>The game starts automatically when your stream is available. For a local installation, choose the client archive and game folder once.</p><p class="links"><a href="https://github.com/rgnv/ut2004-wasm/releases/download/v0.2.0/ut2004-web-v0.2.0.tar.gz" download>Download the v0.2.0 web client ↗</a><a href="https://www.oldunreal.com/downloads/ut2004/full-game-installers/">Get UT2004 from OldUnreal ↗</a><a href="https://github.com/recursionbane/UT2K4#full-game-data">Install the tested game build ↗</a></p></div>
-<form id="setup"><label>Web client archive <small id="client-info">ut2004-web-v0.2.0.tar.gz</small><input type="file" id="client" accept=".gz,.tgz,.tar"></label><label>Full UT2004 game folder <small id="game-info">3369 or OldUnreal 3374-preview-23</small></label><button id="choose" type="button">Choose game folder…</button><input type="file" id="folder" webkitdirectory multiple hidden>
-<details id="stream-details"><summary>Stream from an asset server</summary><p>Use the local streaming helper or a CORS-enabled HTTPS host. Allow local network access when using a stream on this computer.</p><label>Full-game manifest URL<input id="stream-url" type="url" placeholder="https://your-server/manifest.json"></label><button id="connect-stream" type="button">Connect stream</button></details><div class="fields"><label>Map<select id="map"><option>DM-Rankin</option></select></label>
-<label>Mutator<select id="mode"><option value="matrix">Monkey Matrix Moves v130b</option><option value="stock">Standard game</option><option value="custom">Local mutator packages</option></select></label></div>
-<div id="custom-fields" hidden><label>Package files and dependencies<input type="file" id="packages" multiple accept=".u,.ucl,.int,.ini,.utx,.ukx,.usx,.uax,.ogg"></label><label>Mutator classes, separated by commas<input id="classes" placeholder="Package.MutatorClass"></label></div>
-<details><summary>Display and controls</summary><label>Graphics profile<select id="power"><option value="efficient">Energy efficient</option><option value="balanced">Balanced</option><option value="quality">High quality</option></select></label><label>Resolution<select id="resolution"><option value="auto">Automatic</option><option>640x480</option><option>1024x768</option><option>1280x720</option><option value="dynamic">Match viewport</option></select></label><label>Touch controls<select id="touch"><option value="auto">Use device capabilities</option><option value="1">On</option><option value="0">Off</option></select></label></details>
-<button id="start" type="submit">Play full game <span aria-hidden="true">→</span></button><p id="status" role="status" aria-live="polite"></p></form></section>
-<section class="more"><div><h2>Monkey Matrix Moves</h2><p>Double jump at any point in flight. Hold crouch to hover, dodge toward a wall to run along it, or press B to spend adrenaline on bullet time. This loads the authors’ UT2004 package from Unreal Archive.</p><a href="https://github.com/recursionbane/UT2K4/blob/main/docs/mutator-research.md">Read the mutator history →</a></div><div><h2>Movement arena</h2><p>Try an independent recreation of the moves with a small WASM download. Includes touch controls and four roaming targets.</p><a href="arena/">Enter movement arena →</a></div></section></main>
-<footer><span>Unofficial preservation project</span><a href="https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0">Upstream WASM client ↗</a><a href="https://github.com/recursionbane/UT2K4">Project and tests ↗</a></footer></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="data:," />
+    <title>UT2K4 · Full game for WebAssembly</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="media.js"></script>
+    <script defer src="full-game.js"></script>
+    <script defer src="native-import.js"></script>
+    <script defer src="stream.js"></script>
+    <script defer src="launch.js"></script>
+  </head>
+  <body>
+    <header>
+      <a class="brand" href="./">UT2K4</a>
+      <nav>
+        <a href="arena/">Movement arena</a
+        ><a href="https://github.com/recursionbane/UT2K4">Source ↗</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="edition">FULL GAME &nbsp; / &nbsp; WEBASSEMBLY</p>
+          <h1>Unreal<br />Tournament <em>2004</em></h1>
+          <p class="intro">
+            Play your full installation in the browser, with the original maps,
+            bots and Monkey Matrix Moves.
+          </p>
+        </div>
+        <figure class="cover">
+          <img
+            src="rankin.jpg"
+            alt="First-person view of the industrial DM-Rankin arena in the native WASM client"
+          />
+          <figcaption>DM-Rankin &nbsp; / &nbsp; Deathmatch</figcaption>
+        </figure>
+      </section>
+      <section class="panel">
+        <div>
+          <h2>Set up the full game</h2>
+          <p>
+            The game starts automatically when your stream is available. For a
+            local installation, choose the client archive and game folder once.
+          </p>
+          <p class="links">
+            <a
+              href="https://github.com/rgnv/ut2004-wasm/releases/download/v0.2.0/ut2004-web-v0.2.0.tar.gz"
+              download
+              >Download the v0.2.0 web client ↗</a
+            ><a
+              href="https://www.oldunreal.com/downloads/ut2004/full-game-installers/"
+              >Get UT2004 from OldUnreal ↗</a
+            ><a href="https://github.com/recursionbane/UT2K4#full-game-data"
+              >Install the tested game build ↗</a
+            >
+          </p>
+        </div>
+        <form id="setup">
+          <label
+            >Web client archive
+            <small id="client-info">ut2004-web-v0.2.0.tar.gz</small
+            ><input type="file" id="client" accept=".gz,.tgz,.tar" /></label
+          ><label
+            >Full UT2004 game folder
+            <small id="game-info"
+              >3369 or OldUnreal 3374-preview-23</small
+            ></label
+          ><button id="choose" type="button">Choose game folder…</button
+          ><input type="file" id="folder" webkitdirectory multiple hidden />
+          <details id="stream-details">
+            <summary>Stream from an asset server</summary>
+            <p>
+              Use the local streaming helper or a CORS-enabled HTTPS host. Allow
+              local network access when using a stream on this computer.
+            </p>
+            <label
+              >Full-game manifest URL<input
+                id="stream-url"
+                type="url"
+                placeholder="https://your-server/manifest.json" /></label
+            ><button id="connect-stream" type="button">Connect stream</button>
+          </details>
+          <div class="fields">
+            <label
+              >Map<select id="map">
+                <option>DM-Rankin</option>
+              </select></label
+            >
+            <label
+              >Mutator<select id="mode">
+                <option value="matrix">Monkey Matrix Moves v130b</option>
+                <option value="stock">Standard game</option>
+                <option value="custom">Local mutator packages</option>
+              </select></label
+            >
+          </div>
+          <div id="custom-fields" hidden>
+            <label
+              >Package files and dependencies<input
+                type="file"
+                id="packages"
+                multiple
+                accept=".u,.ucl,.int,.ini,.utx,.ukx,.usx,.uax,.ogg" /></label
+            ><label
+              >Mutator classes, separated by commas<input
+                id="classes"
+                placeholder="Package.MutatorClass"
+            /></label>
+          </div>
+          <details>
+            <summary>Display and controls</summary>
+            <label
+              >Graphics profile<select id="power">
+                <option value="efficient">Energy efficient</option>
+                <option value="balanced">Balanced</option>
+                <option value="quality">High quality</option>
+              </select></label
+            ><label
+              >Resolution<select id="resolution">
+                <option value="auto">Automatic</option>
+                <option>640x480</option>
+                <option>1024x768</option>
+                <option>1280x720</option>
+                <option value="dynamic">Match viewport</option>
+              </select></label
+            ><label
+              >Touch controls<select id="touch">
+                <option value="auto">Use device capabilities</option>
+                <option value="1">On</option>
+                <option value="0">Off</option>
+              </select></label
+            >
+          </details>
+          <button id="start" type="submit">
+            Play full game <span aria-hidden="true">→</span>
+          </button>
+          <p id="status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+      <section class="more">
+        <div>
+          <h2>Monkey Matrix Moves</h2>
+          <p>
+            Double jump at any point in flight. Hold crouch to hover, dodge
+            toward a wall to run along it, or press B to spend adrenaline on
+            bullet time. This loads the authors’ UT2004 package from Unreal
+            Archive.
+          </p>
+          <a
+            href="https://github.com/recursionbane/UT2K4/blob/main/docs/mutator-research.md"
+            >Read the mutator history →</a
+          >
+        </div>
+        <div>
+          <h2>Movement arena</h2>
+          <p>
+            Try an independent recreation of the moves with a small WASM
+            download. Includes touch controls and four roaming targets.
+          </p>
+          <a href="arena/">Enter movement arena →</a>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <span>Unofficial preservation project</span
+      ><a href="https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0"
+        >Upstream WASM client ↗</a
+      ><a href="https://github.com/recursionbane/UT2K4">Project and tests ↗</a>
+    </footer>
+  </body>
+</html>
