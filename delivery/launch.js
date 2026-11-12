@@ -1,9 +1,8 @@
 const $ = (id) => document.getElementById(id);
-const release =
-  'https://unreal-archive-files-eu.s3.de.io.cloud.ovh.net/Unreal%20Tournament%202004/Mutators/M/f/d/ed10fc/MonkeyMatrixMoves2004_v130_selfextractor.exe';
 let current = null;
 function status(msg) {
   $('status').textContent = msg;
+  $('boot-status').textContent = msg;
 }
 function mapsFor(info) {
   const maps = Object.keys(info.sizes)
@@ -47,36 +46,6 @@ $('choose').onclick = async () => {
   }
 };
 $('folder').onchange = () => selectGame(fromSelection($('folder').files));
-async function matrixFiles() {
-  let archive = await mediaGet('matrix-release');
-  if (!archive) {
-    status('Fetching the original mutator from Unreal Archive…');
-    const response = await fetch(release);
-    if (!response.ok)
-      throw Error('The mutator mirror returned HTTP ' + response.status);
-    archive = await response.blob();
-    if (
-      (await sha256(archive)) !==
-      '03f1d4fa6fe07feb3704e019cbec93db120172497ebb3755e8c7ead7a724bd96'
-    )
-      throw Error('Mutator checksum mismatch.');
-    await mediaSave([['matrix-release', archive]]);
-  }
-  const response = await fetch('matrix-index.json');
-  if (!response.ok) throw Error('Missing mutator index.');
-  const out = [];
-  for (const [path, [offset, length, size]] of Object.entries(
-    await response.json(),
-  )) {
-    const bytes = archive.slice(offset, offset + length);
-    const blob = await new Response(
-      bytes.stream().pipeThrough(new DecompressionStream('deflate-raw')),
-    ).blob();
-    if (blob.size !== size) throw Error('Unexpected mutator file length.');
-    out.push([path, blob]);
-  }
-  return out;
-}
 function customFiles() {
   const classes = $('classes')
     .value.trim()
@@ -163,12 +132,7 @@ $('setup').onsubmit = async (e) => {
     if (touch !== 'auto') url.searchParams.set('touch', touch);
     let files = [];
     if (mode === 'matrix') {
-      files = await matrixFiles();
-      for (const name of ['MatrixModern.u', 'MatrixModern.ucl']) {
-        const r = await fetch('compat/' + name);
-        if (!r.ok) throw Error('The Matrix compatibility package is missing.');
-        files.push(['System/' + name, await r.blob()]);
-      }
+      files = await matrixProfileFiles(status);
       url.searchParams.set(
         'mutator',
         'Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern',
@@ -213,6 +177,7 @@ $('setup').onsubmit = async (e) => {
     location.assign(url);
   } catch (err) {
     status(err.message || String(err));
+    document.getElementById('boot').hidden = false;
     $('start').disabled = false;
   }
 };
@@ -226,27 +191,41 @@ $('connect-stream').onclick = async () => {
     status(e.message);
   }
 };
+const hostedGame = document.getElementById('hosted-game').href;
+function playHosted() {
+  location.replace(hostedGame);
+}
+$('mod-download').onclick = async () => {
+  $('mod-download').disabled = true;
+  try {
+    await HostedMatrixMod.download({ onProgress: status });
+    status(
+      'Your Matrix ZIP is ready. Import it in the hosted game’s Mods tab.',
+    );
+  } catch (error) {
+    status(error.message);
+  } finally {
+    $('mod-download').disabled = false;
+  }
+};
 (async () => {
+  const q = new URLSearchParams(location.search);
+  const quickStart = !q.has('setup') && !q.has('source');
   try {
     if (await nativeClientReady())
       $('client-info').textContent = 'v0.2.0 verified on this device';
     current = await mediaGet('current-game');
-    const q = new URLSearchParams(location.search);
+    if (quickStart) {
+      if (!current) return playHosted();
+      if (
+        current.handle &&
+        (await current.handle.queryPermission({ mode: 'read' })) !== 'granted'
+      )
+        return playHosted();
+    }
     if (q.get('source') && q.get('source') !== current?.source) {
       status('Connecting to the full-game stream…');
       current = await openStream(q.get('source'));
-    }
-    if (!current && !q.has('setup') && !q.has('source')) {
-      const local = 'http://127.0.0.1:8789/manifest.json';
-      $('stream-url').value = local;
-      status('Looking for the UT2K4 stream on this device…');
-      try {
-        current = await openStream(local);
-      } catch {
-        status(
-          'Choose your full game folder or connect an asset stream below.',
-        );
-      }
     }
     if (current) mapsFor(current);
     if (q.has('setup')) return;
@@ -285,9 +264,13 @@ $('connect-stream').onclick = async () => {
     if (
       current &&
       (current.runtime || current.client || (await nativeClientReady()))
-    )
+    ) {
       $('setup').requestSubmit();
+    } else if (quickStart) {
+      playHosted();
+    }
   } catch (e) {
+    if (quickStart) return playHosted();
     status(
       'Could not resume the game. Check source access and allow local network access for a stream on this computer. ' +
         e.message,

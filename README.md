@@ -2,7 +2,13 @@
 
 Play the full Unreal Tournament 2004 in a browser using rgnv’s native WebAssembly engine port and the original Monkey Matrix Moves v130b mutator. The launcher, mutator recovery tooling, independent movement arena and verification scripts live in this repository.
 
-**[Play on GitHub Pages](https://recursionbane.github.io/UT2K4/)** · [Movement arena (no installation)](https://recursionbane.github.io/UT2K4/arena/) · [Upstream native WASM release](https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0)
+**[Play UT2004](https://recursionbane.github.io/UT2K4/)** · [Matrix and settings](https://recursionbane.github.io/UT2K4/?setup=1) · [Movement arena (no installation)](https://recursionbane.github.io/UT2K4/arena/) · [Upstream native WASM release](https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0)
+
+## Start playing
+
+Open the Pages link in a fresh browser. It opens the [Unreal Collection full-game build](https://unrealcollection.games/ut2004/?map=DM-Rankin&Game=XGame.xDeathMatch&NumBots=2) with DM-Rankin and two bots selected. Click the host’s **Start to menu** button when ready, then fire to join the match. The first visit downloads game data into browser storage. There is no client archive, folder picker, login or local-network prompt on this route.
+
+For the original Monkey Matrix Moves on the prepared Mac, open the [local match](http://127.0.0.1:8789/play/?source=http%3A%2F%2F127.0.0.1%3A8789%2Fmanifest.json). If the helper is stopped, double-click `tools/play-on-mac.command`. For the hosted version, [Matrix and settings](https://recursionbane.github.io/UT2K4/?setup=1) prepares a ZIP from the verified author release on your device. Import it once in the host’s Mods tab, then use **Open hosted Matrix match**. Previously configured installations and explicit stream URLs still use the original native client and its touch/power settings.
 
 ## Stream and autostart
 
@@ -12,7 +18,7 @@ Run the supplied read-only helper on the computer holding the game. It serves th
 python3 tools/stream-game.py /path/to/UT2004 --client /path/to/ut2004-web-v0.2.0.tar.gz
 ```
 
-Open the [Pages launcher](https://recursionbane.github.io/UT2K4/). On a fresh visit it looks for the helper at `127.0.0.1:8789`. Allow local network access when the browser asks. With a configured source, it loads the verified engine at launch, starts DM-Rankin and resumes that profile on subsequent visits. Use [setup](https://recursionbane.github.io/UT2K4/?setup=1) to change sources or settings. On the prepared Mac, `tools/play-on-mac.command` opens the stream and launcher.
+Open the local play URL the helper prints or use the Mac command. The local launcher and stream share one origin. The verified engine loads at launch and starts DM-Rankin with Monkey Matrix Moves. Use [setup](https://recursionbane.github.io/UT2K4/?setup=1) to choose a different source or use another installation.
 
 For a separate HTTPS asset server, enter its manifest URL in **Stream from an asset server**, or share a Pages URL with `?source=<encoded manifest URL>`. The launcher accepts the upstream `file-sizes.json` format (data under adjacent `data/`) or the helper's `manifest.json` format, which also identifies the client archive. The host must allow the Pages origin and expose `Content-Range` for HTTP 206 responses. Texture packages, maps, sound packages and Vorbis music are read as the engine requests them. The helper serves the upstream WASM Brotli sidecar at engine launch (5,071,694 transfer bytes for 23,222,347 verified engine bytes); it streams each shell or input file when requested. Startup also reads the game's configuration and localization files. The landing page and GitHub Pages deployment contain no full game data or engine WASM.
 
@@ -23,7 +29,7 @@ Efficient mode targets 30 fps with a 307,200-pixel budget. Balanced and Quality 
 ## Full game data
 
 1. Use your full 3369 installation or the pinned OldUnreal 3374-preview-23 data. To reproduce the tested full installation on Linux, obtain the [upstream v0.2.0 web release](https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0), extract it, and run its `bash scripts/install-game-data.sh --dest /path/to/UT2004`. It fetches the disc and patch from the sources used by OldUnreal. Other OldUnreal releases can have a different native class layout. [OldUnreal installers](https://www.oldunreal.com/downloads/ut2004/full-game-installers/)
-2. On the Pages launcher select the original **ut2004-web-v0.2.0.tar.gz** file. The browser verifies the client and keeps it on the device. Select the game directory containing both `System` and `Maps`. Chromium can read files directly from that directory. Browsers without the directory-handle API store the selection in local browser storage and need enough space.
+2. On the [advanced setup page](https://recursionbane.github.io/UT2K4/?setup=1) select the original **ut2004-web-v0.2.0.tar.gz** file. The browser verifies the client and keeps it on the device. Select the game directory containing both `System` and `Maps`. Chromium can read files directly from that directory. Browsers without the directory-handle API store the selection in local browser storage and need enough space.
 3. Select a map and mutator, then **Play full game**. The initial configuration uses DM-Rankin and Monkey Matrix Moves. Click the viewport to focus or join. Use WASD, mouse, Space and C. Touchscreen controls are capability-detected with a manual override in Display and controls. Browser audio may need a tap or click.
 4. For other mutators, select **Local mutator packages**, choose their files and dependencies, and enter the UnrealScript `Package.Class` names. Classes already present in the selected install can be used directly. Package compatibility depends on the game build and game type. This site launches local bot matches.
 

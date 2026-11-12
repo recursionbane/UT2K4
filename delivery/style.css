@@ -280,3 +280,65 @@ small {
 input[hidden] {
   display: none;
 }
+
+html:not(.settings) body > main,
+html:not(.settings) body > footer,
+html:not(.settings) body > header,
+html.settings #boot {
+  display: none;
+}
+#boot {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  align-items: end;
+  background: #151917;
+  color: white;
+}
+.boot-art {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(7, 11, 10, 0.78), rgba(7, 11, 10, 0.12)),
+    linear-gradient(0deg, rgba(7, 11, 10, 0.9), transparent 65%),
+    url('rankin.jpg') center / cover;
+}
+.boot-copy {
+  position: relative;
+  padding: clamp(24px, 7vw, 100px);
+  max-width: 950px;
+}
+.boot-copy h1 {
+  font-size: clamp(3.5rem, 9vw, 8rem);
+}
+.boot-copy .edition {
+  color: #f1d179;
+}
+.boot-copy p {
+  color: #e2e6df;
+}
+.start-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ecc451;
+  color: #171812;
+  font-weight: 720;
+  padding: 12px 20px;
+  text-decoration: none;
+  border-radius: 3px;
+}
+.start-link:hover {
+  background: #ffdc70;
+  color: #171812;
+}
+.boot-options {
+  font-size: 0.87rem;
+}
+.matrix-options {
+  margin-bottom: 20px;
+}
+.matrix-options .start-link,
+#mod-download {
+  margin: 12px 0;
+}

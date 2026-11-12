@@ -10,7 +10,13 @@
     <script defer src="full-game.js"></script>
     <script defer src="native-import.js"></script>
     <script defer src="stream.js"></script>
+    <script defer src="matrix-files.js"></script>
+    <script defer src="hosted-mod.js"></script>
     <script defer src="launch.js"></script>
+    <script>
+      if (new URLSearchParams(location.search).has('setup'))
+        document.documentElement.classList.add('settings');
+    </script>
   </head>
   <body>
     <header>
@@ -20,14 +26,33 @@
         ><a href="https://github.com/recursionbane/UT2K4">Source ↗</a>
       </nav>
     </header>
+    <section id="boot" aria-labelledby="boot-title">
+      <div class="boot-art" aria-hidden="true"></div>
+      <div class="boot-copy">
+        <p class="edition">DM–RANKIN &nbsp; / &nbsp; DEATHMATCH</p>
+        <h1 id="boot-title">Unreal<br />Tournament <em>2004</em></h1>
+        <p id="boot-status" role="status">Opening the full game…</p>
+        <a
+          class="start-link"
+          id="hosted-game"
+          href="https://unrealcollection.games/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2"
+          >Play DM-Rankin →</a
+        >
+        <p class="boot-options">
+          <a href="?setup=1">Matrix moves &amp; settings</a>
+        </p>
+      </div>
+    </section>
     <main>
       <section class="hero">
         <div>
           <p class="edition">FULL GAME &nbsp; / &nbsp; WEBASSEMBLY</p>
           <h1>Unreal<br />Tournament <em>2004</em></h1>
           <p class="intro">
-            Play your full installation in the browser, with the original maps,
-            bots and Monkey Matrix Moves.
+            <a
+              href="https://unrealcollection.games/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2"
+              >Play the hosted full game →</a
+            >
           </p>
         </div>
         <figure class="cover">
@@ -38,9 +63,38 @@
           <figcaption>DM-Rankin &nbsp; / &nbsp; Deathmatch</figcaption>
         </figure>
       </section>
+      <section class="panel matrix-options">
+        <div>
+          <h2>Monkey Matrix Moves</h2>
+          <p>
+            On the prepared Mac, this opens DM-Rankin with the original mutator
+            already loaded.
+          </p>
+          <a
+            class="start-link"
+            href="http://127.0.0.1:8789/play/?source=http%3A%2F%2F127.0.0.1%3A8789%2Fmanifest.json"
+            >Play Matrix on this Mac →</a
+          >
+        </div>
+        <div>
+          <h2>Matrix on the hosted game</h2>
+          <p>
+            Download the mod ZIP. Open the host’s <strong>Mods</strong> tab and
+            import it once, then launch the Matrix match. To bind bullet time,
+            enter <code>set input B slowtimedown</code> in the game console.
+          </p>
+          <button id="mod-download" type="button">
+            Download Matrix mod ZIP
+          </button>
+          <a
+            href="https://unrealcollection.games/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2&amp;Mutator=Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern"
+            >Open hosted Matrix match →</a
+          >
+        </div>
+      </section>
       <section class="panel">
         <div>
-          <h2>Set up the full game</h2>
+          <h2>Use your own game files</h2>
           <p>
             The game starts automatically when your stream is available. For a
             local installation, choose the client archive and game folder once.
