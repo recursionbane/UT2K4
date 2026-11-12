@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 22
       - run: |
-          python3 tests/test_streaming.py
+          python3 -m unittest discover -s tests -p 'test_*.py'
           node arena/test.mjs
           node tests/test-hosted-mod.cjs
           curl --fail --silent --show-error --location --retry 3 https://github.com/rgnv/ut2004-wasm/releases/download/v0.2.0/ut2004-web-v0.2.0.tar.gz -o "$RUNNER_TEMP/ut2004-web.tar.gz"

@@ -6,9 +6,9 @@ Play the full Unreal Tournament 2004 in a browser using rgnv’s native WebAssem
 
 ## Start playing
 
-Open the Pages link in a fresh browser. It opens the [Unreal Collection full-game build](https://unrealcollection.games/ut2004/?map=DM-Rankin&Game=XGame.xDeathMatch&NumBots=2) with DM-Rankin and two bots selected. Click the host’s **Start to menu** button when ready, then fire to join the match. The first visit downloads game data into browser storage. There is no client archive, folder picker, login or local-network prompt on this route.
+Open the Pages link in a fresh browser. It opens the [Unreal Collection full-game build](https://unrealcollection.games/ut2004/?map=DM-Rankin&Game=XGame.xDeathMatch&NumBots=2) with DM-Rankin and two bots selected. Click the host’s **Start to menu** button when ready, then fire to join the match. The first visit downloads game data into browser storage. Our fresh Chrome test observed about 808 MB of transfers on the page and reached DM-Rankin in 19 seconds on the test connection. [First-visit test](delivery/native/evidence/hosted-first-visit.json) There is no client archive, folder picker, login or local-network prompt on this route.
 
-For the original Monkey Matrix Moves on the prepared Mac, open the [local match](http://127.0.0.1:8789/play/?source=http%3A%2F%2F127.0.0.1%3A8789%2Fmanifest.json). If the helper is stopped, double-click `tools/play-on-mac.command`. For the hosted version, [Matrix and settings](https://recursionbane.github.io/UT2K4/?setup=1) prepares a ZIP from the verified author release on your device. Import it once in the host’s Mods tab, then use **Open hosted Matrix match**. Previously configured installations and explicit stream URLs still use the original native client and its touch/power settings.
+For the original Monkey Matrix Moves on the prepared Mac, open the [local match](http://127.0.0.1:8789/play/). If the helper is stopped, double-click `tools/play-on-mac.command`. For the hosted version, [Matrix and settings](https://recursionbane.github.io/UT2K4/?setup=1) prepares a ZIP from the verified author release on your device. Import it once in the host’s Mods tab, then use **Open hosted Matrix match**. Previously configured installations and explicit stream URLs still use the original native client and its touch/power settings.
 
 ## Stream and autostart
 

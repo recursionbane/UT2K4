@@ -1,0 +1,34 @@
+{
+  "target": "https://unrealcollection.games/ut2004/?map=DM-Rankin&game=XGame.xDeathMatch&NumBots=3",
+  "testedAt": "2026-11-12",
+  "freshIsolatedContext": true,
+  "existingGameFiles": false,
+  "browser": "Headless installed Chrome on Mac, --use-angle=metal",
+  "nativeInputOnly": true,
+  "autoStartsWithoutClick": false,
+  "firstAction": {
+    "action": "Click Start to menu",
+    "ms": 5062
+  },
+  "mapReachedMs": 19252,
+  "ownedGameplayScreenshotMs": 36712,
+  "timingNote": "Owned screenshot time includes a deliberate 12-second wait after map-load log, followed by normal input; not a pure loading benchmark.",
+  "game": "XGame.xDeathMatch",
+  "map": "DM-Rankin",
+  "botsObserved": [
+    "Tamika",
+    "Subversa",
+    "Kane"
+  ],
+  "gameplayProof": "Screenshot shows first-person assault rifle, 100 health, native HUD and all 3 bots entering the match.",
+  "pageCDPEncodedTransferBytes": 808361954,
+  "transferCaveat": "Page CDP does not capture every worker transfer. In-game counter additionally reported 13 downloaded assets / 156.4 MB; do not sum this with encoded page bytes as an exact network total.",
+  "networkFailures": [
+    "https://e.unrealcollection.games/e net::ERR_CERT_COMMON_NAME_INVALID",
+    "https://unrealpeer-we.azurewebsites.net/ net::ERR_FAILED"
+  ],
+  "screenshots": {
+    "ownedGameplay": "hosted-first-match.jpg"
+  },
+  "pagesHandoff": "A fresh Pages visit navigated to the hosted v3369 DM-Rankin link with NumBots=2 and made zero loopback requests. The independent functional host run below selected three bots."
+}

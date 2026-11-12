@@ -1,5 +1,8 @@
 const $ = (id) => document.getElementById(id);
 let current = null;
+function modStatus(msg) {
+  $('mod-status').textContent = msg;
+}
 function status(msg) {
   $('status').textContent = msg;
   $('boot-status').textContent = msg;
@@ -198,19 +201,24 @@ function playHosted() {
 $('mod-download').onclick = async () => {
   $('mod-download').disabled = true;
   try {
-    await HostedMatrixMod.download({ onProgress: status });
-    status(
+    await HostedMatrixMod.download({ onProgress: modStatus });
+    modStatus(
       'Your Matrix ZIP is ready. Import it in the hosted game’s Mods tab.',
     );
   } catch (error) {
-    status(error.message);
+    modStatus(error.message);
   } finally {
     $('mod-download').disabled = false;
   }
 };
 (async () => {
   const q = new URLSearchParams(location.search);
-  const quickStart = !q.has('setup') && !q.has('source');
+  const isMacLauncher =
+    location.hostname === '127.0.0.1' && location.pathname.startsWith('/play/');
+  const source =
+    q.get('source') ||
+    (isMacLauncher ? new URL('/manifest.json', location.origin).href : null);
+  const quickStart = !q.has('setup') && !source;
   try {
     if (await nativeClientReady())
       $('client-info').textContent = 'v0.2.0 verified on this device';
@@ -223,9 +231,9 @@ $('mod-download').onclick = async () => {
       )
         return playHosted();
     }
-    if (q.get('source') && q.get('source') !== current?.source) {
+    if (source && source !== current?.source) {
       status('Connecting to the full-game stream…');
-      current = await openStream(q.get('source'));
+      current = await openStream(source);
     }
     if (current) mapsFor(current);
     if (q.has('setup')) return;

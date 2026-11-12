@@ -1,0 +1,15 @@
+{
+  "out": {
+    "map": "DM-Rankin",
+    "pawn": true,
+    "frames": 82,
+    "mutators": "Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern",
+    "secureContext": true
+  },
+  "origins": [
+    "http://127.0.0.1:8789",
+    "https://unreal-archive-files-eu.s3.de.io.cloud.ovh.net"
+  ],
+  "permissionsGrantedByTest": 0,
+  "entry": "http://127.0.0.1:8789/play/"
+}

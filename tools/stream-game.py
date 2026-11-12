@@ -13,6 +13,46 @@ PAGES = 'https://recursionbane.github.io'
 DIRECTORIES = {'animations', 'forcefeedback', 'karmadata', 'maps', 'music', 'sounds',
                'speech', 'staticmeshes', 'system', 'textures'}
 EXTENSIONS = set('ukx ifr ka ut2 ogg uax xml usx u ucl upl ini int utx md5 dat det est frt itt kot tmt rut plt het het_utx rut_utx'.split())
+PLAY_ASSETS = {
+    'index.html', 'style.css', 'launch.js', 'media.js', 'native-import.js',
+    'full-game.js', 'stream.js', 'sw.js', 'matrix-index.json', 'matrix-files.js',
+    'hosted-mod.js', 'rankin.jpg',
+    'arena/index.html', 'arena/arena.js', 'arena/movement.wasm',
+    'compat/MatrixModern.u', 'compat/MatrixModern.ucl',
+}
+PLAY_TYPES = {'.html':'text/html; charset=utf-8', '.js':'text/javascript',
+              '.css':'text/css', '.json':'application/json', '.jpg':'image/jpeg',
+              '.wasm':'application/wasm'}
+
+
+def play_asset(site, name):
+    """Only generated public assets; never expose repository/private files."""
+    if name not in PLAY_ASSETS:
+        return None
+    candidate = site / name
+    if not candidate.is_file() or candidate.is_symlink():
+        return None
+    try:
+        candidate.resolve().relative_to(site.resolve())
+    except ValueError:
+        return None
+    return candidate
+
+
+def native_bootstrap():
+    return b'''<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Starting Matrix</title><p id="status">Preparing the game launcher...</p>
+<p><a href="/play/">Return to the launcher</a></p><script>
+(async()=>{const back=new URL('/play/',location.href);
+back.searchParams.set('source',new URL('/manifest.json',location.href));
+try{if(!('serviceWorker' in navigator))throw Error('This browser needs service worker support.');
+await navigator.serviceWorker.register('/play/sw.js',{scope:'/play/'});
+await navigator.serviceWorker.ready;
+if(navigator.serviceWorker.controller){location.replace(back);return;}
+await Promise.race([new Promise(resolve=>navigator.serviceWorker.addEventListener('controllerchange',resolve,{once:true})),new Promise((_,reject)=>setTimeout(()=>reject(Error('The launcher is taking longer than expected. Use the link below.')),10000))]);
+location.reload();}catch(error){document.getElementById('status').textContent=error.message;}})();
+</script></html>'''
 
 
 def main():
@@ -22,6 +62,8 @@ def main():
     parser.add_argument('--port', type=int, default=8789)
     parser.add_argument('--bind', default='127.0.0.1')
     parser.add_argument('--origin', action='append', default=[PAGES])
+    parser.add_argument('--site', type=Path, default=Path(__file__).resolve().parents[1] / '_site',
+                        help='Generated public launcher directory (only allowlisted assets are served)')
     args = parser.parse_args()
     root = args.data.resolve(strict=True)
     files = {}
@@ -33,8 +75,11 @@ def main():
                 files[path.relative_to(root).as_posix()] = path
     if not {'maps/dm-antalus.ut2', 'system/core.u'} <= {p.lower() for p in files}:
         parser.error('Select the full game directory containing System and Maps.')
+    site = args.site.resolve()
     manifest = {'format': 'ut2k4-stream-v1', 'data': 'data/',
                 'files': {k: p.stat().st_size for k, p in files.items()}}
+    if play_asset(site, 'index.html') and play_asset(site, 'sw.js'):
+        manifest.update(launcher='play/', launcherVersion=1)
     if args.client:
         if not args.client.is_file():
             parser.error('Could not find the v0.2.0 web client archive.')
@@ -95,6 +140,37 @@ def main():
             if not self.authorized():
                 return self.send_error(403)
             path = unquote(urlsplit(self.path).path)
+            if path == '/play':
+                self.send_response(302)
+                self.send_header('Location', '/play/' + ('?' + urlsplit(self.path).query if urlsplit(self.path).query else ''))
+                self.end_headers()
+                return
+            if path.startswith('/play/'):
+                name = path[6:] or 'index.html'
+                source = play_asset(site, name)
+                payload = None
+                if re.fullmatch(r'native/[a-zA-Z0-9_-]+/(?:index\.html)?', name):
+                    if not play_asset(site, 'sw.js'):
+                        return self.send_error(503, 'Build the local launcher with tools/build-site.sh first')
+                    payload = native_bootstrap()
+                    content_type = PLAY_TYPES['.html']
+                elif source:
+                    payload = source.read_bytes()
+                    content_type = PLAY_TYPES.get(source.suffix, 'application/octet-stream')
+                else:
+                    return self.send_error(404, 'Public launcher asset unavailable')
+                self.send_response(200)
+                self.send_header('Content-Type', content_type)
+                self.send_header('Content-Length', str(len(payload)))
+                self.send_header('Cache-Control', 'no-store')
+                self.send_header('X-Content-Type-Options', 'nosniff')
+                self.send_header('X-UT2K4-Launcher', '1')
+                if name == 'sw.js':
+                    self.send_header('Service-Worker-Allowed', '/play/')
+                self.end_headers()
+                if body:
+                    self.wfile.write(payload)
+                return
             if path == '/manifest.json':
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
@@ -157,7 +233,8 @@ def main():
                 super().log_message(fmt, *args)
 
     server = ThreadingHTTPServer((args.bind, args.port), Handler)
-    print('Play: ' + PAGES + '/UT2K4/?source=' +
+    origins.update({f'http://127.0.0.1:{server.server_port}', f'http://localhost:{server.server_port}'})
+    print('Play: ' + f'http://127.0.0.1:{server.server_port}/play/?source=' +
           quote(f'http://127.0.0.1:{server.server_port}/manifest.json', safe=''), flush=True)
     server.serve_forever()
 

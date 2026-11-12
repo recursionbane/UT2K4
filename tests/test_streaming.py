@@ -26,6 +26,13 @@ class StreamingTest(unittest.TestCase):
                 f.write_bytes(bytes(range(128)))
             secret = root / 'System/unrelated.txt'
             secret.write_text('not served')
+            site = root / 'site'
+            site.mkdir()
+            for name in ('index.html', 'sw.js', 'matrix-files.js', 'hosted-mod.js'):
+                (site / name).write_text('public-'+name)
+            (site / 'private.txt').write_text('not public')
+            (root / 'outside.js').write_text('private outside site')
+            (site / 'launch.js').symlink_to(root / 'outside.js')
             client = root / 'release.tar.gz'
             with tarfile.open(client, 'w:gz') as archive:
                 for name, content in [('ut2004.wasm', b'wasm-test'), ('ut2004.wasm.br', b'br-test')]:
@@ -33,7 +40,7 @@ class StreamingTest(unittest.TestCase):
                     entry.size = len(content)
                     archive.addfile(entry, io.BytesIO(content))
             with subprocess.Popen([sys.executable, str(ROOT / 'tools/stream-game.py'), str(root),
-                                   '--port', '0', '--client', str(client)],
+                                   '--port', '0', '--client', str(client), '--site', str(site)],
                                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True) as server:
                 try:
                     launch = server.stdout.readline().split('Play: ', 1)[1].strip()
@@ -42,6 +49,32 @@ class StreamingTest(unittest.TestCase):
                     with urlopen(manifest_url, timeout=5) as res:
                         manifest = json.load(res)
                     self.assertEqual(set(manifest['files']), set(paths))
+                    self.assertEqual(manifest['launcher'], 'play/')
+                    self.assertEqual(manifest['launcherVersion'], 1)
+                    self.assertEqual(urlparse(launch).path, '/play/')
+                    for name in ('index.html', 'sw.js', 'matrix-files.js', 'hosted-mod.js'):
+                        request = Request(base+'/play/'+name, headers={'Origin':base})
+                        with urlopen(request, timeout=5) as response:
+                            self.assertEqual(response.read(), ('public-'+name).encode())
+                            self.assertEqual(response.headers['X-UT2K4-Launcher'], '1')
+                            self.assertEqual(response.headers['Cache-Control'], 'no-store')
+                            self.assertEqual(response.headers['Content-Type'].split(';')[0], 'text/html' if name.endswith('.html') else 'text/javascript')
+                            if name=='sw.js':
+                                self.assertEqual(response.headers['Service-Worker-Allowed'], '/play/')
+                    with urlopen(base+'/play/?setup=1', timeout=5) as response:
+                        self.assertEqual(response.read(), b'public-index.html')
+                    with urlopen(base+'/play/native/test-session/index.html?map=DM-Rankin', timeout=5) as response:
+                        bootstrap = response.read().decode()
+                        self.assertIn("register('/play/sw.js'", bootstrap)
+                        self.assertIn('controllerchange', bootstrap)
+                        self.assertIn('location.reload()', bootstrap)
+                    for path in ('/play/private.txt', '/play/launch.js', '/play/../outside.js',
+                                 '/play/%2e%2e/outside.js', '/play/native/x/ut2004.wasm',
+                                 '/play/native/x/index.html/extra', '/tools/stream-game.py'):
+                        with self.assertRaises(HTTPError) as refused_file:
+                            urlopen(base+path,timeout=5)
+                        self.assertEqual(refused_file.exception.code,404)
+                        refused_file.exception.close()
                     for url in ['data/'+p for p in paths]:
                         req = Request(base+'/'+url, headers={'Origin':ORIGIN,'Range':'bytes=3-10'})
                         with urlopen(req, timeout=5) as res:
