@@ -1,0 +1,247 @@
+{
+  "url": "https://recursionbane.github.io/UT2K4/native/9a936c7d-14d9-4c14-891e-b3fb7e5a74c6/index.html?interactive=1&map=DM-Rankin&power=efficient&mutator=Matrix2004_v130.MutMonkeyMatrixMoves%2CMatrixModern.MutMatrixModern",
+  "first": {
+    "frame": 75,
+    "time": 28194.11999988556,
+    "audio": {
+      "deviceOpen": true,
+      "contextState": "running",
+      "musicPlaying": true,
+      "queued": 8,
+      "processed": 21,
+      "soundsStarted": 13,
+      "lastError": 0,
+      "rms": 0.00019142157152403334,
+      "peakRms": 0.0006995335778432138
+    },
+    "power": {
+      "profile": "efficient",
+      "targetFPS": 30,
+      "scheduler": "asyncify-engine-requestAnimationFrame-cap",
+      "schedulerCallbacks": 79,
+      "mainLoopReady": true,
+      "hiddenPolicy": "Browser requestAnimationFrame suspension; existing audio visibility handling",
+      "lastCallbackAt": 28132.145,
+      "observedSchedulerFPS": 15.2
+    }
+  },
+  "samples": [
+    {
+      "frames": 83,
+      "time": 28718.52499961853,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 22,
+        "soundsStarted": 13,
+        "lastError": 0,
+        "rms": 0.0002655999701362871,
+        "peakRms": 0.0006995335778432138
+      },
+      "state": "running",
+      "pawn": false
+    },
+    {
+      "frames": 91,
+      "time": 29253.375,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 24,
+        "soundsStarted": 14,
+        "lastError": 0,
+        "rms": 0.0003658522915670834,
+        "peakRms": 0.0006995335778432138
+      },
+      "state": "running",
+      "pawn": false
+    },
+    {
+      "frames": 99,
+      "time": 29759.914999961853,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 25,
+        "soundsStarted": 14,
+        "lastError": 0,
+        "rms": 0.00025597933014438555,
+        "peakRms": 0.0006995335778432138
+      },
+      "state": "running",
+      "pawn": false
+    },
+    {
+      "frames": 107,
+      "time": 30274.46499967575,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 27,
+        "soundsStarted": 15,
+        "lastError": 0,
+        "rms": 0.00016032163442269604,
+        "peakRms": 0.0006995335778432138
+      },
+      "state": "running",
+      "pawn": false
+    },
+    {
+      "frames": 115,
+      "time": 30793.974999904633,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 28,
+        "soundsStarted": 15,
+        "lastError": 0,
+        "rms": 0.00029942513196841295,
+        "peakRms": 0.0006995335778432138
+      },
+      "state": "running",
+      "pawn": false
+    },
+    {
+      "frames": 120,
+      "time": 31470.764999866486,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 29,
+        "soundsStarted": 35,
+        "lastError": 0,
+        "rms": 0.002795363420883641,
+        "peakRms": 0.002795363420883641
+      },
+      "state": "running",
+      "pawn": true
+    },
+    {
+      "frames": 128,
+      "time": 32028.355000019073,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 31,
+        "soundsStarted": 35,
+        "lastError": 0,
+        "rms": 0.0031855363062180788,
+        "peakRms": 0.01930041245136703
+      },
+      "state": "running",
+      "pawn": true
+    },
+    {
+      "frames": 136,
+      "time": 32588.074999809265,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 33,
+        "soundsStarted": 35,
+        "lastError": 0,
+        "rms": 0.00025457881980575273,
+        "peakRms": 0.01930041245136703
+      },
+      "state": "running",
+      "pawn": true
+    },
+    {
+      "frames": 144,
+      "time": 33128.954999923706,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 34,
+        "soundsStarted": 35,
+        "lastError": 0,
+        "rms": 0.0003768999493214302,
+        "peakRms": 0.01930041245136703
+      },
+      "state": "running",
+      "pawn": true
+    },
+    {
+      "frames": 152,
+      "time": 33675.069999694824,
+      "audio": {
+        "deviceOpen": true,
+        "contextState": "running",
+        "musicPlaying": true,
+        "queued": 8,
+        "processed": 36,
+        "soundsStarted": 37,
+        "lastError": 0,
+        "rms": 0.0004679345725431991,
+        "peakRms": 0.01930041245136703
+      },
+      "state": "running",
+      "pawn": true
+    }
+  ],
+  "measuredEngineFPS": 14.048659448212366,
+  "power": {
+    "profile": "efficient",
+    "targetFPS": 30,
+    "scheduler": "asyncify-engine-requestAnimationFrame-cap",
+    "schedulerCallbacks": 157,
+    "mainLoopReady": true,
+    "hiddenPolicy": "Browser requestAnimationFrame suspension; existing audio visibility handling",
+    "lastCallbackAt": 33665.255,
+    "observedSchedulerFPS": 14.5
+  },
+  "graphics": {
+    "api": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)",
+    "glError": 0,
+    "resolution": [
+      640,
+      480
+    ]
+  },
+  "errors": [
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "physicalListeningTest": false,
+  "observedAt": "2026-11-12T23:16:38.717614+00:00",
+  "entryURL": "https://recursionbane.github.io/UT2K4/",
+  "testSetup": {
+    "freshBrowserProfile": true,
+    "loopbackPermission": "granted only in isolated test browser context",
+    "chromeArgs": [
+      "--use-angle=metal"
+    ],
+    "autoplayOverride": false,
+    "manualImport": false,
+    "manualSourceSelection": false
+  },
+  "measuredSchedulerCallbacksPerSecond": 14.231109570916423,
+  "checks": {
+    "autostartFromBareURL": true,
+    "matrixAndAddonInLaunchURL": true,
+    "ownedPawn": true,
+    "realEngineSchedulerCallbacks": true,
+    "capTarget30": true,
+    "audioSignal": true,
+    "hardwareMetal": true,
+    "webglErrorZero": true
+  }
+}

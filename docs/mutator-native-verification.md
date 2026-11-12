@@ -103,3 +103,13 @@ Pressing B after regeneration displayed the original **“The Matrix has you…�
 The owned original MatrixPawn then jumped from Z≈49.85 to 76.88. Holding **C** entered its hover behavior: Z≈121.93 after the initial hold and 131.21 after a further 2.5 seconds, still airborne; releasing C resumed descent to Z≈105.96. The slight upward drift matches the original hover's flying physics and drag, rather than a perfectly stationary freeze. A generic Shift alias did not sustain hover in the browser test; literal C did. Touch hover uses KeyC.
 
 This run also measured ~327 units of owned walking, recorded no page exceptions, and reported zero GL/WebGL errors in native frame evidence. The final activation screenshot, sustained-hover screenshot, class logs, input positions, and disclosed settings are under `delivery/native/evidence/matrix-{bullet-time.png,hover.png,activation-proof.json}`. Wall running, air dodging, and multiplayer prediction were not covered by this focused verification.
+
+## Additional original movements: one focused browser run
+
+A final bounded real-input run used the same original MatrixPlayer/MatrixPawn, full 3374 data, adapter, 40% bullet time, and disclosed accelerated-regeneration QA settings. Every sampled action retained `pawn=true`; no page exceptions occurred and frame evidence reported zero GL/WebGL errors.
+
+- **Late double jump:** after the initial jump, the pawn had begun descending (Z≈−249.41 to −252.78). A second Space gesture 1.3 real seconds later restored upward movement, reaching Z≈−159.33: a rise of **93.46 units** from the descending sample.
+- **Air dodge:** while still airborne, A was held for 70 ms, released for 90 ms, then held for 120 ms. The pawn moved **163.71 horizontal units**, and camera roll reached approximately **−95.8°**, visibly rotating the original first-person view.
+- **Crouch jump:** after landing at Z≈−270.10, holding C before Space raised the pawn to Z≈−92.09, a rise of **178.01 units**. This exceeds an ordinary jump's standard-gravity maximum and is consistent with the original 800 crouch-jump speed.
+
+Telemetry, exact input timings, source-class proof lines, and the test settings are in `delivery/native/evidence/matrix-additional-moves-proof.json`; screenshots are `matrix-late-jump.png`, `matrix-air-dodge.png`, and `matrix-crouch-jump.png` beside it. Wall running was not attempted in this focused pass, because locating and validating an appropriate wall contact would require a separate controlled setup. Multiplayer movement prediction also remains unverified. No additional movement runs were performed after this pass.

@@ -1,0 +1,265 @@
+{
+  "errors": [],
+  "testConfig": {
+    "AdrenalineBasedOnPlayers": false,
+    "AdrenalineRegenRate": 0.05
+  },
+  "gestures": [
+    {
+      "name": "late double jump",
+      "keys": "Space140ms, wait1300ms, Space140ms, wait450ms"
+    },
+    {
+      "name": "air dodge",
+      "keys": "A70ms, gap90ms, A120ms, wait500ms"
+    },
+    {
+      "name": "crouch jump",
+      "keys": "C held120ms then Space160ms, release C, wait700ms"
+    }
+  ],
+  "spawn": {
+    "player": {
+      "tick": 176,
+      "position": [
+        2444,
+        1104,
+        -270.1499938964844
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 174
+  },
+  "bullet": {
+    "player": {
+      "tick": 195,
+      "position": [
+        2444,
+        1104,
+        -270.1499938964844
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 192
+  },
+  "firstJump": {
+    "player": {
+      "tick": 199,
+      "position": [
+        2444,
+        1104,
+        -249.41380310058594
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 196
+  },
+  "lateJumpBefore": {
+    "player": {
+      "tick": 225,
+      "position": [
+        2444,
+        1104,
+        -252.78472900390625
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 222
+  },
+  "lateJumpAfter": {
+    "player": {
+      "tick": 238,
+      "position": [
+        2444,
+        1104,
+        -159.3283233642578
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 235
+  },
+  "airDodgeBefore": {
+    "player": {
+      "tick": 248,
+      "position": [
+        2444,
+        1104,
+        -128.05043029785156
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 246
+  },
+  "airDodgeAfter": {
+    "player": {
+      "tick": 262,
+      "position": [
+        2304.42578125,
+        1189.558349609375,
+        -107.76490783691406
+      ],
+      "rotation": [
+        0,
+        -22120,
+        -17439
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 260
+  },
+  "crouchJumpBefore": {
+    "player": {
+      "tick": 320,
+      "position": [
+        1982.3648681640625,
+        1318.9967041015625,
+        -270.1000061035156
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 317
+  },
+  "crouchJumpAfter": {
+    "player": {
+      "tick": 342,
+      "position": [
+        1982.3648681640625,
+        1313.634521484375,
+        -92.0887451171875
+      ],
+      "rotation": [
+        0,
+        -22120,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 339
+  },
+  "proofLines": [
+    "DevLoad: Loading object 'Matrix2004_v130.MatrixPlayer'  class 'Class'",
+    "ScriptLog: MATRIX_COMPAT_LOGIN: controller=Matrix2004_v130.MatrixPlayer pawn=Matrix2004_v130.MatrixPawn",
+    "DevLoad: Loading object 'Matrix2004_v130.MatrixPawn'  class 'Class'",
+    "ScriptLog: MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130.MatrixPlayer"
+  ],
+  "gl": {
+    "glErrors": 0,
+    "webglErrors": 0
+  },
+  "verifiedBehaviors": [
+    "Late double jump while already descending",
+    "Airborne left double-tap dodge with original first-person roll",
+    "Crouch jump exceeding ordinary jump height"
+  ],
+  "wallRunVerified": false,
+  "scope": "One bounded real-input browser run; no multiplayer coverage.",
+  "measurements": {
+    "lateJumpRise": 93.45640563964844,
+    "airDodgeHorizontalDistance": 163.71070132264686,
+    "airDodgeCameraRollDegrees": -95.7952880859375,
+    "crouchJumpRise": 178.01126098632812
+  },
+  "interpretation": {
+    "lateJump": "Earlier jump sample had already begun descending before the second Space gesture; upward motion resumed.",
+    "airDodge": "The pawn remained owned and airborne; left double tap produced lateral displacement and a ~96 degree view roll.",
+    "crouchJump": "Measured rise exceeds the ordinary 420-speed jump maximum under standard gravity; original class defaults specify 800 crouch jump speed."
+  }
+}

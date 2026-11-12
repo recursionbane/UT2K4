@@ -52,3 +52,7 @@ python3 -m http.server 8000 --directory _site
 Open localhost:8000. A service worker serves verified client files and game assets from local browser storage, including HTTP byte ranges. The GitHub Actions workflow builds the static launcher and deploys to Pages. For the independent arena's C-to-WASM build, see [its README](arena/README.md).
 
 The archived [3334 demo installer](https://github.com/recursionbane/UT2K4/releases/tag/demo-3334) predates the full-game release target. Unreal Tournament belongs to Epic Games and its licensors. This project is unaffiliated with Epic Games and OldUnreal.
+
+## Verified gameplay
+
+The live Pages launcher autostarted a full 3374-preview-23 match on DM-Rankin, with the human player using the original MatrixPawn and MatrixPlayer classes. The full-game tests exercised bullet time, sustained crouch hover, late double jump, air dodge and crouch jump. In the 600-tick headless Matrix test, eight bots held pawns. The deployed browser produced nonzero audio output with music and sound effects. Wall-running, multiplayer prediction and physical-device parity remain open checks. [Gameplay evidence](docs/mutator-native-verification.md) · [Deployed render and audio measurements](delivery/native/evidence/deployed-runtime.json)

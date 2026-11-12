@@ -34,6 +34,7 @@ async function importNativeClient(file,onProgress=()=>{}){
  if(!file||file.size>100*1024*1024)throw Error('Choose the upstream ut2004-web-v0.2.0.tar.gz client archive (under 100 MB).');
  onProgress('Reading the local WebAssembly client…');
  const magic=new Uint8Array(await file.slice(0,2).arrayBuffer());
+ if(magic[0]===31 && magic[1]===139 && (file.size!==23788861 || await sha256(file)!=='946071180231747b43217886fa52190187031ae94ad54343c41788e75702c259'))throw Error('Choose the original v0.2.0 web client archive. Its download checksum does not match.');
  const tar=magic[0]===31&&magic[1]===139?await new Response(file.stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer():await file.arrayBuffer();
  if(tar.byteLength>100*1024*1024)throw Error('Client archive expands beyond the supported size.');
  const files=parseNativeTar(tar),entries=[];
@@ -99,8 +100,22 @@ function nativeGraphicsInfo(){
  const debug=gl.getExtension('WEBGL_debug_renderer_info');
  return {api:gl.getParameter(gl.VERSION),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),vendor:debug?gl.getParameter(debug.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR),resolution:[Module.canvas.width,Module.canvas.height],power:Module.powerEvidence||null};
 }
+function boundedGameLog() {
+ const panel = document.getElementById('pages-log'), output = document.getElementById('log');
+ const lines = [];
+ let pending = false;
+ const draw = () => {pending = false; if(panel.open) output.textContent = lines.join('\n');};
+ panel.addEventListener('toggle', draw);
+ return text => {
+  console.log(text);
+  lines.push(text);
+  if(lines.length > 500) lines.splice(0, 100);
+  if(panel.open && !pending){pending = true; setTimeout(draw, 150);}
+ };
+}
 function patchNativeShell(source){
  const setup=`const options = new URLSearchParams(location.search);
+const gameLog = (${boundedGameLog.toString()})();
 const touchRequested = options.get('touch');
 const touchPreferred = touchRequested === '1' || (touchRequested !== '0' && (matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0));
 const matrixSession = /(?:^|,)Matrix2004_v130\\.MutMonkeyMatrixMoves(?:,|$)/i.test(options.get('mutator') || '');
@@ -120,7 +135,8 @@ inputSelect.value = touchRequested === '1' ? '1' : touchRequested === '0' ? '0' 
 inputSelect.onchange = () => { const url = new URL(location.href); if(inputSelect.value==='auto')url.searchParams.delete('touch');else url.searchParams.set('touch',inputSelect.value);location.assign(url); };
 document.querySelector('form').onsubmit = event => { event.preventDefault();const url=new URL(location.href);url.searchParams.set('name',document.getElementById('name').value);url.searchParams.delete('connect');url.searchParams.set('interactive','1');location.assign(url); };
 const patchSessionUserIni = ${patchNativeUserIni.toString()};`;
- return source.replace(/(["'])(?:\.\.\/|\/)assets\//g,'$1assets/')
+ return source.replace('<style>', '<style>\n.mobile-input-button[data-id=bullet]{top:54px;right:8px;bottom:auto;left:auto}')
+ .replace(/(["'])(?:\.\.\/|\/)assets\//g,'$1assets/')
  .replace(/dataBaseURL:\s*[^,\n]+/,"dataBaseURL: new URL('data/', location.href).href")
  .replace('<h1>', '<nav><a href="../../?setup=1">← Game launcher</a> · <label>Input <select id="pages-input" aria-label="Input controls"><option value="auto">Automatic</option><option value="1">Touch</option><option value="0">Mouse and keyboard</option></select></label> · <label>Power <select id="pages-power"><option value="efficient">Efficient</option><option value="balanced">Balanced</option><option value="quality">Quality</option></select></label> · <label>Frame cap <select id="pages-fps"><option value="30">30</option><option value="60">60</option><option value="native">Native</option></select></label> <button id="pages-graphics" type="button">Graphics info</button><pre id="pages-gpu" role="status"></pre></nav><h1>')
  .replace('<input type="hidden" name="connect" value="1">','')
@@ -149,6 +165,9 @@ window.mobileInput = MobileInput.attach(mobileConfig);
 Module.canvas.addEventListener('pointerdown', () => Module.canvas.focus({preventScroll:true}));
 Module.canvas.focus({preventScroll:true});`)
  .replace('bytes = new TextEncoder().encode(text);', `bytes = new TextEncoder().encode(/(?:^|\\/)System\\/(?:DefUser|User)\\.ini$/i.test('/'+path) ? patchSessionUserIni(text,matrixSession) : text);`)
+ .replace('Starting engine (first load downloads a ~22 MB engine; can take 1-2 minutes)…','Starting UT2004 and loading map packages…')
+ .replace('<pre id="log"></pre>','<details id="pages-log"><summary>Game log</summary><pre id="log"></pre></details>')
+ .replace(/print\(text\) \{ console\.log\(text\); document\.getElementById\('log'\)\.textContent \+= text \+ '[^']*'; \}/, 'print: gameLog')
  .replace('Tab opens console.', 'Tab opens chat. Tilde opens console.')
  .replace("document.getElementById('status').textContent = 'Loading config files…';", "document.getElementById('status').textContent = 'Loading config files…';\n  if(matrixSession)document.getElementById('input-help').textContent += ' Matrix: B / TIME toggles bullet time (75 adrenaline by default; configurable); C holds hover; C + Space superjumps.';");
 }
