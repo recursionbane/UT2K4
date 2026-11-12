@@ -1,0 +1,108 @@
+{
+  "before": {
+    "player": {
+      "tick": 180,
+      "position": [
+        4724.3017578125,
+        448,
+        -366.1499938964844
+      ],
+      "rotation": [
+        0,
+        32720,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 178
+  },
+  "moved": {
+    "player": {
+      "tick": 196,
+      "position": [
+        4416.39501953125,
+        449.4172058105469,
+        -366.1499938964844
+      ],
+      "rotation": [
+        0,
+        32720,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 194
+  },
+  "bullet": {
+    "player": {
+      "tick": 307,
+      "position": [
+        4398.85595703125,
+        449.4979248046875,
+        -366.1499938964844
+      ],
+      "rotation": [
+        0,
+        32720,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 305
+  },
+  "hover": {
+    "player": {
+      "tick": 347,
+      "position": [
+        4398.85595703125,
+        449.4979248046875,
+        -366.1499938964844
+      ],
+      "rotation": [
+        0,
+        32720,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 345
+  },
+  "errors": [],
+  "proofLines": [
+    "DevLoad: Loading object 'Matrix2004_v130.MatrixPlayer'  class 'Class'",
+    "ScriptLog: MATRIX_COMPAT_LOGIN: controller=Matrix2004_v130.MatrixPlayer pawn=Matrix2004_v130.MatrixPawn",
+    "DevLoad: Loading object 'Matrix2004_v130.MatrixPawn'  class 'Class'",
+    "ScriptLog: MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130.MatrixPlayer"
+  ],
+  "glErrors": 0,
+  "webglErrors": 0,
+  "walkDistance": 307.9099997585457
+}

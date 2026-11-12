@@ -121,6 +121,13 @@ $('connect-stream').onclick=async()=>{
       status('Connecting to the full-game stream…');
       current=await openStream(q.get('source'));
     }
+    if (!current && !q.has('setup') && !q.has('source')) {
+      const local='http://127.0.0.1:8789/manifest.json';
+      $('stream-url').value=local;
+      status('Looking for the UT2K4 stream on this device…');
+      try { current=await openStream(local); }
+      catch { status('Choose your full game folder or connect an asset stream below.'); }
+    }
     if(current) mapsFor(current);
     if(q.has('setup')) return;
     if(current?.handle && await current.handle.queryPermission({mode:'read'})!=='granted') {

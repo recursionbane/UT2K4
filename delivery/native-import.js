@@ -72,24 +72,34 @@ function nativePixelBudget(width,height,profile){
 }
 function installNativePowerLoop(profile,requestedFPS){
  const fps=requestedFPS==='native'?0:requestedFPS==='30'?30:requestedFPS==='60'?60:profile.fps;
- const evidence=Module.powerEvidence={profile:profile.name,targetFPS:fps||'native',scheduler:'pending',hiddenPolicy:'Browser requestAnimationFrame suspension; existing audio visibility handling'};
- if(typeof MainLoop==='undefined'||!MainLoop.func){evidence.scheduler='unavailable';return;}
- if(!fps){evidence.scheduler='upstream-native';return;}
- const nativeRAF=window.requestAnimationFrame.bind(window);let last=-Infinity,sampleStart,sampleCount=0;
- evidence.schedulerCallbacks=0;
- MainLoop.requestAnimationFrame=function(callback){
-  const tick=time=>{
-   if(document.hidden){sampleStart=undefined;sampleCount=0;nativeRAF(tick);return;}
-   if(time-last<1000/fps-.5){nativeRAF(tick);return;}
-   last=time;evidence.schedulerCallbacks++;evidence.lastCallbackAt=time;
-   if(sampleStart===undefined)sampleStart=time;else sampleCount++;
-   if(time-sampleStart>=1000){evidence.observedSchedulerFPS=Math.round(sampleCount*10000/(time-sampleStart))/10;sampleStart=time;sampleCount=0;}
-   callback(time);
-  };nativeRAF(tick);
- };
- if(typeof _emscripten_set_main_loop_timing==='function')_emscripten_set_main_loop_timing(1,1);
+ let evidence=Module.powerEvidence;
+ if(!evidence)evidence=Module.powerEvidence={profile:profile.name,targetFPS:fps||'native',scheduler:'pending',hiddenPolicy:'Browser requestAnimationFrame suspension; existing audio visibility handling'};
+ if(!fps){evidence.scheduler='upstream-native';evidence.mainLoopReady=typeof MainLoop!=='undefined'&&!!MainLoop.func;return;}
+ if(typeof MainLoop==='undefined'){evidence.scheduler='waiting-for-main-loop';return;}
+ if(!MainLoop.pagesPowerCap){
+  const nativeRAF=window.requestAnimationFrame.bind(window);let last=-Infinity,sampleStart,sampleCount=0;
+  evidence.schedulerCallbacks=0;
+  MainLoop.requestAnimationFrame=function(callback){
+   const tick=time=>{
+    if(document.hidden){sampleStart=undefined;sampleCount=0;nativeRAF(tick);return;}
+    if(time-last<1000/fps-.5){nativeRAF(tick);return;}
+    last=time;evidence.schedulerCallbacks++;evidence.lastCallbackAt=time;
+    if(sampleStart===undefined)sampleStart=time;else sampleCount++;
+    if(time-sampleStart>=1000){evidence.observedSchedulerFPS=Math.round(sampleCount*10000/(time-sampleStart))/10;sampleStart=time;sampleCount=0;}
+    callback(time);
+   };nativeRAF(tick);
+  };
+  MainLoop.pagesPowerCap=true;
+ }
+ // postRun can precede creation of the interactive engine main loop. Install
+ // the scheduler immediately, then select RAF timing again at the first frame.
+ if(MainLoop.func&&typeof _emscripten_set_main_loop_timing==='function'&&!evidence.timingApplied){
+  _emscripten_set_main_loop_timing(1,1);evidence.timingApplied=true;
+ }
  evidence.scheduler='engine-only-requestAnimationFrame-cap';
+ evidence.mainLoopReady=!!MainLoop.func;
 }
+
 function nativeGraphicsInfo(){
  let gl=Module.ctx;
  if((!gl||!gl.getParameter)&&typeof GL!=='undefined')gl=GL.currentContext?.GLctx;
@@ -130,6 +140,7 @@ const patchSessionUserIni = ${patchNativeUserIni.toString()};`;
  .replace("const [width, height] = value === 'dynamic' ? dynamicSize() : value.split('x').map(Number);", "const [width,height] = budgetPixels(...(value === 'dynamic' ? dynamicSize() : value.split('x').map(Number)),powerProfile);")
  .replace(/innerWidth \* devicePixelRatio/g,'innerWidth * Math.min(devicePixelRatio,powerProfile.maxDPR)')
  .replace(/innerHeight \* devicePixelRatio/g,'innerHeight * Math.min(devicePixelRatio,powerProfile.maxDPR)')
+ .replace('++Module.frameCount;', "if(!Module.powerEvidence?.mainLoopReady)installPowerLoop(powerProfile,options.get('fps')); ++Module.frameCount;")
  .replace('configFiles: {}', "postRun: [() => installPowerLoop(powerProfile,options.get('fps'))], configFiles: {}")
  .replace(/const defaultJoin = [^;]+;/,'const defaultJoin = false;')
  .replace("interactive: defaultJoin || options.has('interactive') || options.has('map'),", "interactive: !options.has('bounded'),")

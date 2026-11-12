@@ -13,6 +13,10 @@ python3 tools/probe-native.py --client /path/to/ut2004-node/ut2004.js --data /pa
 
 The probe requires real engine initialization, `WASM_HEADLESS_PROOF` controlled-pawn output, and a clean exit. Headless success validates loading and ticking; browser rendering and input require separate observation.
 
+On 2026-11-12, the approved full ISO and pinned 3374-preview-23 patch were provisioned with the release's `scripts/install-game-data.sh`. Both published SHA-256 values matched. The resulting full install passed the native Node client for 600 ticks with two controlled bot pawns and a clean exit. The native browser client rendered DM-Rankin, spawned a player, moved in response to held W input, and respawned after a bot killed the player; WebGL reported no error. See `evidence/verification.json`, the headless log, and the original canvas screenshots. Audio was disabled during this test.
+
+The Node release requires the `ws` npm package installed beside its JS file. Keep browser data immutable while serving it: headless startup can regenerate `System/CacheRecords.ucl`, so generating the browser size manifest before that write produces an HTTP Content-Range size mismatch. Clone the data for headless tests or regenerate the manifest afterward.
+
 The browser's virtual root is `native/<profileid>/`. Imported client files remain at that root, with `assets/` beside `index.html`. The profile supplies `file-sizes.json` mapping original-case game-relative names to byte counts, `files.json` containing the names, and `data/<OriginalCasePath>` supporting exact HTTP Range/Content-Range responses. Shell adaptation sets `Module.dataBaseURL` to the relative `data/` directory and preserves original engine binaries.
 
 The engine's normal map argument accepts `DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves`. A shell adapter validates package/class names before appending mutators to `Module.map`; `game=XGame.xDeathMatch` selects the game class. `B=slowtimedown` in `[Engine.Input]` of the profile's User.ini binds the original Matrix ability.

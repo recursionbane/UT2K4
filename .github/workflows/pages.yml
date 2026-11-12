@@ -22,6 +22,7 @@ jobs:
         with:
           node-version: 22
       - run: |
+          python3 tests/test_streaming.py
           node arena/test.mjs
           node delivery/test-native-import.cjs
           for script in delivery/*.js; do node --check "$script"; done

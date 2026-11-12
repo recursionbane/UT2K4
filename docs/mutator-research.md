@@ -47,3 +47,29 @@ The release README describes bullet time, arbitrary-timing double jump, crouch h
 Additional implementation findings: wall run enters spider physics after a short directional world-geometry trace; hover enters flying physics and restores saved velocity on exit; falling dodges cancel downward velocity before applying the dodge; first-person rolls are controller states. These are observations of locally recovered code, not copied implementation in the browser toy.
 
 The mutator is a controller/pawn/weapon replacement with configuration and networking, substantially more than a global slow-motion command. The original declares standard gametype support but excludes Assault and Onslaught. Multiplayer support is stated in its README. Modern patch compatibility and client movement have not been established by the server smoke test.
+
+## Full-source export obtained later
+
+Once the matching full DVD Windows compiler was available, `UCC.exe batchexport Matrix2004_v130 class uc OUTPUT` succeeded with 0 errors and 0 warnings. All 66 classes, **including serialized default properties**, are preserved in ignored `mutators/monkey-matrix-moves/local/source-full/`, with separate SHA256 provenance. The Python-only recovery remains a source-text fallback; the complete export requires matching UCC. Neither form is published without an established license.
+
+Verified original defaults: bullet time runs at 40% speed with 0.5-second smoothing; minimum adrenaline to start is 75 and minimum consumption is 25; special movement is enabled only during bullet time; maximum hover is 7 seconds; crouch-jump vertical speed is 800 and double-jump boost is 160. The combo duration property is 15 seconds.
+
+Complete exports are also preserved at the sibling project's root **`local/recovered-classes/`** (git-ignored). The tracked `docs/mutator-original-fingerprints.json` records SHA256 fingerprints for all 66 complete exports and the exact matching compiler/Core/Engine inputs. It contains no original source text.
+
+Optional full export, from a matching full Windows UT2004 `System` directory with the original Matrix package installed:
+
+```text
+UCC.exe batchexport Matrix2004_v130 class uc C:\path\to\ut2k4\local\recovered-classes
+```
+
+The executed macOS equivalent used CrossOver's Windows XP bottle and the original DVD's unpatched Windows System package set:
+
+```sh
+'/Applications/CrossOver.app/Contents/SharedSupport/CrossOver/bin/wine' \
+  --bottle ut2k4-matrix-check \
+  --workdir /tmp/mmm-research/compiler/System \
+  /tmp/mmm-research/compiler/System/UCC.exe \
+  batchexport Matrix2004_v130 class uc /tmp/mmm-research/full-source-export
+```
+
+The 66 resulting files were copied byte-for-byte into `local/recovered-classes/`. Mixing that original Windows compiler with patched 3374 Core packages fails native-layout checks; the fingerprints document the compatible inputs used here. The independently written Python `preserve.py` can recover embedded class text without UCC, but those fallback texts exclude default properties and are not equivalent to the complete compiler export.

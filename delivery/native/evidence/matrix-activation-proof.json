@@ -1,0 +1,160 @@
+{
+  "before": {
+    "player": {
+      "tick": 206,
+      "position": [
+        -32,
+        -640,
+        -270.1499938964844
+      ],
+      "rotation": [
+        0,
+        7420,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 204
+  },
+  "moved": {
+    "player": {
+      "tick": 222,
+      "position": [
+        168.36578369140625,
+        -467.2975769042969,
+        -270.1499938964844
+      ],
+      "rotation": [
+        0,
+        7420,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 219
+  },
+  "bullet": {
+    "player": {
+      "tick": 304,
+      "position": [
+        181.4759521484375,
+        -455.9974365234375,
+        -270.1499938964844
+      ],
+      "rotation": [
+        0,
+        7420,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 302
+  },
+  "jumping": {
+    "player": {
+      "tick": 322,
+      "position": [
+        181.4759521484375,
+        -455.9974365234375,
+        -238.39405822753906
+      ],
+      "rotation": [
+        0,
+        7420,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 319
+  },
+  "hover": {
+    "player": {
+      "tick": 343,
+      "position": [
+        181.4759521484375,
+        -455.9974365234375,
+        -212.7897186279297
+      ],
+      "rotation": [
+        0,
+        7420,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 340
+  },
+  "released": {
+    "player": {
+      "tick": 374,
+      "position": [
+        181.4759521484375,
+        -455.9974365234375,
+        -270.1499938964844
+      ],
+      "rotation": [
+        0,
+        7420,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 372
+  },
+  "errors": [],
+  "testConfig": {
+    "AdrenalineBasedOnPlayers": false,
+    "AdrenalineRegenRate": 0.05
+  },
+  "proofLines": [
+    "DevLoad: Loading object 'Matrix2004_v130.MatrixPlayer'  class 'Class'",
+    "ScriptLog: MATRIX_COMPAT_LOGIN: controller=Matrix2004_v130.MatrixPlayer pawn=Matrix2004_v130.MatrixPawn",
+    "DevLoad: Loading object 'Matrix2004_v130.MatrixPawn'  class 'Class'",
+    "ScriptLog: MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130.MatrixPlayer"
+  ],
+  "glErrors": 0,
+  "webglErrors": 0,
+  "walkDistance": 264.52329617143107
+}

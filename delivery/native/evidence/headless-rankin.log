@@ -1,0 +1,1148 @@
+Init: Name subsystem initialized
+Init: Version: 3369 (128.29)
+Init: Compiled: Oct 14 2026 11:36:02
+Init: Command line: DM-Rankin?NumBots=2?MinPlayers=2?QuickStart=1 -nohomedir -nosound
+Init: Character set: ANSI
+Init: Base directory: /private/tmp/ut2k4-full-3374/System/
+Init: Ini:UT2004.ini   UserIni:User.ini
+Init: Build label:  Build UT2004_v3374_[2026-07-18_18.42]_d1b145e1
+Init: Object subsystem initialized
+Init: WASM: Core init complete
+Init: WASM: static registry self-check passed
+Init: WASM: Core package loaded
+Init: WASM: Engine package loaded
+DevLoad: Loading object 'ini:Engine.Engine.GameEngine'  class 'Class'
+DevLoad: Loading object 'PropertyManagerBase'  class 'Class'
+Warning: Missing Class Class Editor.TransBuffer
+DevLoad: Loading object 'StateButton'  class 'Class'
+DevLoad: Loading object 'GUIProgressBar'  class 'Class'
+DevLoad: Loading object 'CoolImage'  class 'Class'
+DevLoad: Loading object 'GUISectionBackground'  class 'Class'
+DevLoad: Loading object 'GUISlider'  class 'Class'
+DevLoad: Loading object 'GUISplitter'  class 'Class'
+DevLoad: Loading object 'GUIMenuOption'  class 'Class'
+DevLoad: Loading object 'GUIComboBox'  class 'Class'
+DevLoad: Loading object 'GUIFloatEdit'  class 'Class'
+DevLoad: Loading object 'GUINumericEdit'  class 'Class'
+DevLoad: Loading object 'GUICheckBoxButton'  class 'Class'
+DevLoad: Loading object 'GUITabPanel'  class 'Class'
+DevLoad: Loading object 'GUITabControl'  class 'Class'
+DevLoad: Loading object 'GUITitleBar'  class 'Class'
+DevLoad: Loading object 'GUIVertImageList'  class 'Class'
+DevLoad: Loading object 'GUICircularImageList'  class 'Class'
+DevLoad: Loading object 'MultiSelectList'  class 'Class'
+DevLoad: Loading object 'GUIMultiColumnListHeader'  class 'Class'
+DevLoad: Loading object 'GUICharacterList'  class 'Class'
+DevLoad: Loading object 'GUIHorzList'  class 'Class'
+DevLoad: Loading object 'GUITreeList'  class 'Class'
+DevLoad: Loading object 'GUIMultiOptionList'  class 'Class'
+DevLoad: Loading object 'GUIScrollText'  class 'Class'
+DevLoad: Loading object 'GUITreeListBox'  class 'Class'
+DevLoad: Loading object 'GUIMultiColumnListBox'  class 'Class'
+DevLoad: Loading object 'GUIScrollTextBox'  class 'Class'
+DevLoad: Loading object 'HudBase'  class 'Class'
+DevLoad: Loading object 'AimedAttachment'  class 'Class'
+DevLoad: Loading object 'IceTexture'  class 'Class'
+DevLoad: Loading object 'WetTexture'  class 'Class'
+DevLoad: Loading object 'FluidTexture'  class 'Class'
+DevLoad: Loading object 'WaveTexture'  class 'Class'
+DevLoad: Loading object 'FireTexture'  class 'Class'
+DevLoad: Loading object 'ONSTreadCraft'  class 'Class'
+DevLoad: Loading object 'ONSHoverCraft'  class 'Class'
+DevLoad: Loading object 'ONSPlaneCraft'  class 'Class'
+DevLoad: Loading object 'ONSWheeledCraft'  class 'Class'
+DevLoad: Loading object 'ONSRVWebProjectileLeader'  class 'Class'
+DevLoad: Loading object 'ONSLinkableWeapon'  class 'Class'
+DevLoad: Loading object 'WebResponse'  class 'Class'
+DevLoad: Loading object 'DecompressCommandlet'  class 'Class'
+DevLoad: Loading object 'CompressCommandlet'  class 'Class'
+DevLoad: Loading object 'HTTPDownload'  class 'Class'
+DevLoad: Loading object 'Download'  class 'Class'
+DevLoad: Loading object 'TcpNetDriver'  class 'Class'
+DevLoad: Loading object 'NetDriver'  class 'Class'
+DevLoad: Loading object 'TcpipConnection'  class 'Class'
+DevLoad: Loading object 'NetConnection'  class 'Class'
+DevLoad: Loading object 'MasterServerClientLauncher'  class 'Class'
+DevLoad: Loading object 'KMeshProps'  class 'Class'
+DevLoad: Loading object 'VertMeshInstance'  class 'Class'
+DevLoad: Loading object 'LodMeshInstance'  class 'Class'
+DevLoad: Loading object 'MeshInstance'  class 'Class'
+DevLoad: Loading object 'Primitive'  class 'Class'
+DevLoad: Loading object 'VertMesh'  class 'Class'
+DevLoad: Loading object 'LodMesh'  class 'Class'
+DevLoad: Loading object 'Mesh'  class 'Class'
+DevLoad: Loading object 'TerrainPrimitive'  class 'Class'
+DevLoad: Loading object 'TerrainSector'  class 'Class'
+DevLoad: Loading object 'StaticMeshInstance'  class 'Class'
+DevLoad: Loading object 'StaticMesh'  class 'Class'
+DevLoad: Loading object 'SkeletalMeshInstance'  class 'Class'
+DevLoad: Loading object 'SkeletalMesh'  class 'Class'
+DevLoad: Loading object 'Animation'  class 'Class'
+DevLoad: Loading object 'MeshAnimation'  class 'Class'
+DevLoad: Loading object 'SkinVertexBuffer'  class 'Class'
+DevLoad: Loading object 'RenderResource'  class 'Class'
+DevLoad: Loading object 'IndexBuffer'  class 'Class'
+DevLoad: Loading object 'VertexBuffer'  class 'Class'
+DevLoad: Loading object 'VertexStreamBase'  class 'Class'
+DevLoad: Loading object 'VertexStreamPosNormTex'  class 'Class'
+DevLoad: Loading object 'VertexStreamUV'  class 'Class'
+DevLoad: Loading object 'VertexStreamCOLOR'  class 'Class'
+DevLoad: Loading object 'VertexStreamVECTOR'  class 'Class'
+DevLoad: Loading object 'ProjectorPrimitive'  class 'Class'
+DevLoad: Loading object 'NetPendingLevel'  class 'Class'
+DevLoad: Loading object 'PendingLevel'  class 'Class'
+DevLoad: Loading object 'PackageCheckInfo'  class 'Class'
+DevLoad: Loading object 'PackageMapLevel'  class 'Class'
+DevLoad: Loading object 'PackageMap'  class 'Class'
+DevLoad: Loading object 'Model'  class 'Class'
+DevLoad: Loading object 'TexCoordMaterial'  class 'Class'
+DevLoad: Loading object 'ProxyBitmapMaterial'  class 'Class'
+DevLoad: Loading object 'Level'  class 'Class'
+DevLoad: Loading object 'LevelBase'  class 'Class'
+DevLoad: Loading object 'Input'  class 'Class'
+DevLoad: Loading object 'Polys'  class 'Class'
+DevLoad: Loading object 'Font'  class 'Class'
+DevLoad: Loading object 'FluidSurfacePrimitive'  class 'Class'
+DevLoad: Loading object 'GlobalTempObjects'  class 'Class'
+DevLoad: Loading object 'MasterMD5Commandlet'  class 'Class'
+DevLoad: Loading object 'UModUnpackCommandlet'  class 'Class'
+DevLoad: Loading object 'ServerCommandlet'  class 'Class'
+DevLoad: Loading object 'RenderDevice'  class 'Class'
+DevLoad: Loading object 'ChannelDownload'  class 'Class'
+DevLoad: Loading object 'DemoRecDriver'  class 'Class'
+DevLoad: Loading object 'DemoRecConnection'  class 'Class'
+DevLoad: Loading object 'DemoPlayPendingLevel'  class 'Class'
+DevLoad: Loading object 'ConvexVolume'  class 'Class'
+DevLoad: Loading object 'VoiceChannel'  class 'Class'
+DevLoad: Loading object 'Channel'  class 'Class'
+DevLoad: Loading object 'FileChannel'  class 'Class'
+DevLoad: Loading object 'ActorChannel'  class 'Class'
+DevLoad: Loading object 'ControlChannel'  class 'Class'
+DevLoad: Loading object 'Client'  class 'Class'
+DevLoad: Loading object 'Viewport'  class 'Class'
+DevLoad: Loading object 'AudioSubsystem'  class 'Class'
+DevLoad: Loading object 'ExportCacheCommandlet'  class 'Class'
+DevLoad: Loading object 'NullRenderDevice'  class 'Class'
+DevLoad: Loading object 'System'  class 'Class'
+DevLoad: Loading object 'StructProperty'  class 'Class'
+DevLoad: Loading object 'Property'  class 'Class'
+DevLoad: Loading object 'Field'  class 'Class'
+DevLoad: Loading object 'MapProperty'  class 'Class'
+DevLoad: Loading object 'ArrayProperty'  class 'Class'
+DevLoad: Loading object 'FixedArrayProperty'  class 'Class'
+DevLoad: Loading object 'StrProperty'  class 'Class'
+DevLoad: Loading object 'NameProperty'  class 'Class'
+DevLoad: Loading object 'ClassProperty'  class 'Class'
+DevLoad: Loading object 'ObjectProperty'  class 'Class'
+DevLoad: Loading object 'FloatProperty'  class 'Class'
+DevLoad: Loading object 'BoolProperty'  class 'Class'
+DevLoad: Loading object 'DelegateProperty'  class 'Class'
+DevLoad: Loading object 'PointerProperty'  class 'Class'
+DevLoad: Loading object 'IntProperty'  class 'Class'
+DevLoad: Loading object 'ByteProperty'  class 'Class'
+DevLoad: Loading object 'Language'  class 'Class'
+DevLoad: Loading object 'TextBufferFactory'  class 'Class'
+DevLoad: Loading object 'Factory'  class 'Class'
+DevLoad: Loading object 'Package'  class 'Class'
+DevLoad: Loading object 'LinkerSave'  class 'Class'
+DevLoad: Loading object 'Linker'  class 'Class'
+DevLoad: Loading object 'LinkerLoad'  class 'Class'
+DevLoad: Loading object 'Enum'  class 'Class'
+DevLoad: Loading object 'TextBuffer'  class 'Class'
+DevLoad: Loading object 'Const'  class 'Class'
+DevLoad: Loading object 'Function'  class 'Class'
+DevLoad: Loading object 'Struct'  class 'Class'
+DevLoad: Loading object 'Class'  class 'Class'
+DevLoad: Loading object 'State'  class 'Class'
+DevLoad: Loading object 'ObjectExporterT3D'  class 'Class'
+DevLoad: Loading object 'Exporter'  class 'Class'
+Init: Unreal engine initialized
+Log: Browse: DM-Rankin?Name=Player?Class=Engine.Pawn?Character=Jakob?team=255?NumBots=2?MinPlayers=2?QuickStart=1
+Init: LoadMap: DM-Rankin?Name=Player?Class=Engine.Pawn?Character=Jakob?team=255?NumBots=2?MinPlayers=2?QuickStart=1
+DevLoad: Loading object 'MyLevel'  class 'Level'
+DevLoad: Loading object 'MyLevel'  class 'Level'
+Log: Collecting garbage
+Log: Purging garbage
+Log: Garbage: objects: 36443->36273; refs: 445177
+DevLoad: Loading object 'xGame.xDeathMatch'  class 'Class'
+Log: Game class is 'xDeathMatch'
+DevLoad: Loading object 'ini:Engine.Engine.NetworkDevice'  class 'Class'
+Warning: WASM: setsockopt SO_BROADCAST unsupported (ENOPROTOOPT); continuing without broadcast
+Log: setsockopt with SO_REUSEADDR failed
+Init: Sockets: Socket queue 131072 / 131072
+Init: Sockets: I am emscripten (172.29.1.0)
+DevNet: TcpNetDriver on port 7777
+DevNet: Server Package: Core
+DevNet: Server Package: Engine
+DevNet: Server Package: Fire
+DevNet: Server Package: Editor
+DevNet: Server Package: IpDrv
+DevNet:    (server-side only)
+DevNet: Server Package: UWeb
+DevNet:    (server-side only)
+DevNet: Server Package: GamePlay
+DevNet: Server Package: UnrealGame
+DevNet: Server Package: XEffects
+DevNet: Server Package: XPickups
+DevNet: Server Package: XGame
+DevNet: Server Package: XWeapons
+DevNet: Server Package: XInterface
+DevNet: Server Package: Vehicles
+DevNet: Server Package: TeamSymbols_UT2003
+DevNet: Server Package: TeamSymbols_UT2004
+DevNet: Server Package: BonusPack
+DevNet: Server Package: SkaarjPack_rc
+DevNet: Server Package: SkaarjPack
+DevNet: Server Package: UTClassic
+DevNet: Server Package: UT2k4Assault
+DevNet: Server Package: Onslaught
+DevNet: Server Package: GUI2K4
+DevNet: Server Package: UT2k4AssaultFull
+DevNet: Server Package: OnslaughtFull
+DevNet: Server Package: xVoting
+DevNet: Server Package: OnslaughtBP
+DevNet: Server Package: AssaultBP
+DevNet: Spawning: IpDrv.MasterServerLauncher
+DevLoad: Loading object 'IpDrv.MasterServerLauncher'  class 'Class'
+DevNet: Spawning: UWeb.WebServer
+DevLoad: Loading object 'UWeb.WebServer'  class 'Class'
+Log: Bringing Level DM-Rankin.MyLevel up for play (20) appSeconds: 2.212000...
+DevLoad: Loading object 'UnrealGame.DMMutator'  class 'Class'
+DevLoad: Loading object 'Engine.BroadcastHandler'  class 'Class'
+DevLoad: Loading object 'Engine.AccessControl'  class 'Class'
+ScriptLog: GameInfo::InitGame : bEnableStatLogging False
+Exporting AS-BP2-Acatana...
+DevLoad: Loading object 'AS-BP2-Acatana.LevelSummary'  class 'LevelSummary'
+Exporting AS-BP2-Acatana.....Successful!
+Log: Exporting AS-BP2-Acatana.....Successful!
+DevLoad: 2456.0ms Unloading: Package AS-BP2-Acatana
+Exporting AS-BP2-Jumpship...
+DevLoad: Loading object 'AS-BP2-Jumpship.LevelSummary'  class 'LevelSummary'
+Exporting AS-BP2-Jumpship.....Successful!
+Log: Exporting AS-BP2-Jumpship.....Successful!
+DevLoad: 2536.0ms Unloading: Package AS-BP2-Jumpship
+Exporting AS-BP2-Outback...
+DevLoad: Loading object 'AS-BP2-Outback.LevelSummary'  class 'LevelSummary'
+Exporting AS-BP2-Outback.....Successful!
+Log: Exporting AS-BP2-Outback.....Successful!
+DevLoad: 2658.0ms Unloading: Package AS-BP2-Outback
+Exporting AS-BP2-SubRosa...
+DevLoad: Loading object 'AS-BP2-SubRosa.LevelSummary'  class 'LevelSummary'
+Warning: Missing Cubemap Cubemap AW-Cubes.Cubes.MesaEnv2
+Warning: Missing Cubemap Cubemap AW-Cubes.Cubes.MesaEnv1
+Exporting AS-BP2-SubRosa.....Successful!
+Log: Exporting AS-BP2-SubRosa.....Successful!
+DevLoad: 2728.0ms Unloading: Package AS-BP2-SubRosa
+Exporting AS-BP2-Thrust...
+DevLoad: Loading object 'AS-BP2-Thrust.LevelSummary'  class 'LevelSummary'
+Exporting AS-BP2-Thrust.....Successful!
+Log: Exporting AS-BP2-Thrust.....Successful!
+DevLoad: 2783.0ms Unloading: Package AS-BP2-Thrust
+Exporting CTF-BP2-Concentrate...
+DevLoad: Loading object 'CTF-BP2-Concentrate.LevelSummary'  class 'LevelSummary'
+Exporting CTF-BP2-Concentrate.....Successful!
+Log: Exporting CTF-BP2-Concentrate.....Successful!
+DevLoad: 2823.0ms Unloading: Package CTF-BP2-Concentrate
+Exporting CTF-BP2-Pistola...
+DevLoad: Loading object 'CTF-BP2-Pistola.LevelSummary'  class 'LevelSummary'
+Exporting CTF-BP2-Pistola.....Successful!
+Log: Exporting CTF-BP2-Pistola.....Successful!
+DevLoad: 2868.0ms Unloading: Package CTF-BP2-Pistola
+Exporting DM-BP2-Calandras...
+DevLoad: Loading object 'DM-BP2-Calandras.LevelSummary'  class 'LevelSummary'
+Exporting DM-BP2-Calandras.....Successful!
+Log: Exporting DM-BP2-Calandras.....Successful!
+DevLoad: 2902.0ms Unloading: Package DM-BP2-Calandras
+Exporting DM-BP2-GoopGod...
+DevLoad: Loading object 'DM-BP2-GoopGod.LevelSummary'  class 'LevelSummary'
+Exporting DM-BP2-GoopGod.....Successful!
+Log: Exporting DM-BP2-GoopGod.....Successful!
+DevLoad: 2941.0ms Unloading: Package DM-BP2-GoopGod
+DevLoad: Loading object 'BonusPack.MapListLastManStanding'  class 'Class'
+DevLoad: Loading object 'BonusPack.MapListMutant'  class 'Class'
+DevLoad: Loading object 'Onslaught.ONSMapListOnslaught'  class 'Class'
+DevLoad: Loading object 'Skaarjpack.MapListSkaarjInvasion'  class 'Class'
+DevLoad: Loading object 'UT2k4Assault.ASMapList'  class 'Class'
+DevLoad: Loading object 'XInterface.MapListCaptureTheFlag'  class 'Class'
+DevLoad: Loading object 'XInterface.MapListBombingRun'  class 'Class'
+DevLoad: Loading object 'XInterface.MapListCaptureTheFlag'  class 'Class'
+DevLoad: Loading object 'XInterface.MapListDoubleDomination'  class 'Class'
+DevLoad: Loading object 'XInterface.MapListVehicleCTF'  class 'Class'
+DevLoad: Loading object 'xVoting.xVotingHandler'  class 'Class'
+MasterServerLauncher: Creating master server uplink for ut2004master.333networks.com:28902
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+DevLoad: Loading object 'IpDrv.UdpGamespyQuery'  class 'Class'
+Log: UdpGamespyQuery DM-Rankin.UdpGamespyQuery (Function IpDrv.UdpGamespyQuery.PreBeginPlay:003F) BindPort: setsockopt failed
+ScriptLog: UdpServerQuery: Port failed to bind.
+DevLoad: Loading object 'IpDrv.UdpGamespyUplink'  class 'Class'
+Log: Resolving master0.gamespy.com...
+ScriptLog: MasterServerUplink: MasterServerGameStats not found - stats uploading disabled.
+Log: Resolving ut2004master.333networks.com...
+MasterServerLauncher: Creating master server uplink for ut2004master.gonespy.com:28902
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Log: Resolving ut2004master.gonespy.com...
+MasterServerLauncher: Creating master server uplink for ut2004master.errorist.eu:28902
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Log: Resolving ut2004master.errorist.eu...
+MasterServerLauncher: Creating master server uplink for master.frag-net.com:28902
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Log: Resolving master.frag-net.com...
+MasterServerLauncher: Creating master server uplink for master.noccer.de:28902
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Log: Resolving master.noccer.de...
+MasterServerLauncher: Creating master server uplink for utmaster.openspy.net:28902
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Defaulting to false
+Log: Defaulting to false
+FUdpLink::BindPort: setsockopt failed
+Log: FUdpLink::BindPort: setsockopt failed
+Log: Resolving utmaster.openspy.net...
+ScriptLog: Webserver is not enabled.  Set bEnabled to True in Advanced Options.
+DevLoad: Loading object 'TeamSymbols_UT2003.LordsOfPain'  class 'Texture'
+DevLoad: Loading object 'TeamSymbols_UT2004.Design2'  class 'Texture'
+DevLoad: Loading object 'XGame.xDMRoster'  class 'Class'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004ECEPlayerSkins.MSkaarj_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004ECEPlayerSkins.MSkaarjV2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004ECEPlayerSkins.MetalG_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004ECEPlayerSkins.MetalGV2b_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004ECEPlayerSkins.NecrisM_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004ECEPlayerSkins.Necris2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAD'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAC'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBC'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotCA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotDA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotCB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotDB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Alien'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cAlienFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotCA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotDA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotCB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cBotDB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cNightFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Egypt'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cEgyptMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Jugg'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cJuggFemaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBA'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercFemaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleAB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'PlayerPictures.cMercMaleBB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skaarj_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skaarj2_Portrait_Rage'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skakruk_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skaarj_PortraitTats'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skaarj2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skaarj3_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Skaarj4_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIESSkaarj'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.SkaarjTech_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanM2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Enigma_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanM3_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanM2v2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanF2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanMk3v2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanF2v2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Bot'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.XanF1v2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'DemoPlayerSkins.Jakob_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'DemoPlayerSkins.MercFem1_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'DemoPlayerSkins.MercFem2_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'DemoPlayerSkins.Othello_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.MercFem1_PortraitB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.MercFem2_PortraitB'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Logan_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Hellion_Garrett_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Hellion_Baird_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Hellion_Rae_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Hellion_Gitty_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.OpheliaPortrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.HellionF1_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Zarina_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Hellion_Kane_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Merc'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.Hellion_Outlaw_Portrait'  class 'Material'
+DevLoad: Loading object 'xGame.SPECIES_Night'  class 'Class'
+DevLoad: Loading object 'UT2004PlayerSkins.AbaddonPortrait'  class 'Material'
+DevLoad: Loading object 'xGame.xPawn'  class 'Class'
+DevLoad: Loading object 'Jugg.JuggFemaleB'  class 'Mesh'
+DevLoad: Loading object 'XGame.xJuggFemaleSoundGroup'  class 'Class'
+DevLoad: Loading object 'XGame.JuggFemaleVoice'  class 'Class'
+DevLoad: Loading object 'xGame.xPawn'  class 'Class'
+DevLoad: Loading object 'NewNightmare.Ophelia'  class 'Mesh'
+DevLoad: Loading object 'XGame.xMercFemaleSoundGroup'  class 'Class'
+DevLoad: Loading object 'XGame.JuggFemaleVoice'  class 'Class'
+DevLoad: Loading object 'Jugg.JuggFemaleB'  class 'Mesh'
+DevLoad: Loading object 'XGame.xJuggFemaleSoundGroup'  class 'Class'
+DevLoad: Loading object 'XGame.JuggFemaleVoice'  class 'Class'
+DevLoad: Loading object 'NewNightmare.Ophelia'  class 'Mesh'
+DevLoad: Loading object 'XGame.xMercFemaleSoundGroup'  class 'Class'
+DevLoad: Loading object 'XGame.JuggFemaleVoice'  class 'Class'
+Init: Game engine initialized
+Init: WASM: engine initialized
+DevLoad: Loading object 'xGame.xPawn'  class 'Class'
+DevLoad: Loading object 'xGame.xPawn'  class 'Class'
+DevLoad: Loading object 'XWeapons.Linkgun'  class 'Class'
+ScriptLog: START MATCH
+Title: Rankin: DM-Rankin (0 players)
+DevLoad: Loading object 'Jugg.JuggFemaleB'  class 'Mesh'
+DevLoad: Loading object 'XGame.xJuggFemaleSoundGroup'  class 'Class'
+DevLoad: Loading object 'xGame.xJuggGibGroup'  class 'Class'
+DevLoad: Loading object 'XGame.JuggFemaleVoice'  class 'Class'
+DevLoad: Loading object 'XWeapons.AssaultRifle'  class 'Class'
+DevLoad: Loading object 'XWeapons.ShieldGun'  class 'Class'
+DevLoad: Loading object 'NewNightmare.Ophelia'  class 'Mesh'
+DevLoad: Loading object 'XGame.xMercFemaleSoundGroup'  class 'Class'
+DevLoad: Loading object 'xEffects.xPawnGibGroup'  class 'Class'
+DevLoad: Loading object 'XGame.JuggFemaleVoice'  class 'Class'
+DevLoad: Loading object 'XWeapons.AssaultRifle'  class 'Class'
+DevLoad: Loading object 'XWeapons.ShieldGun'  class 'Class'
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Title: Rankin: DM-Rankin (0 players)
+Log: WASM_HEADLESS_PROOF: map=DM-Rankin game=XGame.xDeathMatch ticks=600 controllers=20 controlledNonVehiclePawns=2 botPawns=2 requestedBots=2
+Init: WASM: bounded loop complete
+Exit: Preparing to exit.
+Log: Purging garbage
+Log: Unbound to XInterface.so
+Log: Unbound to Core.so
+Log: Unbound to Engine.so
+Log: Unbound to XGame.so
+Log: Unbound to Fire.so
+Log: Unbound to Onslaught.so
+Log: Unbound to UWeb.so
+Log: Unbound to IpDrv.so
+DevLoad: 3648.0ms Unloading: Package Core
+DevLoad: 3648.0ms Unloading: Package X_sg_Evilstatpak1
+DevLoad: 3648.0ms Unloading: Package Engine
+DevLoad: 3649.0ms Unloading: Package X_SG_Lost_Outpost
+DevLoad: 3650.0ms Unloading: Package X_SG_LO_meshes
+DevLoad: 3650.0ms Unloading: Package Mech_decayed
+DevLoad: 3650.0ms Unloading: Package Desp_SMS-Tex
+DevLoad: 3650.0ms Unloading: Package Desp_SMS-SM
+DevLoad: 3650.0ms Unloading: Package gooseFX
+DevLoad: 3650.0ms Unloading: Package ShiptechHardwareBrush
+DevLoad: 3650.0ms Unloading: Package SC_Intro
+DevLoad: 3650.0ms Unloading: Package MapThumbnails
+DevLoad: 3650.0ms Unloading: Package wm_textures
+DevLoad: 3650.0ms Unloading: Package X_cp_stevetest1
+DevLoad: 3650.0ms Unloading: Package CP_UT2K3_TechSet1
+DevLoad: 3650.0ms Unloading: Package X_Mechcity1_CP
+DevLoad: 3651.0ms Unloading: Package cp_Evil2
+DevLoad: 3651.0ms Unloading: Package X_cp_Evil2
+DevLoad: 3651.0ms Unloading: Package Plutonic_BP2_textures
+DevLoad: 3651.0ms Unloading: Package X_cp_cubemaps
+DevLoad: 3651.0ms Unloading: Package X_cp_fx
+DevLoad: 3651.0ms Unloading: Package X_cp_Evil3
+DevLoad: 3651.0ms Unloading: Package Plutonic_BP2_static
+DevLoad: 3651.0ms Unloading: Package jwDecemberArchitecture
+DevLoad: 3651.0ms Unloading: Package SG_Lost_Outpost
+DevLoad: 3651.0ms Unloading: Package SG_LO_meshes
+DevLoad: 3652.0ms Unloading: Package X_cp_Evil1
+DevLoad: 3652.0ms Unloading: Package cp_Mech1
+DevLoad: 3652.0ms Unloading: Package cp_Mechstaticpack1
+DevLoad: 3652.0ms Unloading: Package cp_fx
+DevLoad: 3653.0ms Unloading: Package cp_cubemaps
+DevLoad: 3653.0ms Unloading: Package cp_Evil3
+DevLoad: 3653.0ms Unloading: Package GlacierTextures
+DevLoad: 3655.0ms Unloading: Package AssaultBP
+DevLoad: 3655.0ms Unloading: Package DistantBooms
+DevLoad: 3656.0ms Unloading: Package ONSBPAnimations
+DevLoad: 3656.0ms Unloading: Package CicadaSnds
+DevLoad: 3656.0ms Unloading: Package BonusParticles
+DevLoad: 3656.0ms Unloading: Package SC-City
+DevLoad: 3656.0ms Unloading: Package X_SC-City
+DevLoad: 3656.0ms Unloading: Package ONS-BPJW1
+DevLoad: 3656.0ms Unloading: Package CicadaTex
+DevLoad: 3656.0ms Unloading: Package ONSBPSounds
+DevLoad: 3656.0ms Unloading: Package ONSBP_DestroyedVehicles
+DevLoad: 3656.0ms Unloading: Package AW-2k4XP
+DevLoad: 3656.0ms Unloading: Package ONSBPTextures
+DevLoad: 3656.0ms Unloading: Package OnslaughtBP
+DevLoad: 3656.0ms Unloading: Package xVoting
+DevLoad: 3656.0ms Unloading: Package GenericSD
+DevLoad: 3656.0ms Unloading: Package Lev_Particles
+DevLoad: 3657.0ms Unloading: Package ONSFullAnimations
+DevLoad: 3657.0ms Unloading: Package ONSFullStaticMeshes
+DevLoad: 3657.0ms Unloading: Package ONSFullTextures
+DevLoad: 3657.0ms Unloading: Package OnslaughtFull
+DevLoad: 3657.0ms Unloading: Package JWAssaultMeshes
+DevLoad: 3657.0ms Unloading: Package AS_VehiclesFull_M
+DevLoad: 3657.0ms Unloading: Package UT2k4AssaultFull
+DevLoad: 3657.0ms Unloading: Package 2K4MenusWS
+DevLoad: 3658.0ms Unloading: Package ULogo
+DevLoad: 3658.0ms Unloading: Package PlayerPictures
+DevLoad: 3658.0ms Unloading: Package 2K4MenusHR
+DevLoad: 3658.0ms Unloading: Package GUI2K4
+DevLoad: 3658.0ms Unloading: Package SniperAnims
+DevLoad: 3658.0ms Unloading: Package UTClassic
+DevLoad: 3658.0ms Unloading: Package AnnouncerEVIL
+DevLoad: 3658.0ms Unloading: Package SkaarjPack
+DevLoad: 3658.0ms Unloading: Package SkaarjPackSkins
+DevLoad: 3658.0ms Unloading: Package SkaarjPack_rc
+DevLoad: 3658.0ms Unloading: Package BarrensArchitecture-epic
+DevLoad: 3659.0ms Unloading: Package BarrensArchitecture
+DevLoad: 3659.0ms Unloading: Package Egypt_techmeshes_Epic
+DevLoad: 3659.0ms Unloading: Package MutantSkins
+DevLoad: 3659.0ms Unloading: Package BonusPack
+DevLoad: 3659.0ms Unloading: Package TeamSymbols_UT2004
+Exit: Socket shut down
+Exit: Game engine shut down
+DevLoad: 3661.0ms Unloading: Package XInterface
+DevLoad: 3661.0ms Unloading: Package XGame
+DevLoad: 3661.0ms Unloading: Package TauntPack
+DevLoad: 3661.0ms Unloading: Package UnrealGame
+DevLoad: 3661.0ms Unloading: Package Gameplay
+DevLoad: 3661.0ms Unloading: Package AS_FX_TX
+DevLoad: 3661.0ms Unloading: Package CubeMaps
+DevLoad: 3661.0ms Unloading: Package XGameShaders
+DevLoad: 3661.0ms Unloading: Package PlayerSkins
+DevLoad: 3662.0ms Unloading: Package Shiptech
+DevLoad: 3662.0ms Unloading: Package UCGeneric
+DevLoad: 3662.0ms Unloading: Package XGameTextures
+DevLoad: 3662.0ms Unloading: Package TeamSymbols_UT2003
+DevLoad: 3662.0ms Unloading: Package GameSounds
+DevLoad: 3662.0ms Unloading: Package AnnouncerAssault
+DevLoad: 3662.0ms Unloading: Package IpDrv
+DevLoad: 3662.0ms Unloading: Package EpicParticles
+DevLoad: 3662.0ms Unloading: Package Editor
+DevLoad: 3662.0ms Unloading: Package Fire
+DevLoad: 3662.0ms Unloading: Package InterfaceContent
+DevLoad: 3662.0ms Unloading: Package intro_characters
+DevLoad: 3662.0ms Unloading: Package AW-2004Particles
+DevLoad: 3662.0ms Unloading: Package AWGlobal
+DevLoad: 3662.0ms Unloading: Package AlleriaArchitecture
+DevLoad: 3662.0ms Unloading: Package TowerTerrain
+DevLoad: 3662.0ms Unloading: Package AbaddonArchitecture
+DevLoad: 3662.0ms Unloading: Package 2K4reducedTEXTURES
+DevLoad: 3662.0ms Unloading: Package AbaddonTerrain
+DevLoad: 3662.0ms Unloading: Package SkyRenders
+DevLoad: 3662.0ms Unloading: Package dom-goose
+DevLoad: 3662.0ms Unloading: Package FireEngine
+DevLoad: 3662.0ms Unloading: Package MikeDemoLevel
+DevLoad: 3662.0ms Unloading: Package ArboreaArchitecture
+DevLoad: 3662.0ms Unloading: Package H_E_L_Ltx
+DevLoad: 3662.0ms Unloading: Package Egypt_tech_Epic
+DevLoad: 3662.0ms Unloading: Package ArboreaTerrain
+DevLoad: 3662.0ms Unloading: Package AbaddonArchitecture-epic
+DevLoad: 3662.0ms Unloading: Package PickupSkins
+DevLoad: 3662.0ms Unloading: Package VMVehicles-TX
+DevLoad: 3662.0ms Unloading: Package AW-Metals
+DevLoad: 3662.0ms Unloading: Package AW-Cubes
+DevLoad: 3662.0ms Unloading: Package jm-prefabs
+DevLoad: 3662.0ms Unloading: Package NewDeath
+DevLoad: 3662.0ms Unloading: Package XEffects
+DevLoad: 3662.0ms Unloading: Package XEffectMat
+DevLoad: 3662.0ms Unloading: Package WeaponSounds
+DevLoad: 3662.0ms Unloading: Package ParticleMeshes
+DevLoad: 3662.0ms Unloading: Package ONSVehicleSounds-S
+DevLoad: 3662.0ms Unloading: Package xGameShadersB
+DevLoad: 3662.0ms Unloading: Package DefaultFluid
+DevLoad: 3662.0ms Unloading: Package ExplosionTex
+DevLoad: 3662.0ms Unloading: Package PlayerSounds
+DevLoad: 3662.0ms Unloading: Package EmitterTextures
+DevLoad: 3662.0ms Unloading: Package AW-2004Explosions
+DevLoad: 3662.0ms Unloading: Package WeaponStaticMesh
+DevLoad: 3662.0ms Unloading: Package WeaponSkins
+DevLoad: 3662.0ms Unloading: Package GeneralAmbience
+DevLoad: 3662.0ms Unloading: Package ArboreaLanscape
+DevLoad: 3662.0ms Unloading: Package WarEffectsTextures
+DevLoad: 3662.0ms Unloading: Package DeployableTex
+DevLoad: 3662.0ms Unloading: Package XGame_rc
+DevLoad: 3662.0ms Unloading: Package SC_Volcano_T
+DevLoad: 3662.0ms Unloading: Package AnnouncerFemale2K4
+DevLoad: 3662.0ms Unloading: Package XPickups
+DevLoad: 3662.0ms Unloading: Package E_Pickups
+DevLoad: 3662.0ms Unloading: Package PickupSounds
+DevLoad: 3662.0ms Unloading: Package XPickups_rc
+DevLoad: 3662.0ms Unloading: Package PlayerSounds2
+DevLoad: 3662.0ms Unloading: Package TeamSymbols
+DevLoad: 3662.0ms Unloading: Package XGame_StaticMeshes
+DevLoad: 3662.0ms Unloading: Package DanFX
+DevLoad: 3662.0ms Unloading: Package Phobos2_cp
+DevLoad: 3662.0ms Unloading: Package CP_Effects1
+DevLoad: 3662.0ms Unloading: Package 2K4chargerMESHES
+DevLoad: 3662.0ms Unloading: Package 2K4Chargers
+DevLoad: 3662.0ms Unloading: Package XGameShaders2004
+DevLoad: 3662.0ms Unloading: Package DeRez
+DevLoad: 3662.0ms Unloading: Package UT2004Weapons
+DevLoad: 3662.0ms Unloading: Package DemoPlayerSkins
+DevLoad: 3662.0ms Unloading: Package GeneralImpacts
+DevLoad: 3662.0ms Unloading: Package NewWeaponPickups
+DevLoad: 3662.0ms Unloading: Package LastManStanding
+DevLoad: 3662.0ms Unloading: Package HudContent
+DevLoad: 3662.0ms Unloading: Package MenuSounds
+DevLoad: 3662.0ms Unloading: Package ThunderCrash
+DevLoad: 3663.0ms Unloading: Package HumanFemaleA
+DevLoad: 3663.0ms Unloading: Package HumanMaleA
+DevLoad: 3663.0ms Unloading: Package Crosshairs
+DevLoad: 3663.0ms Unloading: Package XWeapons
+DevLoad: 3663.0ms Unloading: Package XWeapons_rc
+DevLoad: 3663.0ms Unloading: Package Weapons
+DevLoad: 3663.0ms Unloading: Package 2K4Hud
+DevLoad: 3663.0ms Unloading: Package NewWeapons2004
+DevLoad: 3663.0ms Unloading: Package NewSniperRifle
+DevLoad: 3663.0ms Unloading: Package NewWeaponSounds
+DevLoad: 3663.0ms Unloading: Package InstagibEffects
+DevLoad: 3663.0ms Unloading: Package IndoorAmbience
+DevLoad: 3663.0ms Unloading: Package NewWeaponStatic
+DevLoad: 3663.0ms Unloading: Package announcermale2k4
+DevLoad: 3663.0ms Unloading: Package 2K4Menus
+DevLoad: 3663.0ms Unloading: Package ExitScreen
+DevLoad: 3663.0ms Unloading: Package UWeb
+DevLoad: 3663.0ms Unloading: Package ServerIcons
+DevLoad: 3663.0ms Unloading: Package MenuEffects
+DevLoad: 3663.0ms Unloading: Package 2K4MenuSounds
+DevLoad: 3663.0ms Unloading: Package SinglePlayerThumbs
+DevLoad: 3669.0ms Unloading: Package Onslaught
+DevLoad: 3669.0ms Unloading: Package ONSDeadVehicles-SM
+DevLoad: 3670.0ms Unloading: Package ONSDeadVehicles-TX
+DevLoad: 3670.0ms Unloading: Package ONSstructureTextures
+DevLoad: 3670.0ms Unloading: Package VMparticleTextures
+DevLoad: 3670.0ms Unloading: Package ONSInterface-TX
+DevLoad: 3670.0ms Unloading: Package VMWeaponsTX
+DevLoad: 3670.0ms Unloading: Package VMStructures
+DevLoad: 3670.0ms Unloading: Package ONSWeapons-A
+DevLoad: 3670.0ms Unloading: Package VMGeneralSounds-S
+DevLoad: 3670.0ms Unloading: Package ONSWeapons-SM
+DevLoad: 3670.0ms Unloading: Package VMWeaponsSM
+DevLoad: 3670.0ms Unloading: Package ONSVehicles-A
+DevLoad: 3670.0ms Unloading: Package ONSstaticMeshVehicles
+DevLoad: 3670.0ms Unloading: Package VehicleFX
+DevLoad: 3670.0ms Unloading: Package BenTex01
+DevLoad: 3670.0ms Unloading: Package TurretParticles
+DevLoad: 3670.0ms Unloading: Package AW-ShieldShaders
+DevLoad: 3670.0ms Unloading: Package AssaultSounds
+DevLoad: 3670.0ms Unloading: Package UT2k4Assault
+DevLoad: 3670.0ms Unloading: Package AS_Weapons_SM
+DevLoad: 3670.0ms Unloading: Package AS_Weapons_TX
+DevLoad: 3670.0ms Unloading: Package Detail
+DevLoad: 3670.0ms Unloading: Package AS_Vehicles_M
+DevLoad: 3670.0ms Unloading: Package AS_Decos
+DevLoad: 3670.0ms Unloading: Package cp_staticmeshskin1
+DevLoad: 3670.0ms Unloading: Package cp_texturetest1
+DevLoad: 3670.0ms Unloading: Package Turrets
+DevLoad: 3670.0ms Unloading: Package AS_Vehicles_SM
+DevLoad: 3670.0ms Unloading: Package AS_Vehicles_TX
+DevLoad: 3670.0ms Unloading: Package Vehicles
+DevLoad: 3670.0ms Unloading: Package BulldogMeshes
+DevLoad: 3670.0ms Unloading: Package EffectMeshes
+DevLoad: 3670.0ms Unloading: Package ASSAULTfilmGrain
+DevLoad: 3670.0ms Unloading: Package VMVehicleSounds-S
+DevLoad: 3670.0ms Unloading: Package ONSNewTank-A
+DevLoad: 3670.0ms Unloading: Package VMmeshEmitted
+DevLoad: 3673.0ms Unloading: Package Packages
+DevLoad: 3673.0ms Unloading: Package DM-Rankin
+DevLoad: 3673.0ms Unloading: Package HumanoidArchitecture
+DevLoad: 3673.0ms Unloading: Package HumanoidArchitecture2
+DevLoad: 3673.0ms Unloading: Package skyline-epic
+DevLoad: 3673.0ms Unloading: Package GeoThermalTextures
+DevLoad: 3673.0ms Unloading: Package HumanoidHardware
+DevLoad: 3673.0ms Unloading: Package Pipe_Set
+DevLoad: 3673.0ms Unloading: Package AlleriaTerrain
+DevLoad: 3673.0ms Unloading: Package HumanoidHardwareBrush
+DevLoad: 3673.0ms Unloading: Package AbaddonHardwareBrush
+DevLoad: 3673.0ms Unloading: Package OutdoorAmbience
+DevLoad: 3673.0ms Unloading: Package skyline-meshes-epic
+DevLoad: 3673.0ms Unloading: Package TowerStatic
+DevLoad: 3673.0ms Unloading: Package cassTextures2
+DevLoad: 3673.0ms Unloading: Package Shiptech2
+DevLoad: 3673.0ms Unloading: Package ArboreaHardwareBrush
+DevLoad: 3673.0ms Unloading: Package cf_tex01
+DevLoad: 3673.0ms Unloading: Package AW-Alleria
+DevLoad: 3673.0ms Unloading: Package X_MechStandard
+DevLoad: 3673.0ms Unloading: Package XceptOne
+DevLoad: 3673.0ms Unloading: Package X_SC-NewMech1
+DevLoad: 3674.0ms Unloading: Package MechStandard
+DevLoad: 3674.0ms Unloading: Package AlleriaHardware
+DevLoad: 3674.0ms Unloading: Package AlleriaHardwareBrush
+DevLoad: 3678.0ms Unloading: Package X_sg_Evil1
+DevLoad: 3678.0ms Unloading: Package sg_floorsandgrates_alpha
+DevLoad: 3678.0ms Unloading: Package cf_sm01
+DevLoad: 3678.0ms Unloading: Package Rahnem_Glacier
+DevLoad: 3678.0ms Unloading: Package sg-Mech
+DevLoad: 3678.0ms Unloading: Package SurvivalGuideSMskins
+DevLoad: 3678.0ms Unloading: Package A_Announcer_BP2
+DevLoad: 3678.0ms Unloading: Package CP_UT2K3_TechSetMesh1
+DevLoad: 3678.0ms Unloading: Package ShiptechHardware
+DevLoad: 3678.0ms Unloading: Package X_AW-Convert
+DevLoad: 3678.0ms Unloading: Package X_AW-Cubes
+DevLoad: 3678.0ms Unloading: Package Pipe_Static
+DevLoad: 3678.0ms Unloading: Package X_Mech_decayed
+DevLoad: 3678.0ms Unloading: Package X_AW-Tech
+DevLoad: 3678.0ms Unloading: Package X_AW-Shaders
+DevLoad: 3678.0ms Unloading: Package AW-Shaders
+DevLoad: 3678.0ms Unloading: Package WarFx
+DevLoad: 3678.0ms Unloading: Package X_GoldCubes
+DevLoad: 3678.0ms Unloading: Package X_WarFx
+DevLoad: 3678.0ms Unloading: Package X_CliffTest
+DevLoad: 3678.0ms Unloading: Package cp_terrain1
+DevLoad: 3678.0ms Unloading: Package AW-Convert
+DevLoad: 3678.0ms Unloading: Package LP_Evil1
+DevLoad: 3678.0ms Unloading: Package cp_Evilmetal
+DevLoad: 3678.0ms Unloading: Package SurvivalGuideMeshes
+DevLoad: 3678.0ms Unloading: Package X_BG-FloraGen
+DevLoad: 3678.0ms Unloading: Package X_BG-FloraGen_tex
+DevLoad: 3678.0ms Unloading: Package Albatross_architecture
+DevLoad: 3678.0ms Unloading: Package AWCity
+DevLoad: 3678.0ms Unloading: Package BenMesh01
+DevLoad: 3678.0ms Unloading: Package cp_wasteland
+DevLoad: 3678.0ms Unloading: Package cf_tex02
+DevLoad: 3678.0ms Unloading: Package BarrensTerrain
+DevLoad: 3678.0ms Unloading: Package Face3_deco
+DevLoad: 3678.0ms Unloading: Package AntalusTextures
+DevLoad: 3678.0ms Unloading: Package lp_scene2_m
+DevLoad: 3678.0ms Unloading: Package lp_scene_1_t
+DevLoad: 3678.0ms Unloading: Package PC_ConvoyTextures
+DevLoad: 3678.0ms Unloading: Package X_lp_scene3_m
+DevLoad: 3678.0ms Unloading: Package X_SC-MechBase1
+DevLoad: 3678.0ms Unloading: Package X_Futuretech1
+DevLoad: 3678.0ms Unloading: Package Futuretech1
+DevLoad: 3678.0ms Unloading: Package WinX
+DevLoad: 3678.0ms Unloading: Package SC_Volcano_M
+DevLoad: 3678.0ms Unloading: Package DEBPchecker
+DevLoad: 3678.0ms Unloading: Package PC_ConvoyStatics
+DevLoad: 3678.0ms Unloading: Package wm_sounds
+DevLoad: 3678.0ms Unloading: Package DespFallencity-SM
+DevLoad: 3678.0ms Unloading: Package DespFallenCity
+DevLoad: 3678.0ms Unloading: Package Rimlight
+DevLoad: 3678.0ms Unloading: Package X_cp_Evilstatic2
+DevLoad: 3678.0ms Unloading: Package AbaddonHardware
+DevLoad: 3678.0ms Unloading: Package XceptOneObjA
+DevLoad: 3678.0ms Unloading: Package AWHardware
+DevLoad: 3678.0ms Unloading: Package JumpShipObjects
+DevLoad: 3678.0ms Unloading: Package JumpshipTextures
+DevLoad: 3678.0ms Unloading: Package Epic_Phoboswing
+DevLoad: 3678.0ms Unloading: Package X_cp_Evil
+DevLoad: 3678.0ms Unloading: Package X_cp_Evilmetal
+DevLoad: 3678.0ms Unloading: Package X_SG_Special
+DevLoad: 3678.0ms Unloading: Package X_SG_Special_Decos
+DevLoad: 3678.0ms Unloading: Package Mech_Decay_New
+DevLoad: 3678.0ms Unloading: Package SG_Special_Decos
+DevLoad: 3678.0ms Unloading: Package X_cp_terrain1
+DevLoad: 3678.0ms Unloading: Package GeothermalStatic
+DevLoad: 3678.0ms Unloading: Package CheckerFX
+DevLoad: 3678.0ms Unloading: Package AWPipes
+DevLoad: 3678.0ms Unloading: Package DESP-MS
+DevLoad: 3678.0ms Unloading: Package DespTech-STA
+DevLoad: 3678.0ms Unloading: Package DespTech
+DevLoad: 3678.0ms Unloading: Package AWStellarMeshes
+DevLoad: 3678.0ms Unloading: Package epic_phobos
+DevLoad: 3678.0ms Unloading: Package Coronas
+DevLoad: 3678.0ms Unloading: Package CP_Nightmare1_Epic
+DevLoad: 3678.0ms Unloading: Package AW-RustTex
+DevLoad: 3678.0ms Unloading: Package cp_Junkyard
+DevLoad: 3678.0ms Unloading: Package X_LP_Evil1
+DevLoad: 3678.0ms Unloading: Package X_jm-prefabs
+DevLoad: 3679.0ms Unloading: Package BenTex02
+DevLoad: 3679.0ms Unloading: Package PlungeMeshes
+DevLoad: 3679.0ms Unloading: Package Intro_Crowd
+DevLoad: 3679.0ms Unloading: Package AW-RustMeshes
+DevLoad: 3679.0ms Unloading: Package AW-Junk
+DevLoad: 3679.0ms Unloading: Package Bastien
+DevLoad: 3679.0ms Unloading: Package Primeval_SM
+DevLoad: 3679.0ms Unloading: Package cp_Forestswamp
+DevLoad: 3679.0ms Unloading: Package X_Foliage
+DevLoad: 3679.0ms Unloading: Package AW-Generic
+DevLoad: 3679.0ms Unloading: Package Comp
+DevLoad: 3679.0ms Unloading: Package Compress
+DevLoad: 3679.0ms Unloading: Package Jugg
+DevLoad: 3679.0ms Unloading: Package StreamlineFX
+DevLoad: 3679.0ms Unloading: Package IntroSounds
+DevLoad: 3679.0ms Unloading: Package cf_DE
+DevLoad: 3679.0ms Unloading: Package Intro_brockfan
+DevLoad: 3679.0ms Unloading: Package JWDecemberSnd
+DevLoad: 3679.0ms Unloading: Package X_WarEffectsTextures
+DevLoad: 3679.0ms Unloading: Package StreamlineTakeOff1
+DevLoad: 3679.0ms Unloading: Package ONSTorlanREDONE
+DevLoad: 3679.0ms Unloading: Package StreamlineTakeOffTex1
+DevLoad: 3679.0ms Unloading: Package X_sg_Mech_hbrushes
+DevLoad: 3679.0ms Unloading: Package X_AW-MechMeshes
+DevLoad: 3679.0ms Unloading: Package X_AW-MechTex
+DevLoad: 3679.0ms Unloading: Package RiseSM
+DevLoad: 3679.0ms Unloading: Package str_plant_meshes
+DevLoad: 3679.0ms Unloading: Package strplants
+DevLoad: 3679.0ms Unloading: Package X_lp_scene2_m
+DevLoad: 3679.0ms Unloading: Package SC_GDC_M
+DevLoad: 3679.0ms Unloading: Package SC_GDC
+DevLoad: 3679.0ms Unloading: Package SC_Water
+DevLoad: 3679.0ms Unloading: Package SC_GDC_FX
+DevLoad: 3679.0ms Unloading: Package SC_Jungle
+DevLoad: 3679.0ms Unloading: Package Chrome_cp
+DevLoad: 3679.0ms Unloading: Package CheckerFXB
+DevLoad: 3679.0ms Unloading: Package Ty_RocketTextures
+DevLoad: 3679.0ms Unloading: Package Ty_RocketSmeshes
+DevLoad: 3679.0ms Unloading: Package ArboreaHardware
+DevLoad: 3679.0ms Unloading: Package T_Epic2k4BP2
+DevLoad: 3679.0ms Unloading: Package December_cp
+DevLoad: 3679.0ms Unloading: Package IceCliffs
+DevLoad: 3679.0ms Unloading: Package HourMoria
+DevLoad: 3679.0ms Unloading: Package ShaneDay
+DevLoad: 3679.0ms Unloading: Package Skies
+DevLoad: 3679.0ms Unloading: Package Citadel_Static
+DevLoad: 3679.0ms Unloading: Package CitadelTextures
+DevLoad: 3679.0ms Unloading: Package HourMoriaStatics
+DevLoad: 3679.0ms Unloading: Package JWDecember
+DevLoad: 3682.0ms Unloading: Package UT2004ECEPlayerSkins
+DevLoad: 3682.0ms Unloading: Package UT2004PlayerSkins
+DevLoad: 3682.0ms Unloading: Package NewNightmare
+Log: Garbage: objects: 40046->0; refs: 445177
+Exit: Object subsystem successfully closed.
+Exit: Exiting.
+Log: FileManager: Reading 0 GByte 54 MByte 926 KByte 205 Bytes from HD took 0.354001 seconds (0.354001 reading, 0.000000 seeking).
+Log: FileManager: 0.000000 seconds spent with misc. duties
+Uninitialized: Name subsystem shut down
+Uninitialized: Allocation checking disabled
+WASM: clean exit

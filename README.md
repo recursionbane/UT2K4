@@ -4,6 +4,22 @@ Play the full Unreal Tournament 2004 in a browser using rgnv’s native WebAssem
 
 **[Play on GitHub Pages](https://recursionbane.github.io/UT2K4/)** · [Movement arena (no installation)](https://recursionbane.github.io/UT2K4/arena/) · [Upstream native WASM release](https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0)
 
+## Stream and autostart
+
+Run the supplied read-only helper on the computer holding the game. It serves the player’s own packages without copying the game into the browser or uploading them to Pages.
+
+```sh
+python3 tools/stream-game.py /path/to/UT2004 --client /path/to/ut2004-web-v0.2.0.tar.gz
+```
+
+Open the [Pages launcher](https://recursionbane.github.io/UT2K4/). On a fresh visit it looks for the helper at `127.0.0.1:8789`. Allow local network access when the browser asks. With a configured source, it loads the verified engine at launch, starts DM-Rankin and resumes that profile on subsequent visits. Use [setup](https://recursionbane.github.io/UT2K4/?setup=1) to change sources or settings. On the prepared Mac, `tools/play-on-mac.command` opens the stream and launcher.
+
+For a separate HTTPS asset server, enter its manifest URL in **Stream from an asset server**, or share a Pages URL with `?source=<encoded manifest URL>`. The launcher accepts the upstream `file-sizes.json` format (data under adjacent `data/`) or the helper's `manifest.json` format, which also identifies the client archive. The host must allow the Pages origin and expose `Content-Range` for HTTP 206 responses. Texture packages, maps, sound packages and Vorbis music are read as the engine requests them. Startup also reads the game's configuration and localization files. The landing page and GitHub Pages deployment contain no full game data or engine WASM.
+
+## Mac graphics
+
+Efficient mode targets 30 fps with a 307,200-pixel budget. Balanced and Quality allow 60 fps with larger framebuffers. Graphics info reports the browser renderer. On the tested Apple M1 Max, Chrome used ANGLE’s Metal backend for WebGL. The browser handles hardware selection. No wall-power measurement was made. [Graphics profiles and checks](delivery/metal.md)
+
 ## Full game data
 
 1. Use your full 3369 installation or the pinned OldUnreal 3374-preview-23 data. To reproduce the tested full installation on Linux, obtain the [upstream v0.2.0 web release](https://github.com/rgnv/ut2004-wasm/releases/tag/v0.2.0), extract it, and run its `bash scripts/install-game-data.sh --dest /path/to/UT2004`. It fetches the disc and patch from the sources used by OldUnreal. Other OldUnreal releases can have a different native class layout. [OldUnreal installers](https://www.oldunreal.com/downloads/ut2004/full-game-installers/)
@@ -11,7 +27,7 @@ Play the full Unreal Tournament 2004 in a browser using rgnv’s native WebAssem
 3. Select a map and mutator, then **Play full game**. The initial configuration uses DM-Rankin and Monkey Matrix Moves. Click the viewport to focus or join. Use WASD, mouse, Space and C. Touchscreen controls are capability-detected with a manual override in Display and controls. Browser audio may need a tap or click.
 4. For other mutators, select **Local mutator packages**, choose their files and dependencies, and enter the UnrealScript `Package.Class` names. Classes already present in the selected install can be used directly. Package compatibility depends on the game build and game type. This site launches local bot matches.
 
-The site fetches the original Matrix package from Unreal Archive, checks its SHA-256, and mounts five files for that session. The Matrix profile binds **B** to `slowtimedown`. The original mod supports deathmatch, CTF and bombing run. Its authors exclude Assault and Onslaught.
+The site fetches the original Matrix package from Unreal Archive, checks its SHA-256, and mounts its five files plus the independent MatrixModern compatibility package. The adapter restores the original controller and pawn during human login on 3374. The Matrix profile binds **B** to `slowtimedown`. The original mod supports deathmatch, CTF and bombing run. Its authors exclude Assault and Onslaught.
 
 ## Preservation
 

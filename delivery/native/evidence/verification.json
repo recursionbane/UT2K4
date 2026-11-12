@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-12",
+  "runtime": "rgnv/ut2004-wasm v0.2.0",
+  "nativeWasm": true,
+  "emulator": false,
+  "dataEra": "3374-preview-23",
+  "buildLabel": "UT2004_v3374_[2026-07-18_18.42]_d1b145e1",
+  "iso": {
+    "source": "https://files.oldunreal.net/UT2004.ISO",
+    "bytes": 2995322880,
+    "sha256": "43e9182ae20bcbc0f6f4588fee6c1b336c261f1465403118a1973b09b1a22541"
+  },
+  "patch": {
+    "tag": "3374-preview-23",
+    "asset": "OldUnreal-UT2004Patch3374-Linux-094b94dc.tar.bz2",
+    "sha256": "179ea43c8831bff147005850cd373c0ec2b70dcf6f841c2109c1525ef11ad4d3"
+  },
+  "releases": {
+    "ut2004-web-v0.2.0.tar.gz": "946071180231747b43217886fa52190187031ae94ad54343c41788e75702c259",
+    "ut2004-node-v0.2.0.tar.gz": "7ee21d0f802d375a29100c6b21cf53c553c414d3ed6972e3865d670d7835634e"
+  },
+  "headless": {
+    "exitCode": 0,
+    "ticks": 600,
+    "map": "DM-Rankin",
+    "game": "XGame.xDeathMatch",
+    "controlledNonVehiclePawns": 2,
+    "botPawns": 2,
+    "cleanExit": true
+  },
+  "browser": {
+    "map": "DM-Rankin",
+    "ownedPawn": true,
+    "movement": {
+      "input": "W held 2200ms, keyboard event through SDL input",
+      "before": [
+        697.9515380859375,
+        -2427.825439453125,
+        -142.14999389648438
+      ],
+      "after": [
+        1477.6285400390625,
+        -1673.4490966796875,
+        -462.1499938964844
+      ],
+      "ticks": [
+        344,
+        389
+      ]
+    },
+    "respawn": true,
+    "framesAtRespawn": 3676,
+    "webglError": 0,
+    "consoleErrors": 0,
+    "soundTested": false,
+    "gameplayVerifiedLocally": true
+  },
+  "notes": [
+    "Headless and browser data must be isolated or manifest regenerated after headless writes CacheRecords.ucl.",
+    "Runtime binaries remain user-local due NOTICE personal-use scope; no binaries or full game data in repository."
+  ]
+}

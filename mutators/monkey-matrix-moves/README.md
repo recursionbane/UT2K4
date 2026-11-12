@@ -28,3 +28,7 @@ Choose the mutator's Configuration button for adrenaline, bot activation, moveme
 This original package loaded successfully on the Windows UT2004 demo **build 3334** under CrossOver on macOS, using a dedicated server on DM-Rankin. This verifies native package/server startup, not client animation, input, or network prediction. Demo UCC does not include the `make` or `batchexport` commandlets; compilation cannot be claimed from this installation.
 
 See [research and provenance](../../docs/mutator-research.md) and [native test record](../../docs/mutator-native-verification.md).
+
+Full-game native WASM verification subsequently passed: eight bots ran 600 ticks to clean exit; the browser loaded the original MatrixPlayer/MatrixPawn, spawned an owned player, moved it ~308 units with held W, and executed the original B-command adrenaline check. The modern adapter is required for that human-controller verification. See the linked native test record for evidence and remaining movement coverage.
+
+The full original DVD compiler also successfully exported all 66 classes **with default properties** to ignored `local/source-full/`; `local/full-source-provenance.json` records per-file hashes and the export method. The Python recovery script remains usable without that compiler and recovers class text only.
