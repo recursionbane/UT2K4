@@ -17,6 +17,8 @@ On 2026-11-12, the approved full ISO and pinned 3374-preview-23 patch were provi
 
 The Node release requires the `ws` npm package installed beside its JS file. Keep browser data immutable while serving it: headless startup can regenerate `System/CacheRecords.ucl`, so generating the browser size manifest before that write produces an HTTP Content-Range size mismatch. Clone the data for headless tests or regenerate the manifest afterward.
 
+A separate test of the actual deployed Pages client with the localhost full-game stream confirmed audio after real canvas clicks: WebAudio running, music buffers consumed, SFX started, no OpenAL error, and analyser peak RMS `0.015757`. The original engine used the Apple M1 Max Metal backend with WebGL error zero at 640×480. This measures the audio signal path; it is not a physical listening test. Final deployed runtime measurements are recorded under `evidence/`.
+
 The browser's virtual root is `native/<profileid>/`. Imported client files remain at that root, with `assets/` beside `index.html`. The profile supplies `file-sizes.json` mapping original-case game-relative names to byte counts, `files.json` containing the names, and `data/<OriginalCasePath>` supporting exact HTTP Range/Content-Range responses. Shell adaptation sets `Module.dataBaseURL` to the relative `data/` directory and preserves original engine binaries.
 
 The engine's normal map argument accepts `DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves`. A shell adapter validates package/class names before appending mutators to `Module.map`; `game=XGame.xDeathMatch` selects the game class. `B=slowtimedown` in `[Engine.Input]` of the profile's User.ini binds the original Matrix ability.

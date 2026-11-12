@@ -3,6 +3,8 @@
 import argparse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import tarfile
+from threading import Lock
 from pathlib import Path
 import re
 from urllib.parse import quote, unquote, urlsplit
@@ -37,8 +39,31 @@ def main():
         if not args.client.is_file():
             parser.error('Could not find the v0.2.0 web client archive.')
         manifest['client'] = 'client.tar.gz'
+        manifest['runtime'] = 'runtime/'
     index = json.dumps(manifest, separators=(',', ':')).encode()
     origins = set(args.origin)
+
+    # Open the release only when the first game actually starts. Keep its shipped
+    # Brotli sidecar for the wire; the browser checks the decompressed WASM hash.
+    runtime = {}
+    runtime_lock = Lock()
+    client_files = {'index.html', 'ut2004.js', 'ut2004.wasm', 'worker.js',
+                    'ut2004.wasm.br', 'assets/mobile-input.js', 'assets/mobile-input.css'}
+
+    def runtime_bytes(name, brotli):
+        if name not in client_files or name.endswith('.br') or not args.client:
+            return None, False
+        with runtime_lock:
+            if not runtime:
+                members = {}
+                with tarfile.open(args.client, mode='r|gz') as archive:
+                    for entry in archive:
+                        filename = entry.name.removeprefix('./').removeprefix('ut2004-web/')
+                        if filename in client_files and entry.isfile() and entry.size <= 32 * 1024 * 1024:
+                            members[filename] = archive.extractfile(entry).read()
+                runtime.update(members)
+            compressed = brotli and name + '.br' in runtime
+            return runtime.get(name + '.br' if compressed else name), compressed
 
     class Handler(BaseHTTPRequestHandler):
         def authorized(self):
@@ -77,6 +102,22 @@ def main():
                 self.end_headers()
                 if body:
                     self.wfile.write(index)
+                return
+            if path.startswith('/runtime/'):
+                try:
+                    payload, encoded = runtime_bytes(path[9:], 'br' in {v.strip() for v in self.headers.get('Accept-Encoding', '').split(',')})
+                except (tarfile.TarError, OSError):
+                    return self.send_error(422, 'Invalid native web release archive')
+                if payload is None:
+                    return self.send_error(404)
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/octet-stream')
+                self.send_header('Content-Length', str(len(payload)))
+                if encoded:
+                    self.send_header('Content-Encoding', 'br')
+                self.end_headers()
+                if body:
+                    self.wfile.write(payload)
                 return
             source = files.get(path[6:]) if path.startswith('/data/') else args.client if path == '/client.tar.gz' else None
             if not source:

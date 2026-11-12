@@ -71,33 +71,25 @@ function nativePixelBudget(width,height,profile){
  return [w,h];
 }
 function installNativePowerLoop(profile,requestedFPS){
+ if(Module.pagesRequestAnimationFrame)return;
  const fps=requestedFPS==='native'?0:requestedFPS==='30'?30:requestedFPS==='60'?60:profile.fps;
- let evidence=Module.powerEvidence;
- if(!evidence)evidence=Module.powerEvidence={profile:profile.name,targetFPS:fps||'native',scheduler:'pending',hiddenPolicy:'Browser requestAnimationFrame suspension; existing audio visibility handling'};
- if(!fps){evidence.scheduler='upstream-native';evidence.mainLoopReady=typeof MainLoop!=='undefined'&&!!MainLoop.func;return;}
- if(typeof MainLoop==='undefined'){evidence.scheduler='waiting-for-main-loop';return;}
- if(!MainLoop.pagesPowerCap){
-  const nativeRAF=window.requestAnimationFrame.bind(window);let last=-Infinity,sampleStart,sampleCount=0;
-  evidence.schedulerCallbacks=0;
-  MainLoop.requestAnimationFrame=function(callback){
-   const tick=time=>{
-    if(document.hidden){sampleStart=undefined;sampleCount=0;nativeRAF(tick);return;}
-    if(time-last<1000/fps-.5){nativeRAF(tick);return;}
-    last=time;evidence.schedulerCallbacks++;evidence.lastCallbackAt=time;
-    if(sampleStart===undefined)sampleStart=time;else sampleCount++;
-    if(time-sampleStart>=1000){evidence.observedSchedulerFPS=Math.round(sampleCount*10000/(time-sampleStart))/10;sampleStart=time;sampleCount=0;}
-    callback(time);
-   };nativeRAF(tick);
-  };
-  MainLoop.pagesPowerCap=true;
- }
- // postRun can precede creation of the interactive engine main loop. Install
- // the scheduler immediately, then select RAF timing again at the first frame.
- if(MainLoop.func&&typeof _emscripten_set_main_loop_timing==='function'&&!evidence.timingApplied){
-  _emscripten_set_main_loop_timing(1,1);evidence.timingApplied=true;
- }
- evidence.scheduler='engine-only-requestAnimationFrame-cap';
- evidence.mainLoopReady=!!MainLoop.func;
+ const evidence=Module.powerEvidence={profile:profile.name,targetFPS:fps||'native',scheduler:fps?'asyncify-engine-requestAnimationFrame-cap':'asyncify-engine-native-requestAnimationFrame',schedulerCallbacks:0,mainLoopReady:true,hiddenPolicy:'Browser requestAnimationFrame suspension; existing audio visibility handling'};
+ const nativeRAF=window.requestAnimationFrame.bind(window);let last=-Infinity,sampleStart,sampleCount=0;
+ Module.pagesRequestAnimationFrame=function(callback){
+  const tick=time=>{
+   if(document.hidden){sampleStart=undefined;sampleCount=0;nativeRAF(tick);return;}
+   if(fps&&time-last<1000/fps-.5){nativeRAF(tick);return;}
+   last=time;evidence.schedulerCallbacks++;evidence.lastCallbackAt=time;
+   if(sampleStart===undefined)sampleStart=time;else sampleCount++;
+   if(time-sampleStart>=1000){evidence.observedSchedulerFPS=Math.round(sampleCount*10000/(time-sampleStart))/10;sampleStart=time;sampleCount=0;}
+   callback(time);
+  };nativeRAF(tick);
+ };
+}
+function patchNativeGlue(source){
+ const original='function __asyncjs__WaitForBrowserFrame() { return Asyncify.handleAsync(async () => { await new Promise(requestAnimationFrame); }); }';
+ if(!source.includes(original))throw Error('Unsupported native frame-wait glue; reimport the verified v0.2.0 client.');
+ return source.replace(original,'function __asyncjs__WaitForBrowserFrame() { return Asyncify.handleAsync(async () => { await new Promise(Module.pagesRequestAnimationFrame || requestAnimationFrame); }); }');
 }
 
 function nativeGraphicsInfo(){
@@ -161,7 +153,7 @@ Module.canvas.focus({preventScroll:true});`)
  .replace("document.getElementById('status').textContent = 'Loading config files…';", "document.getElementById('status').textContent = 'Loading config files…';\n  if(matrixSession)document.getElementById('input-help').textContent += ' Matrix: B / TIME toggles bullet time (75 adrenaline by default; configurable); C holds hover; C + Space superjumps.';");
 }
 
-async function nativeResponse(request,scope){
+async function nativeResponse(request,scope,fetchClientFile){
  const url=new URL(request.url),base=new URL(scope);
  if(url.origin!==base.origin||!url.pathname.startsWith(base.pathname))return null;
  const relative=url.pathname.slice(base.pathname.length),match=/^native\/([a-zA-Z0-9_-]+)\/(.*)$/.exec(relative);
@@ -169,8 +161,17 @@ async function nativeResponse(request,scope){
  let path=match[2]||'index.html';if(path==='files.json'||path==='file-sizes.json'||path.startsWith('data/'))return null;
  if(!hashes[path])return null;
  let blob=await mediaGet('native-client/'+path);
+ if(!blob && fetchClientFile){
+  const streamed=await fetchClientFile(path);
+  if(streamed){
+   if(await sha256(streamed)!==hashes[path])throw Error('Incorrect v0.2.0 native client hash for '+path);
+   await mediaSave([['native-client/'+path,streamed]]);
+   blob=streamed;
+  }
+ }
  if(!blob)return new Response('Import the local v0.2.0 WebAssembly client in the launcher first.',{status:404});
  if(path==='index.html')blob=new Blob([patchNativeShell(await blob.text())]);
+ if(path==='ut2004.js')blob=new Blob([patchNativeGlue(await blob.text())]);
  const mime=path.endsWith('.wasm')?'application/wasm':path.endsWith('.js')?'text/javascript':path.endsWith('.css')?'text/css':'text/html';
  const headers=new Headers({'Content-Type':mime,'Cache-Control':'no-store','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'require-corp','Cross-Origin-Resource-Policy':'same-origin','Accept-Ranges':'bytes'});
  let start=0,end=blob.size-1,status=200;
@@ -183,6 +184,6 @@ async function nativeResponse(request,scope){
  headers.set('Content-Length',String(end-start+1));
  return new Response(request.method==='HEAD'?null:blob.slice(start,end+1),{status,headers});
 }
-Object.assign(root,{importNativeClient,nativeClientReady,nativeResponse,patchNativeShell,parseNativeTar,patchNativeUserIni,nativePowerProfile,nativePixelBudget,installNativePowerLoop,nativeGraphicsInfo});
-if(typeof module!=='undefined'&&module.exports)module.exports={parseNativeTar,patchNativeShell,patchNativeUserIni,nativePowerProfile,nativePixelBudget,installNativePowerLoop,nativeGraphicsInfo,hashes};
+Object.assign(root,{importNativeClient,nativeClientReady,nativeResponse,patchNativeShell,parseNativeTar,patchNativeUserIni,nativePowerProfile,nativePixelBudget,installNativePowerLoop,nativeGraphicsInfo,patchNativeGlue});
+if(typeof module!=='undefined'&&module.exports)module.exports={parseNativeTar,patchNativeShell,patchNativeUserIni,nativePowerProfile,nativePixelBudget,installNativePowerLoop,nativeGraphicsInfo,patchNativeGlue,hashes};
 })(typeof self!=='undefined'?self:globalThis);

@@ -1,4 +1,6 @@
+import io
 import json
+import tarfile
 from pathlib import Path
 import subprocess
 import sys
@@ -24,8 +26,14 @@ class StreamingTest(unittest.TestCase):
                 f.write_bytes(bytes(range(128)))
             secret = root / 'System/unrelated.txt'
             secret.write_text('not served')
+            client = root / 'release.tar.gz'
+            with tarfile.open(client, 'w:gz') as archive:
+                for name, content in [('ut2004.wasm', b'wasm-test'), ('ut2004.wasm.br', b'br-test')]:
+                    entry = tarfile.TarInfo('ut2004-web/'+name)
+                    entry.size = len(content)
+                    archive.addfile(entry, io.BytesIO(content))
             with subprocess.Popen([sys.executable, str(ROOT / 'tools/stream-game.py'), str(root),
-                                   '--port', '0', '--client', str(root / paths[0])],
+                                   '--port', '0', '--client', str(client)],
                                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True) as server:
                 try:
                     launch = server.stdout.readline().split('Play: ', 1)[1].strip()
@@ -34,13 +42,18 @@ class StreamingTest(unittest.TestCase):
                     with urlopen(manifest_url, timeout=5) as res:
                         manifest = json.load(res)
                     self.assertEqual(set(manifest['files']), set(paths))
-                    for url in ['data/'+p for p in paths] + [manifest['client']]:
+                    for url in ['data/'+p for p in paths]:
                         req = Request(base+'/'+url, headers={'Origin':ORIGIN,'Range':'bytes=3-10'})
                         with urlopen(req, timeout=5) as res:
                             self.assertEqual(res.status, 206)
                             self.assertEqual(res.headers['Content-Range'], 'bytes 3-10/128')
                             self.assertEqual(res.headers['Access-Control-Allow-Origin'], ORIGIN)
                             self.assertEqual(res.read(), bytes(range(3, 11)))
+                    for encoding, content in [('br', b'br-test'), ('identity', b'wasm-test')]:
+                        request = Request(base+'/runtime/ut2004.wasm', headers={'Accept-Encoding':encoding})
+                        with urlopen(request, timeout=5) as response:
+                            self.assertEqual(response.read(), content)
+                            self.assertEqual(response.headers.get('Content-Encoding'), 'br' if encoding=='br' else None)
                     with self.assertRaises(HTTPError) as refused:
                         urlopen(Request(manifest_url, headers={'Origin':'https://example.org'}))
                     self.assertEqual(refused.exception.code,403)

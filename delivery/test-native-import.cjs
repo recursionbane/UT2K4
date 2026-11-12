@@ -28,6 +28,9 @@ if(process.argv[2]) (async()=>{
  assert(html.includes('href="../../?setup=1"'));
  assert(html.includes('id="pages-input"'));assert(html.includes("const defaultJoin = false"));assert(html.includes("powerProfile.defaultResolution"));assert(html.includes("mobileConfig.binds.bullet='KeyB'"));assert(!html.includes('Join multiplayer</button>'));assert(!html.includes('Bounded CI run'));assert(html.includes('(?:DefUser|User)'));
  const js=await memory.get('native-client/ut2004.js').text();
+ const adapted=await(await global.nativeResponse(new Request('https://example.test/UT2K4/native/profile123/ut2004.js'),'https://example.test/UT2K4/')).text();
+ assert(adapted.includes('await new Promise(Module.pagesRequestAnimationFrame || requestAnimationFrame)'));assert(!js.includes('Module.pagesRequestAnimationFrame'));
+ const wait=adapted.match(/function __asyncjs__WaitForBrowserFrame\(\) \{[^\n]+/)[0];let hookRan=false;await vm.runInNewContext(wait+';__asyncjs__WaitForBrowserFrame()', {Asyncify:{handleAsync:fn=>fn()},Module:{pagesRequestAnimationFrame:resolve=>{hookRan=true;resolve(16)}}});assert(hookRan,'actual pinned Asyncify frame wait uses adapter');
  const bridge=js.match(/572675: \([^)]*\) => \{([^}]+)\}/);assert(bridge,'pinned native bridge exists');
  let nativeURL;vm.runInNewContext('(function($0,$1){'+bridge[1]+'})(0,1024)',{Module:{map:'DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves',gameClass:'XGame.xDeathMatch'},stringToUTF8:value=>nativeURL=value});
  assert.equal(nativeURL,'DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves?game=XGame.xDeathMatch');for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
@@ -58,12 +61,24 @@ for(const fps of [30,60]){
  const vm=require('node:vm'),pending=[];let ran=0,timing;
  const scope={Module:{},document:{hidden:false},MainLoop:{func:()=>{}},window:{requestAnimationFrame:callback=>pending.push(callback)},_emscripten_set_main_loop_timing:(...args)=>timing=args};
  vm.runInNewContext('('+installNativePowerLoop.toString()+')({name:"efficient",fps:'+fps+'},null)',scope);
- assert.deepEqual(timing,[1,1]);
- function callback(){ran++;scope.MainLoop.requestAnimationFrame(callback)}
- scope.MainLoop.requestAnimationFrame(callback);
+ assert.equal(timing,undefined);
+ function callback(){ran++;scope.Module.pagesRequestAnimationFrame(callback)}
+ scope.Module.pagesRequestAnimationFrame(callback);
  for(let time=0;time<=1000;time+=1000/120)pending.shift()(time);
  assert(ran<=fps+1&&ran>=fps-1,{fps,ran});
  const before=ran;scope.document.hidden=true;for(let time=1010;time<1500;time+=10)pending.shift()(time);assert.equal(ran,before);
- assert.equal(scope.Module.powerEvidence.scheduler,'engine-only-requestAnimationFrame-cap');
+ assert.equal(scope.Module.powerEvidence.scheduler,'asyncify-engine-requestAnimationFrame-cap');
 }
 console.log('Power profile pixel budgets and actual scheduler adapter 30/60/hidden checks passed');
+{
+ const vm=require('node:vm');const scope={Module:{},document:{hidden:false},window:{requestAnimationFrame:()=>{}}};
+ const apply='('+installNativePowerLoop.toString()+')({name:"efficient",fps:30},null)';
+ vm.runInNewContext(apply,scope);const installed=scope.Module.pagesRequestAnimationFrame;
+ assert.equal(scope.Module.powerEvidence.scheduler,'asyncify-engine-requestAnimationFrame-cap');
+ assert.equal(scope.Module.powerEvidence.mainLoopReady,true);
+ vm.runInNewContext(apply,scope);assert.equal(scope.Module.pagesRequestAnimationFrame,installed);
+ const {nativeGraphicsInfo,patchNativeGlue}=require('./native-import.js');let created=0;
+ assert.equal(vm.runInNewContext('('+nativeGraphicsInfo.toString()+')()', {Module:{canvas:{getContext:()=>{created++}}}}).renderer,'Context not ready; wait for engine startup');assert.equal(created,0);
+ assert.throws(()=>patchNativeGlue('unsupported'),/Unsupported native/);
+}
+console.log('Asyncify hook installation, idempotence and context non-interference passed');

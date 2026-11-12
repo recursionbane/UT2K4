@@ -42,7 +42,14 @@ async function localResponse(request,id,path) {
     const blob=p.extras.has(name)?await mediaGet('overlay/'+id+'/'+name):await gameFile(p.base,name);
     return sendFile(blob,request);
   }
-  return await nativeResponse(request,scope) || new Response('Missing client file',{status:404});
+  return await nativeResponse(request,scope,async name=>{
+    const profile=await profileData(id);
+    if(!profile.runtime)return null;
+    const url=new URL(name,profile.runtime);
+    const response=await fetch(url,{credentials:'omit'});
+    if(!response.ok) throw Error('Native client stream returned HTTP '+response.status+' for '+name);
+    return response.blob();
+  }) || new Response('Missing client file',{status:404});
 }
 self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);

@@ -23,6 +23,7 @@ async function openStream(source) {
   if (!base.pathname.endsWith('/')) base.pathname+='/';
   const id=crypto.randomUUID();
   const info={id,sizes,count:Object.keys(sizes).length,remote:base.href,source:url.href,
+    runtime:wrapped && raw.runtime ? streamURL(raw.runtime,url).href : null,
     client:wrapped && raw.client ? streamURL(raw.client,url).href : null};
   await mediaSave([['dataset/'+id,sizes],['current-game',info]]);
   return info;

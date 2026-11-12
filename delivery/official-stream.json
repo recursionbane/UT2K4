@@ -10,5 +10,24 @@
       "compressedBytes": 2978714167,
       "plainBytes": 2995322880
     }
-  ]
+  ],
+  "browserOrigin": "https://recursionbane.github.io",
+  "isoBrowserResults": [
+    {
+      "url": "https://files.oldunreal.net/UT2004.ISO",
+      "range": "bytes=32768-34815",
+      "result": "Browser CORS rejection; no Access-Control-Allow-Origin response header"
+    },
+    {
+      "url": "https://files2.oldunreal.net/UT2004.ISO",
+      "range": "bytes=32768-34815",
+      "result": "Browser CORS rejection; no Access-Control-Allow-Origin response header"
+    },
+    {
+      "url": "https://files3.oldunreal.net/UT2004.ISO",
+      "range": "bytes=32768-34815",
+      "result": "Browser CORS rejection; no Access-Control-Allow-Origin response header"
+    }
+  ],
+  "nativeReleaseBinaryResult": "GitHub API metadata readable; binary redirect failed browser CORS (no Access-Control-Allow-Origin)"
 }

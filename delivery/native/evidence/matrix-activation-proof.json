@@ -1,15 +1,15 @@
 {
   "before": {
     "player": {
-      "tick": 206,
+      "tick": 174,
       "position": [
-        -32,
-        -640,
-        -270.1499938964844
+        -580,
+        -596,
+        49.849998474121094
       ],
       "rotation": [
         0,
-        7420,
+        4484,
         0
       ],
       "pawn": true,
@@ -21,19 +21,19 @@
       "menuClass": "",
       "level": "DM-Rankin"
     },
-    "frames": 204
+    "frames": 172
   },
   "moved": {
     "player": {
-      "tick": 222,
+      "tick": 185,
       "position": [
-        168.36578369140625,
-        -467.2975769042969,
-        -270.1499938964844
+        -282.69036865234375,
+        -459.68389892578125,
+        49.849998474121094
       ],
       "rotation": [
         0,
-        7420,
+        4484,
         0
       ],
       "pawn": true,
@@ -45,19 +45,19 @@
       "menuClass": "",
       "level": "DM-Rankin"
     },
-    "frames": 219
+    "frames": 182
   },
   "bullet": {
     "player": {
-      "tick": 304,
+      "tick": 223,
       "position": [
-        181.4759521484375,
-        -455.9974365234375,
-        -270.1499938964844
+        -267.7395935058594,
+        -452.8290710449219,
+        49.849998474121094
       ],
       "rotation": [
         0,
-        7420,
+        4484,
         0
       ],
       "pawn": true,
@@ -69,19 +69,19 @@
       "menuClass": "",
       "level": "DM-Rankin"
     },
-    "frames": 302
+    "frames": 220
   },
   "jumping": {
     "player": {
-      "tick": 322,
+      "tick": 235,
       "position": [
-        181.4759521484375,
-        -455.9974365234375,
-        -238.39405822753906
+        -267.7395935058594,
+        -452.8290710449219,
+        76.87680053710938
       ],
       "rotation": [
         0,
-        7420,
+        4484,
         0
       ],
       "pawn": true,
@@ -93,19 +93,19 @@
       "menuClass": "",
       "level": "DM-Rankin"
     },
-    "frames": 319
+    "frames": 232
   },
   "hover": {
     "player": {
-      "tick": 343,
+      "tick": 249,
       "position": [
-        181.4759521484375,
-        -455.9974365234375,
-        -212.7897186279297
+        -267.7395935058594,
+        -452.8290710449219,
+        121.92636108398438
       ],
       "rotation": [
         0,
-        7420,
+        4484,
         0
       ],
       "pawn": true,
@@ -117,19 +117,43 @@
       "menuClass": "",
       "level": "DM-Rankin"
     },
-    "frames": 340
+    "frames": 246
+  },
+  "held": {
+    "player": {
+      "tick": 300,
+      "position": [
+        -267.7395935058594,
+        -452.8290710449219,
+        131.20909118652344
+      ],
+      "rotation": [
+        0,
+        4484,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 298
   },
   "released": {
     "player": {
-      "tick": 374,
+      "tick": 334,
       "position": [
-        181.4759521484375,
-        -455.9974365234375,
-        -270.1499938964844
+        -267.7395935058594,
+        -452.8290710449219,
+        105.95654296875
       ],
       "rotation": [
         0,
-        7420,
+        4484,
         0
       ],
       "pawn": true,
@@ -141,7 +165,7 @@
       "menuClass": "",
       "level": "DM-Rankin"
     },
-    "frames": 372
+    "frames": 331
   },
   "errors": [],
   "testConfig": {
@@ -156,5 +180,20 @@
   ],
   "glErrors": 0,
   "webglErrors": 0,
-  "walkDistance": 264.52329617143107
+  "walkDistance": 327.07047605089014,
+  "verifiedBehaviors": [
+    "Original MatrixPlayer and MatrixPawn human spawn",
+    "Owned walking",
+    "Original B bullet time activation with adrenaline consumption",
+    "Original crouch hover using KeyC, sustained hold and release"
+  ],
+  "unverifiedBehaviors": [
+    "Wall run",
+    "Air dodge",
+    "Multiplayer movement prediction"
+  ],
+  "hoverInput": "KeyC",
+  "extendedHoverHoldMilliseconds": 2500,
+  "inputNote": "Shift generic alias did not sustain hover in browser; literal C did.",
+  "bulletTimeActivationEvidence": "Screenshot original message: The Matrix has you... / You have started your bullet time combo"
 }

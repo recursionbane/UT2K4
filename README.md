@@ -14,7 +14,7 @@ python3 tools/stream-game.py /path/to/UT2004 --client /path/to/ut2004-web-v0.2.0
 
 Open the [Pages launcher](https://recursionbane.github.io/UT2K4/). On a fresh visit it looks for the helper at `127.0.0.1:8789`. Allow local network access when the browser asks. With a configured source, it loads the verified engine at launch, starts DM-Rankin and resumes that profile on subsequent visits. Use [setup](https://recursionbane.github.io/UT2K4/?setup=1) to change sources or settings. On the prepared Mac, `tools/play-on-mac.command` opens the stream and launcher.
 
-For a separate HTTPS asset server, enter its manifest URL in **Stream from an asset server**, or share a Pages URL with `?source=<encoded manifest URL>`. The launcher accepts the upstream `file-sizes.json` format (data under adjacent `data/`) or the helper's `manifest.json` format, which also identifies the client archive. The host must allow the Pages origin and expose `Content-Range` for HTTP 206 responses. Texture packages, maps, sound packages and Vorbis music are read as the engine requests them. Startup also reads the game's configuration and localization files. The landing page and GitHub Pages deployment contain no full game data or engine WASM.
+For a separate HTTPS asset server, enter its manifest URL in **Stream from an asset server**, or share a Pages URL with `?source=<encoded manifest URL>`. The launcher accepts the upstream `file-sizes.json` format (data under adjacent `data/`) or the helper's `manifest.json` format, which also identifies the client archive. The host must allow the Pages origin and expose `Content-Range` for HTTP 206 responses. Texture packages, maps, sound packages and Vorbis music are read as the engine requests them. The helper serves the upstream WASM Brotli sidecar at engine launch (5,071,694 transfer bytes for 23,222,347 verified engine bytes); it streams each shell or input file when requested. Startup also reads the game's configuration and localization files. The landing page and GitHub Pages deployment contain no full game data or engine WASM.
 
 ## Mac graphics
 
@@ -38,7 +38,7 @@ python3 mutators/monkey-matrix-moves/preserve.py
 (cd mutators/monkey-matrix-moves/local/source-text && shasum -a 256 -c ../../source-sha256.txt)
 ```
 
-The public recovery tool, hashes, and provenance identify the original texts. Their release includes no source republication grant. Full game data and the compiled native engine are imported on each player's device under their respective terms. The MIT license for rgnv’s integration covers its original harnesses and shell. [Mutator research](docs/mutator-research.md) · [Engine notice](https://github.com/rgnv/ut2004-wasm/blob/v0.2.0/NOTICE.md)
+The public recovery tool, hashes, and provenance identify the original texts. A second recovery using Epic’s UCC exported all 66 classes with serialized default properties. The exact toolchain and per-file digests are in the [source fingerprints](docs/mutator-original-fingerprints.json). Their release includes no source republication grant. Full game data and the compiled native engine are imported on each player's device under their respective terms. The MIT license for rgnv’s integration covers its original harnesses and shell. [Mutator research](docs/mutator-research.md) · [Engine notice](https://github.com/rgnv/ut2004-wasm/blob/v0.2.0/NOTICE.md)
 
 ## Build and test
 

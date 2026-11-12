@@ -93,3 +93,13 @@ MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130
 After the match countdown, telemetry reported `pawn=true`. Holding W for 700 ms moved that owned pawn **307.91 Unreal units** (position approximately `[4724.30,448,-366.15]` to `[4416.40,449.42,-366.15]`). The page raised no errors, and native frame evidence reported zero GL/WebGL errors. This establishes authentic class selection and actual owned-player motion, rather than spectator-camera motion.
 
 The rendered original B-command response and compact telemetry are saved under `delivery/native/evidence/matrix-original-command.png` and `matrix-controller-proof.json`. Full browser logs remain ignored in the preservation folder. Complete wall-running, air-dodge, and multiplayer prediction coverage is not established by this smoke test.
+
+## Full browser: original bullet time and crouch hover
+
+For a bounded input check, the isolated test data used the original mutator's supported settings `AdrenalineBasedOnPlayers=False` and `AdrenalineRegenRate=0.05`. This accelerates adrenaline regeneration for QA; the original 75-point start threshold and movement implementation were unchanged. These test settings are disclosed in `matrix-activation-proof.json` and are not installed by the preservation tool.
+
+Pressing B after regeneration displayed the original **“The Matrix has you…”** and **“You have started your bullet time combo”** messages. Adrenaline decreased from 100. Full original defaults confirm 40% time speed and 0.5-second smoothing.
+
+The owned original MatrixPawn then jumped from Z≈49.85 to 76.88. Holding **C** entered its hover behavior: Z≈121.93 after the initial hold and 131.21 after a further 2.5 seconds, still airborne; releasing C resumed descent to Z≈105.96. The slight upward drift matches the original hover's flying physics and drag, rather than a perfectly stationary freeze. A generic Shift alias did not sustain hover in the browser test; literal C did. Touch hover uses KeyC.
+
+This run also measured ~327 units of owned walking, recorded no page exceptions, and reported zero GL/WebGL errors in native frame evidence. The final activation screenshot, sustained-hover screenshot, class logs, input positions, and disclosed settings are under `delivery/native/evidence/matrix-{bullet-time.png,hover.png,activation-proof.json}`. Wall running, air dodging, and multiplayer prediction were not covered by this focused verification.

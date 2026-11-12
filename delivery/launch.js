@@ -70,16 +70,16 @@ $('setup').onsubmit=async e=>{
   try {
     if (current.handle && await current.handle.requestPermission({mode:'read'})!=='granted') throw Error('Folder access is needed to load game assets.');
     if(!navigator.serviceWorker) throw Error('This browser needs HTTPS and service workers to run the full game.');
-    await navigator.serviceWorker.register('sw.js',{scope:'./'}); await navigator.serviceWorker.ready;
+    await navigator.serviceWorker.register('sw.js',{scope:'./',updateViaCache:'none'}); await navigator.serviceWorker.ready;
     if($('client').files.length) await importNativeClient($('client').files[0],status);
-    if(!await nativeClientReady() && current.client) {
+    if(!await nativeClientReady() && !current.runtime && current.client) {
       status('Loading the verified native engine from your stream…');
       const response=await fetch(current.client,{credentials:'omit'});
       if(!response.ok) throw Error('Could not fetch the web client from the selected stream.');
       await importNativeClient(await response.blob(),status);
     }
-    if(!await nativeClientReady()) throw Error('Select the downloaded v0.2.0 web client archive.');
-    $('client-info').textContent='v0.2.0 verified';
+    if(!current.runtime && !await nativeClientReady()) throw Error('Select the downloaded v0.2.0 web client archive.');
+    $('client-info').textContent=current.runtime?'v0.2.0 stream connected':'v0.2.0 verified';
     const id=crypto.randomUUID(), mode=$('mode').value, extra={}, entries=[];
     const url=new URL('native/'+id+'/index.html',location.href);
     url.search=new URLSearchParams({interactive:'1',map:$('map').value,power:$('power').value});
@@ -103,7 +103,7 @@ $('setup').onsubmit=async e=>{
       if(Object.hasOwn(extra,name)) throw Error('Duplicate package: '+path);
       extra[name]=blob.size;entries.push(['overlay/'+id+'/'+lower,blob]);
     }
-    await mediaSave([...entries,['profile/'+id,{base:current.id,remote:current.remote,extra}]]);
+    await mediaSave([...entries,['profile/'+id,{base:current.id,remote:current.remote,runtime:current.runtime,extra}]]);
     localStorage.setItem('ut2k4-last-session',JSON.stringify({url:url.href,base:current.id,mode,map:$('map').value}));
     status('Starting '+$('map').value+'…');location.assign(url);
   }catch(err){status(err.message||String(err));$('start').disabled=false;}
@@ -134,13 +134,13 @@ $('connect-stream').onclick=async()=>{
       status('Press Play to grant this browser access to the saved game folder.');return;
     }
     const last=JSON.parse(localStorage.getItem('ut2k4-last-session')||'null');
-    if(last && current && last.base===current.id && await nativeClientReady()) {
+    if(last && current && last.base===current.id && (current.runtime || await nativeClientReady())) {
       const url=new URL(last.url);
       if(url.origin===location.origin && url.pathname.startsWith(new URL('native/',location.href).pathname)){
-        await navigator.serviceWorker.register('sw.js',{scope:'./'});await navigator.serviceWorker.ready;
+        await navigator.serviceWorker.register('sw.js',{scope:'./',updateViaCache:'none'});await navigator.serviceWorker.ready;
         location.replace(url);return;
       }
     }
-    if(current && (current.client || await nativeClientReady())) $('setup').requestSubmit();
+    if(current && (current.runtime || current.client || await nativeClientReady())) $('setup').requestSubmit();
   }catch(e){status('Could not resume the game. Check source access and allow local network access for a stream on this computer. '+e.message);}
 })();

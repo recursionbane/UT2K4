@@ -32,3 +32,5 @@ See [research and provenance](../../docs/mutator-research.md) and [native test r
 Full-game native WASM verification subsequently passed: eight bots ran 600 ticks to clean exit; the browser loaded the original MatrixPlayer/MatrixPawn, spawned an owned player, moved it ~308 units with held W, and executed the original B-command adrenaline check. The modern adapter is required for that human-controller verification. See the linked native test record for evidence and remaining movement coverage.
 
 The full original DVD compiler also successfully exported all 66 classes **with default properties** to ignored `local/source-full/`; `local/full-source-provenance.json` records per-file hashes and the export method. The Python recovery script remains usable without that compiler and recovers class text only.
+
+The subsequent full-browser input test also activated the original 40% bullet-time combo and sustained crouch hover with C before release resumed descent. Its accelerated regeneration settings and exact telemetry are disclosed in `delivery/native/evidence/matrix-activation-proof.json`; wall-run and multiplayer coverage remain unverified.
