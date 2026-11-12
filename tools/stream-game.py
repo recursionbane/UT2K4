@@ -10,7 +10,7 @@ from urllib.parse import quote, unquote, urlsplit
 PAGES = 'https://recursionbane.github.io'
 DIRECTORIES = {'animations', 'forcefeedback', 'karmadata', 'maps', 'music', 'sounds',
                'speech', 'staticmeshes', 'system', 'textures'}
-EXTENSIONS = set('ukx ifr ka ut2 ogg uax xml usx u ucl upl ini int utx det est frt itt kot tmt rut plt het'.split())
+EXTENSIONS = set('ukx ifr ka ut2 ogg uax xml usx u ucl upl ini int utx md5 dat det est frt itt kot tmt rut plt het het_utx rut_utx'.split())
 
 
 def main():

@@ -3,7 +3,7 @@ const gameDirs = new Map('System Maps Textures StaticMeshes Animations Music Sou
 function gamePath(path) {
   const parts = path.split('/');
   if (parts.length !== 2 || !gameDirs.has(parts[0].toLowerCase())) return null;
-  if (!/\.(?:ut2|utx|usx|ukx|uax|u|ucl|ini|int|upl|ka|ogg|ifr|xml|det|est|frt|itt|kot|tmt)$/i.test(parts[1])) return null;
+  if (!/\.(?:ut2|utx|usx|ukx|uax|u|ucl|ini|int|upl|ka|ogg|ifr|xml|md5|dat|det|est|frt|itt|kot|tmt|rut|het|plt|het_utx|rut_utx)$/i.test(parts[1])) return null;
   return gameDirs.get(parts[0].toLowerCase()) + '/' + parts[1];
 }
 async function fromDirectory(handle) {

@@ -12,7 +12,7 @@ Run `node arena/test.mjs` from repository root for physics tests. `node --check 
 
 ## Controls and scope
 
-WASD / arrows move; Enter arena captures mouse; Escape releases it. Space jumps, C or Shift crouches/hovers, B toggles bullet time (50 adrenaline needed to begin), F or click shoots. Double-tap a direction to dodge. Mutator mode allows late double jump, hover with damped flight up to seven seconds once per jump (restoring entry vertical velocity on release), superjump with crouch+jump, one airborne dodge per flight and a brief wall-run initiated by dodging toward and holding into the wall. Jump during wall-run flips off. Classic mode disables mutator extras, retaining ground dodge and early double jump.
+WASD / arrows move; Enter arena captures mouse; Escape releases it. Space jumps, C or Shift crouches/hovers, B toggles bullet time (75 adrenaline needed to begin), F or click shoots. Double-tap a direction to dodge. Mutator mode allows late double jump, hover with damped flight up to seven seconds once per jump (restoring entry vertical velocity on release), superjump with crouch+jump, one airborne dodge per flight and a brief wall-run initiated by dodging toward and holding into the wall. Jump during wall-run flips off. Classic mode disables mutator extras, retaining ground dodge and early double jump.
 
 Coarse-pointer devices automatically get a move pad and action buttons; drag the right arena area to look. Touch controls can also be toggled manually. Hold Hover then tap Jump for a superjump. Dodge follows the movement pad direction. Inputs are cleared on focus loss.
 

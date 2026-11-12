@@ -135,5 +135,5 @@ $('connect-stream').onclick=async()=>{
       }
     }
     if(current && (current.client || await nativeClientReady())) $('setup').requestSubmit();
-  }catch(e){status('Local storage unavailable: '+e.message);}
+  }catch(e){status('Could not resume the game. Check source access and allow local network access for a stream on this computer. '+e.message);}
 })();
