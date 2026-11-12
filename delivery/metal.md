@@ -30,7 +30,7 @@ When hidden, the capped engine callback does not run. RAF is normally suspended 
 - Renderer: `ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)`.
 - Vendor: `Google Inc. (Apple)`.
 
-This is a real local browser context probe, not a claim that the game has been rewritten for Metal. Safari was not tested in this check. Four adapter browser checks also passed desktop automatic input, touch automatic input, forced touch off and forced touch on, including Matrix TIME key dispatch and both session INI bindings. Full-engine visual/gameplay evidence is tracked separately by the native runtime probes.
+This is a real local browser context probe, not a claim that the game has been rewritten for Metal. Safari was not tested in this check. Four adapter browser checks also passed desktop automatic input, touch automatic input, forced touch off and forced touch on, including Matrix TIME key dispatch and both session INI bindings. The final deployed full-engine touch-emulation run also passed authentic Matrix pawn spawn, joystick movement, jump and fire on the same Mac. It reported 29 scheduler callbacks per second against the 30 cap, Metal WebGL with zero GL errors, and a 640×480 framebuffer. See [compact touch evidence](native/evidence/deployed-touch.json) and [game/control screenshot](native/evidence/deployed-touch.png). This was an 844×450 emulated touch viewport, not a physical phone or a listening test.
 
 The implementation reduces the amount of work requested through lower pixel counts and optional frame caps. No wattage, battery-life or frames-per-watt benchmark was performed. Efficient is a conservative workload default, not a proven optimal point for every Mac.
 
