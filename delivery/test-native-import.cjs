@@ -1,0 +1,46 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {parseNativeTar,patchNativeShell}=require('./native-import.js');
+assert.throws(()=>parseNativeTar(new Uint8Array(512).fill(65)),/header/);
+const source='<link href="../assets/mobile-input.css"><script src="/assets/mobile-input.js"></script>\nvar Module={dataBaseURL: location.pathname ? "/one/" : "/two/",};\nModule.gameClass = Module.localMap ? requestedGame : null;';
+const patched=patchNativeShell(source);
+assert(patched.includes('href="assets/mobile-input.css"'));
+assert(patched.includes('src="assets/mobile-input.js"'));
+assert(patched.includes("new URL('data/', location.href).href"));
+assert(patched.includes("Module.map += '?Mutator='"));
+assert(patched.includes('/^[a-z_]\\w*\\.[a-z_]\\w*$/i'));
+if(process.argv[2]){
+ const zlib=require('node:zlib');const archive=zlib.gunzipSync(fs.readFileSync(process.argv[2]));
+ assert.equal(parseNativeTar(archive).size,6);
+}
+console.log('Native archive and adapter tests passed');
+if(process.argv[2]) (async()=>{
+ const crypto=require('node:crypto');const zlib=require('node:zlib');const vm=require('node:vm');const memory=new Map();
+ global.mediaSave=async entries=>entries.forEach(([k,v])=>memory.set(k,v));global.mediaGet=async key=>memory.get(key);
+ global.sha256=async blob=>crypto.createHash('sha256').update(Buffer.from(await blob.arrayBuffer())).digest('hex');
+ await global.importNativeClient(new Blob([fs.readFileSync(process.argv[2])]));
+ assert(await global.nativeClientReady());
+ const req=new Request('https://example.test/UT2K4/native/profile123/index.html');
+ const response=await global.nativeResponse(req,'https://example.test/UT2K4/');
+ assert.equal(response.status,200);assert.equal(response.headers.get('Cross-Origin-Embedder-Policy'),'require-corp');
+ const html=await response.text();assert(html.includes('id="pages-input"'));assert(html.includes("const defaultJoin = false"));assert(html.includes("touchPreferred ? '640x480'"));assert(html.includes("mobileConfig.binds.bullet='KeyB'"));assert(!html.includes('Join multiplayer</button>'));assert(!html.includes('Bounded CI run'));assert(html.includes('(?:DefUser|User)'));
+ const js=await memory.get('native-client/ut2004.js').text();
+ const bridge=js.match(/572675: \([^)]*\) => \{([^}]+)\}/);assert(bridge,'pinned native bridge exists');
+ let nativeURL;vm.runInNewContext('(function($0,$1){'+bridge[1]+'})(0,1024)',{Module:{map:'DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves',gameClass:'XGame.xDeathMatch'},stringToUTF8:value=>nativeURL=value});
+ assert.equal(nativeURL,'DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves?game=XGame.xDeathMatch');for(const match of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
+ const wasm=await global.nativeResponse(new Request('https://example.test/UT2K4/native/profile123/ut2004.wasm',{headers:{Range:'bytes=0-7'}}),'https://example.test/UT2K4/');
+ assert.equal(wasm.status,206);assert.deepEqual([...new Uint8Array(await wasm.arrayBuffer())],[0,97,115,109,1,0,0,0]);
+ assert.equal(await global.nativeResponse(new Request('https://example.test/UT2K4/native/profile123/data/System/Core.u'),'https://example.test/UT2K4/'),null);
+ assert.equal(await global.nativeResponse(new Request('https://example.test/UT2K4/native/profile123/files.json'),'https://example.test/UT2K4/'),null);
+ assert.equal(await global.nativeResponse(new Request('https://elsewhere.test/UT2K4/native/profile123/index.html'),'https://example.test/UT2K4/'),null);
+ console.log('Verified client import, patched script syntax, WASM range, route delegation and isolation passed');
+})().catch(e=>{console.error(e);process.exitCode=1});
+const {patchNativeUserIni}=require('./native-import.js');
+const ini='[Other]\r\nB=Unrelated\r\n[Engine.Input]\r\nB=SwitchToLastWeapon\r\nSpace=Jump\r\n[Next]\r\nB=Unrelated';
+assert.equal(patchNativeUserIni(ini,false),ini);
+const changed=patchNativeUserIni(ini,true);
+assert.equal(changed.match(/B=slowtimedown/g).length,1);
+assert.equal(changed.match(/B=Unrelated/g).length,2);
+assert(changed.includes('\r\nSpace=Jump'));
+assert.equal(patchNativeUserIni('[Engine.Input]\nSpace=Jump',true),'[Engine.Input]\nB=slowtimedown\nSpace=Jump');
+assert(patchNativeUserIni('[Other]\nTest=1',true).endsWith('[Engine.Input]\nB=slowtimedown'));
