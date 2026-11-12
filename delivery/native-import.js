@@ -60,11 +60,59 @@ function patchNativeUserIni(source,matrix){
   if(at>=0)lines.splice(at+1,0,'B=slowtimedown');else lines.push('[Engine.Input]','B=slowtimedown');}
  return lines.join(newline);
 }
+function nativePowerProfile(name,touch){
+ const selected=['efficient','balanced','quality'].includes(name)?name:'efficient';
+ return {name:selected,fps:selected==='efficient'?30:60,defaultResolution:selected==='quality'?'1280x720':selected==='balanced'&&!touch?'960x540':'640x480',maxPixels:selected==='efficient'?307200:selected==='balanced'?921600:2073600,maxDPR:selected==='quality'?2:1};
+}
+function nativePixelBudget(width,height,profile){
+ const scale=Math.min(1,Math.sqrt(profile.maxPixels/(width*height)));
+ let w=Math.max(320,Math.floor(width*scale/2)*2),h=Math.max(240,Math.floor(height*scale/2)*2);
+ if(w*h>profile.maxPixels){if(w>=h)w=Math.floor(profile.maxPixels/h/2)*2;else h=Math.floor(profile.maxPixels/w/2)*2;}
+ return [w,h];
+}
+function installNativePowerLoop(profile,requestedFPS){
+ const fps=requestedFPS==='native'?0:requestedFPS==='30'?30:requestedFPS==='60'?60:profile.fps;
+ const evidence=Module.powerEvidence={profile:profile.name,targetFPS:fps||'native',scheduler:'pending',hiddenPolicy:'Browser requestAnimationFrame suspension; existing audio visibility handling'};
+ if(typeof MainLoop==='undefined'||!MainLoop.func){evidence.scheduler='unavailable';return;}
+ if(!fps){evidence.scheduler='upstream-native';return;}
+ const nativeRAF=window.requestAnimationFrame.bind(window);let last=-Infinity,sampleStart,sampleCount=0;
+ evidence.schedulerCallbacks=0;
+ MainLoop.requestAnimationFrame=function(callback){
+  const tick=time=>{
+   if(document.hidden){sampleStart=undefined;sampleCount=0;nativeRAF(tick);return;}
+   if(time-last<1000/fps-.5){nativeRAF(tick);return;}
+   last=time;evidence.schedulerCallbacks++;evidence.lastCallbackAt=time;
+   if(sampleStart===undefined)sampleStart=time;else sampleCount++;
+   if(time-sampleStart>=1000){evidence.observedSchedulerFPS=Math.round(sampleCount*10000/(time-sampleStart))/10;sampleStart=time;sampleCount=0;}
+   callback(time);
+  };nativeRAF(tick);
+ };
+ if(typeof _emscripten_set_main_loop_timing==='function')_emscripten_set_main_loop_timing(1,1);
+ evidence.scheduler='engine-only-requestAnimationFrame-cap';
+}
+function nativeGraphicsInfo(){
+ let gl=Module.ctx;
+ if((!gl||!gl.getParameter)&&typeof GL!=='undefined')gl=GL.currentContext?.GLctx;
+ if(!gl||!gl.getParameter)return {api:'WebGL',renderer:'Context not ready; wait for engine startup'};
+ const debug=gl.getExtension('WEBGL_debug_renderer_info');
+ return {api:gl.getParameter(gl.VERSION),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),vendor:debug?gl.getParameter(debug.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR),resolution:[Module.canvas.width,Module.canvas.height],power:Module.powerEvidence||null};
+}
 function patchNativeShell(source){
  const setup=`const options = new URLSearchParams(location.search);
 const touchRequested = options.get('touch');
 const touchPreferred = touchRequested === '1' || (touchRequested !== '0' && (matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0));
 const matrixSession = /(?:^|,)Matrix2004_v130\\.MutMonkeyMatrixMoves(?:,|$)/i.test(options.get('mutator') || '');
+const getPowerProfile = ${nativePowerProfile.toString()};
+const budgetPixels = ${nativePixelBudget.toString()};
+const installPowerLoop = ${installNativePowerLoop.toString()};
+const readGraphicsInfo = ${nativeGraphicsInfo.toString()};
+const powerProfile = getPowerProfile(options.get('power'),touchPreferred);
+const powerSelect = document.getElementById('pages-power');
+powerSelect.value=powerProfile.name;
+powerSelect.onchange=()=>{const url=new URL(location.href);url.searchParams.set('power',powerSelect.value);url.searchParams.delete('res');location.assign(url);};
+const fpsSelect=document.getElementById('pages-fps');fpsSelect.value=['30','60','native'].includes(options.get('fps'))?options.get('fps'):String(powerProfile.fps);
+fpsSelect.onchange=()=>{const url=new URL(location.href);url.searchParams.set('fps',fpsSelect.value);location.assign(url);};
+document.getElementById('pages-graphics').onclick=()=>{document.getElementById('pages-gpu').textContent=JSON.stringify(readGraphicsInfo(),null,2);};
 const inputSelect = document.getElementById('pages-input');
 inputSelect.value = touchRequested === '1' ? '1' : touchRequested === '0' ? '0' : 'auto';
 inputSelect.onchange = () => { const url = new URL(location.href); if(inputSelect.value==='auto')url.searchParams.delete('touch');else url.searchParams.set('touch',inputSelect.value);location.assign(url); };
@@ -72,12 +120,17 @@ document.querySelector('form').onsubmit = event => { event.preventDefault();cons
 const patchSessionUserIni = ${patchNativeUserIni.toString()};`;
  return source.replace(/(["'])(?:\.\.\/|\/)assets\//g,'$1assets/')
  .replace(/dataBaseURL:\s*[^,\n]+/,"dataBaseURL: new URL('data/', location.href).href")
- .replace('<h1>', '<nav><a href="../../">← Game launcher</a> · <label>Input <select id="pages-input" aria-label="Input controls"><option value="auto">Automatic</option><option value="1">Touch</option><option value="0">Mouse and keyboard</option></select></label></nav><h1>')
+ .replace('<h1>', '<nav><a href="../../?setup=1">← Game launcher</a> · <label>Input <select id="pages-input" aria-label="Input controls"><option value="auto">Automatic</option><option value="1">Touch</option><option value="0">Mouse and keyboard</option></select></label> · <label>Power <select id="pages-power"><option value="efficient">Efficient</option><option value="balanced">Balanced</option><option value="quality">Quality</option></select></label> · <label>Frame cap <select id="pages-fps"><option value="30">30</option><option value="60">60</option><option value="native">Native</option></select></label> <button id="pages-graphics" type="button">Graphics info</button><pre id="pages-gpu" role="status"></pre></nav><h1>')
  .replace('<input type="hidden" name="connect" value="1">','')
  .replace('Join multiplayer</button>','Restart local session</button>')
  .replace(/<p><a href="\?interactive=1&map=DM-Rankin">[\s\S]*?<button id="stop" type="button">Stop client<\/button><\/p>/, '<p><button id="stop" type="button">Stop client</button></p>')
  .replace('const options = new URLSearchParams(location.search);',setup)
- .replace("[options.get('res'), savedResolution, '1280x720']", "[options.get('res'), touchPreferred ? null : savedResolution, touchPreferred ? '640x480' : '1280x720']")
+ .replace("[options.get('res'), savedResolution, '1280x720']", "[options.get('res'), powerProfile.defaultResolution]")
+ .replace("const initialSize = activeResolution === 'dynamic' ? dynamicSize() : activeResolution.split('x').map(Number);", "const initialSize = budgetPixels(...(activeResolution === 'dynamic' ? dynamicSize() : activeResolution.split('x').map(Number)),powerProfile);")
+ .replace("const [width, height] = value === 'dynamic' ? dynamicSize() : value.split('x').map(Number);", "const [width,height] = budgetPixels(...(value === 'dynamic' ? dynamicSize() : value.split('x').map(Number)),powerProfile);")
+ .replace(/innerWidth \* devicePixelRatio/g,'innerWidth * Math.min(devicePixelRatio,powerProfile.maxDPR)')
+ .replace(/innerHeight \* devicePixelRatio/g,'innerHeight * Math.min(devicePixelRatio,powerProfile.maxDPR)')
+ .replace('configFiles: {}', "postRun: [() => installPowerLoop(powerProfile,options.get('fps'))], configFiles: {}")
  .replace(/const defaultJoin = [^;]+;/,'const defaultJoin = false;')
  .replace("interactive: defaultJoin || options.has('interactive') || options.has('map'),", "interactive: !options.has('bounded'),")
  .replace("connect: defaultJoin || options.has('connect'),", "connect: options.has('connect'),")
@@ -94,7 +147,7 @@ Module.canvas.addEventListener('pointerdown', () => Module.canvas.focus({prevent
 Module.canvas.focus({preventScroll:true});`)
  .replace('bytes = new TextEncoder().encode(text);', `bytes = new TextEncoder().encode(/(?:^|\\/)System\\/(?:DefUser|User)\\.ini$/i.test('/'+path) ? patchSessionUserIni(text,matrixSession) : text);`)
  .replace('Tab opens console.', 'Tab opens chat. Tilde opens console.')
- .replace("document.getElementById('status').textContent = 'Loading config files…';", "document.getElementById('status').textContent = 'Loading config files…';\n  if(matrixSession)document.getElementById('input-help').textContent += ' Matrix: B / TIME toggles bullet time (50 adrenaline); C holds hover; C + Space superjumps.';");
+ .replace("document.getElementById('status').textContent = 'Loading config files…';", "document.getElementById('status').textContent = 'Loading config files…';\n  if(matrixSession)document.getElementById('input-help').textContent += ' Matrix: B / TIME toggles bullet time (75 adrenaline by default; configurable); C holds hover; C + Space superjumps.';");
 }
 
 async function nativeResponse(request,scope){
@@ -119,6 +172,6 @@ async function nativeResponse(request,scope){
  headers.set('Content-Length',String(end-start+1));
  return new Response(request.method==='HEAD'?null:blob.slice(start,end+1),{status,headers});
 }
-Object.assign(root,{importNativeClient,nativeClientReady,nativeResponse,patchNativeShell,parseNativeTar,patchNativeUserIni});
-if(typeof module!=='undefined'&&module.exports)module.exports={parseNativeTar,patchNativeShell,patchNativeUserIni,hashes};
+Object.assign(root,{importNativeClient,nativeClientReady,nativeResponse,patchNativeShell,parseNativeTar,patchNativeUserIni,nativePowerProfile,nativePixelBudget,installNativePowerLoop,nativeGraphicsInfo});
+if(typeof module!=='undefined'&&module.exports)module.exports={parseNativeTar,patchNativeShell,patchNativeUserIni,nativePowerProfile,nativePixelBudget,installNativePowerLoop,nativeGraphicsInfo,hashes};
 })(typeof self!=='undefined'?self:globalThis);

@@ -1,10 +1,10 @@
 # Monkey Matrix Moves: original UT2004 preservation
 
-This integration uses the authentic **MonkeyMatrixMoves 2004 v130b**, by Adam “MonkeyCircus” Bradley and Rob “[Apoc]Death” Gutermuth. The original already targets UT2004; a new port is unnecessary.
+This integration uses the authentic **MonkeyMatrixMoves 2004 v130b**, by Adam “MonkeyCircus” Bradley and Rob “[Apoc]Death” Gutermuth. The original already targets UT2004. Modern data also needs the independently written [controller adapter](../matrix-modern/README.md) to select the original movement classes.
 
 ```sh
 python3 mutators/monkey-matrix-moves/preserve.py
-python3 mutators/monkey-matrix-moves/preserve.py --install '/path/to/UT2004' --bind-b
+python3 mutators/monkey-matrix-moves/preserve.py --install '/path/to/UT2004' --bind-b --modern-compat
 ```
 
 Python 3 and internet access are sufficient. Alternatively, supply `--archive /path/to/MonkeyMatrixMoves2004_v130_selfextractor.exe`. The executable is treated as a ZIP archive and is never executed. Archive and package SHA1 hashes are checked before extraction; installation refuses to replace a different existing package.
@@ -14,7 +14,7 @@ The download, complete release, original readme, and **66 recovered original Unr
 Launch with:
 
 ```text
-UT2004.exe DM-Rankin?game=XGame.xDeathMatch?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves
+UT2004.exe DM-Rankin?game=XGame.xDeathMatch?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern
 ```
 
 `--bind-b` binds B to Bullet Time and saves `User.ini.before-monkey-matrix` before changing controls. Stock UT2004 binds B to weapon switching, so enabling the mutator alone does not make B activate Bullet Time. Alternatively, bind Bullet Time in controls. The original console command is:

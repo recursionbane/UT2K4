@@ -72,16 +72,28 @@ $('setup').onsubmit=async e=>{
     if(!navigator.serviceWorker) throw Error('This browser needs HTTPS and service workers to run the full game.');
     await navigator.serviceWorker.register('sw.js',{scope:'./'}); await navigator.serviceWorker.ready;
     if($('client').files.length) await importNativeClient($('client').files[0],status);
+    if(!await nativeClientReady() && current.client) {
+      status('Loading the verified native engine from your stream…');
+      const response=await fetch(current.client,{credentials:'omit'});
+      if(!response.ok) throw Error('Could not fetch the web client from the selected stream.');
+      await importNativeClient(await response.blob(),status);
+    }
     if(!await nativeClientReady()) throw Error('Select the downloaded v0.2.0 web client archive.');
     $('client-info').textContent='v0.2.0 verified';
     const id=crypto.randomUUID(), mode=$('mode').value, extra={}, entries=[];
     const url=new URL('native/'+id+'/index.html',location.href);
-    url.search=new URLSearchParams({interactive:'1',map:$('map').value,res:$('resolution').value});
+    url.search=new URLSearchParams({interactive:'1',map:$('map').value,power:$('power').value});
+    if($('resolution').value!=='auto') url.searchParams.set('res',$('resolution').value);
     const touch=$('touch').value; if(touch!=='auto') url.searchParams.set('touch',touch);
     let files=[];
     if(mode==='matrix') {
       files=await matrixFiles();
-      url.searchParams.set('mutator','Matrix2004_v130.MutMonkeyMatrixMoves');
+      for (const name of ['MatrixModern.u','MatrixModern.ucl']) {
+        const r=await fetch('compat/'+name);
+        if (!r.ok) throw Error('The Matrix compatibility package is missing.');
+        files.push(['System/'+name,await r.blob()]);
+      }
+      url.searchParams.set('mutator','Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern');
     } else if(mode==='custom'){
       const added=customFiles();files=added.files;url.searchParams.set('mutator',added.classes);
     }
@@ -91,14 +103,37 @@ $('setup').onsubmit=async e=>{
       if(Object.hasOwn(extra,name)) throw Error('Duplicate package: '+path);
       extra[name]=blob.size;entries.push(['overlay/'+id+'/'+lower,blob]);
     }
-    await mediaSave([...entries,['profile/'+id,{base:current.id,extra}]]);
+    await mediaSave([...entries,['profile/'+id,{base:current.id,remote:current.remote,extra}]]);
+    localStorage.setItem('ut2k4-last-session',JSON.stringify({url:url.href,base:current.id,mode,map:$('map').value}));
     status('Starting '+$('map').value+'…');location.assign(url);
   }catch(err){status(err.message||String(err));$('start').disabled=false;}
+};
+$('connect-stream').onclick=async()=>{
+  try{status('Reading the full-game stream index…'); current=await openStream($('stream-url').value);mapsFor(current);status('Stream connected. Packages load as the engine reads them.');}
+  catch(e){status(e.message);}
 };
 (async()=>{
   try {
     if(await nativeClientReady()) $('client-info').textContent='v0.2.0 verified on this device';
     current=await mediaGet('current-game');
+    const q=new URLSearchParams(location.search);
+    if(q.get('source') && q.get('source')!==current?.source) {
+      status('Connecting to the full-game stream…');
+      current=await openStream(q.get('source'));
+    }
     if(current) mapsFor(current);
+    if(q.has('setup')) return;
+    if(current?.handle && await current.handle.queryPermission({mode:'read'})!=='granted') {
+      status('Press Play to grant this browser access to the saved game folder.');return;
+    }
+    const last=JSON.parse(localStorage.getItem('ut2k4-last-session')||'null');
+    if(last && current && last.base===current.id && await nativeClientReady()) {
+      const url=new URL(last.url);
+      if(url.origin===location.origin && url.pathname.startsWith(new URL('native/',location.href).pathname)){
+        await navigator.serviceWorker.register('sw.js',{scope:'./'});await navigator.serviceWorker.ready;
+        location.replace(url);return;
+      }
+    }
+    if(current && (current.client || await nativeClientReady())) $('setup').requestSubmit();
   }catch(e){status('Local storage unavailable: '+e.message);}
 })();

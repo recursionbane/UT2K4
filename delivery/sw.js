@@ -1,4 +1,4 @@
-importScripts('./media.js','./full-game.js','./native-import.js');
+importScripts('./media.js','./full-game.js','./native-import.js','./stream.js');
 self.addEventListener('install', event => event.waitUntil(self.skipWaiting()));
 self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
 const scope = self.registration.scope;
@@ -9,7 +9,7 @@ async function profileData(id) {
     if (!profile) throw Error('This game session is unavailable. Return to the launcher.');
     const sizes = await mediaGet('dataset/'+profile.base);
     if (!sizes) throw Error('The local game folder needs to be selected again.');
-    return {...profile,files:{...sizes,...profile.extra},extras:new Set(Object.keys(profile.extra).map(s=>s.toLowerCase()))};
+    return {...profile,names:new Map(Object.keys(sizes).map(name=>[name.toLowerCase(),name])),files:{...sizes,...profile.extra},extras:new Set(Object.keys(profile.extra).map(s=>s.toLowerCase()))};
   })().catch(e=>{profiles.delete(id); throw e;}));
   return profiles.get(id);
 }
@@ -35,6 +35,10 @@ async function localResponse(request,id,path) {
     if (path==='files.json') return Response.json(Object.keys(p.files));
     if (path==='file-sizes.json') return Response.json(p.files);
     const name=path.slice(5).toLowerCase();
+    if(p.remote && !p.extras.has(name)) {
+      const path=p.names.get(name);
+      return path ? streamFile(request,p.remote,path,p.files[path]) : new Response('Unknown asset',{status:404});
+    }
     const blob=p.extras.has(name)?await mediaGet('overlay/'+id+'/'+name):await gameFile(p.base,name);
     return sendFile(blob,request);
   }

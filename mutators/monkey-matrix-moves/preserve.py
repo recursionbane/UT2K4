@@ -125,14 +125,22 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--archive', type=Path, help='Use an already downloaded original archive')
     parser.add_argument('--install', type=Path, metavar='UT2004_ROOT', help='Install verified original packages')
+    parser.add_argument('--modern-compat', action='store_true', help='With --install, install the independently written modern-controller adapter')
     parser.add_argument('--bind-b', action='store_true', help='With --install, bind B to bullet time and back up User.ini')
     args = parser.parse_args()
-    if args.bind_b and not args.install:
-        parser.error('--bind-b requires --install')
+    if (args.bind_b or args.modern_compat) and not args.install:
+        parser.error('--bind-b and --modern-compat require --install')
     release, sources = recover(args.archive)
     print('Verified original release:', release)
     print('Recovered 66 original source texts locally:', sources)
     if args.install:
         install(release, args.install)
+        if args.modern_compat:
+            for src in (BASE.parent / 'matrix-modern/System').glob('MatrixModern.*'):
+                dest = args.install / 'System' / src.name
+                if dest.exists() and dest.read_bytes() != src.read_bytes():
+                    raise ValueError('Refusing to overwrite different adapter: ' + str(dest))
+                shutil.copy2(src, dest)
+            print('Enable both mutators: Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern')
         if args.bind_b:
             bind_b(args.install)

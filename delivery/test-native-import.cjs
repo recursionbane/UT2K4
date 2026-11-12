@@ -23,7 +23,10 @@ if(process.argv[2]) (async()=>{
  const req=new Request('https://example.test/UT2K4/native/profile123/index.html');
  const response=await global.nativeResponse(req,'https://example.test/UT2K4/');
  assert.equal(response.status,200);assert.equal(response.headers.get('Cross-Origin-Embedder-Policy'),'require-corp');
- const html=await response.text();assert(html.includes('id="pages-input"'));assert(html.includes("const defaultJoin = false"));assert(html.includes("touchPreferred ? '640x480'"));assert(html.includes("mobileConfig.binds.bullet='KeyB'"));assert(!html.includes('Join multiplayer</button>'));assert(!html.includes('Bounded CI run'));assert(html.includes('(?:DefUser|User)'));
+ const html=await response.text();const matrixLine=html.match(/const matrixSession = ([^;]+);/);assert(matrixLine);assert(vm.runInNewContext(matrixLine[1],{options:new URLSearchParams('mutator=Matrix2004_v130.MutMonkeyMatrixMoves')}));
+ const mutatorCheck=html.match(/importedMutators.every\(value => (.+?)\.test\(value\)\)/);assert(mutatorCheck);assert(vm.runInNewContext(mutatorCheck[1]+'.test("Matrix2004_v130.MutMonkeyMatrixMoves")'));
+ assert(html.includes('href="../../?setup=1"'));
+ assert(html.includes('id="pages-input"'));assert(html.includes("const defaultJoin = false"));assert(html.includes("powerProfile.defaultResolution"));assert(html.includes("mobileConfig.binds.bullet='KeyB'"));assert(!html.includes('Join multiplayer</button>'));assert(!html.includes('Bounded CI run'));assert(html.includes('(?:DefUser|User)'));
  const js=await memory.get('native-client/ut2004.js').text();
  const bridge=js.match(/572675: \([^)]*\) => \{([^}]+)\}/);assert(bridge,'pinned native bridge exists');
  let nativeURL;vm.runInNewContext('(function($0,$1){'+bridge[1]+'})(0,1024)',{Module:{map:'DM-Rankin?Mutator=Matrix2004_v130.MutMonkeyMatrixMoves',gameClass:'XGame.xDeathMatch'},stringToUTF8:value=>nativeURL=value});
@@ -44,3 +47,23 @@ assert.equal(changed.match(/B=Unrelated/g).length,2);
 assert(changed.includes('\r\nSpace=Jump'));
 assert.equal(patchNativeUserIni('[Engine.Input]\nSpace=Jump',true),'[Engine.Input]\nB=slowtimedown\nSpace=Jump');
 assert(patchNativeUserIni('[Other]\nTest=1',true).endsWith('[Engine.Input]\nB=slowtimedown'));
+const {nativePowerProfile,nativePixelBudget,installNativePowerLoop}=require('./native-import.js');
+for(const power of ['efficient','balanced','quality'])for(const dimensions of [[3840,2160],[640,480],[3840,240],[320,2160]]){
+ const profile=nativePowerProfile(power,false),size=nativePixelBudget(...dimensions,profile);
+ assert(size[0]*size[1]<=profile.maxPixels);
+ assert(size.every(v=>v%2===0));
+}
+assert.equal(nativePowerProfile('unknown',false).name,'efficient');
+for(const fps of [30,60]){
+ const vm=require('node:vm'),pending=[];let ran=0,timing;
+ const scope={Module:{},document:{hidden:false},MainLoop:{func:()=>{}},window:{requestAnimationFrame:callback=>pending.push(callback)},_emscripten_set_main_loop_timing:(...args)=>timing=args};
+ vm.runInNewContext('('+installNativePowerLoop.toString()+')({name:"efficient",fps:'+fps+'},null)',scope);
+ assert.deepEqual(timing,[1,1]);
+ function callback(){ran++;scope.MainLoop.requestAnimationFrame(callback)}
+ scope.MainLoop.requestAnimationFrame(callback);
+ for(let time=0;time<=1000;time+=1000/120)pending.shift()(time);
+ assert(ran<=fps+1&&ran>=fps-1,{fps,ran});
+ const before=ran;scope.document.hidden=true;for(let time=1010;time<1500;time+=10)pending.shift()(time);assert.equal(ran,before);
+ assert.equal(scope.Module.powerEvidence.scheduler,'engine-only-requestAnimationFrame-cap');
+}
+console.log('Power profile pixel budgets and actual scheduler adapter 30/60/hidden checks passed');
