@@ -1,0 +1,25 @@
+{
+  "testedOn": "2026-11-12",
+  "url": "https://unrealcollection.games/ut2004/?map=DM-Rankin&Game=XGame.xDeathMatch&NumBots=2&Mutator=Matrix2004_v130.MutMonkeyMatrixMoves%2CMatrixModern.MutMatrixModern",
+  "method": "Imported the ZIP through the hosted Mods tab, opened the Matrix match link, clicked Start to menu, then fired to join.",
+  "actions": [
+    {
+      "action": "Uploaded: 8 files",
+      "ms": 4368
+    },
+    {
+      "action": "Click enabled Start to menu after Matrix deep link",
+      "ms": 8218
+    },
+    {
+      "action": "Canvas Fire to join; W900ms; Space140ms; normal native console set input B slowtimedown; B120ms",
+      "ms": 44609
+    }
+  ],
+  "engineLog": [
+    "ScriptLog: Mutators Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern",
+    "ScriptLog: MATRIX_COMPAT_LOGIN: controller=Matrix2004_v130.MatrixPlayer pawn=Matrix2004_v130.MatrixPawn",
+    "ScriptLog: MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130.MatrixPlayer"
+  ],
+  "screenshot": "hosted-matrix-match.jpg"
+}
