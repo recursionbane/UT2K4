@@ -90,7 +90,9 @@ function installNativePowerLoop(profile,requestedFPS){
 function patchNativeGlue(source){
  const original='function __asyncjs__WaitForBrowserFrame() { return Asyncify.handleAsync(async () => { await new Promise(requestAnimationFrame); }); }';
  if(!source.includes(original))throw Error('Unsupported native frame-wait glue; reimport the verified v0.2.0 client.');
- return source.replace(original,'function __asyncjs__WaitForBrowserFrame() { return Asyncify.handleAsync(async () => { await new Promise(Module.pagesRequestAnimationFrame || requestAnimationFrame); }); }');
+ const attributes="'powerPreference': webglPowerPreferences[powerPreference]";
+ if(!source.includes(attributes))throw Error('Unsupported native WebGL context attributes.');
+ return source.replace(attributes,"'powerPreference': Module.pagesLowPowerGPU ? 'low-power' : webglPowerPreferences[powerPreference]").replace(original,'function __asyncjs__WaitForBrowserFrame() { return Asyncify.handleAsync(async () => { await new Promise(Module.pagesRequestAnimationFrame || requestAnimationFrame); }); }');
 }
 
 function nativeGraphicsInfo(){
@@ -98,7 +100,7 @@ function nativeGraphicsInfo(){
  if((!gl||!gl.getParameter)&&typeof GL!=='undefined')gl=GL.currentContext?.GLctx;
  if(!gl||!gl.getParameter)return {api:'WebGL',renderer:'Context not ready; wait for engine startup'};
  const debug=gl.getExtension('WEBGL_debug_renderer_info');
- return {api:gl.getParameter(gl.VERSION),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),vendor:debug?gl.getParameter(debug.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR),resolution:[Module.canvas.width,Module.canvas.height],power:Module.powerEvidence||null};
+ return {api:gl.getParameter(gl.VERSION),renderer:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER),vendor:debug?gl.getParameter(debug.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR),resolution:[Module.canvas.width,Module.canvas.height],gpuPreference:gl.getContextAttributes?.()?.powerPreference,power:Module.powerEvidence||null};
 }
 function boundedGameLog() {
  const panel = document.getElementById('pages-log'), output = document.getElementById('log');
@@ -130,15 +132,33 @@ powerSelect.onchange=()=>{const url=new URL(location.href);url.searchParams.set(
 const fpsSelect=document.getElementById('pages-fps');fpsSelect.value=['30','60','native'].includes(options.get('fps'))?options.get('fps'):String(powerProfile.fps);
 fpsSelect.onchange=()=>{const url=new URL(location.href);url.searchParams.set('fps',fpsSelect.value);location.assign(url);};
 document.getElementById('pages-graphics').onclick=()=>{document.getElementById('pages-gpu').textContent=JSON.stringify(readGraphicsInfo(),null,2);};
+document.body.classList.toggle('pages-touch',touchPreferred);
+function fitTouchViewport(){if(touchPreferred)document.documentElement.style.setProperty('--pages-toolbar-height',Math.ceil(document.getElementById('viewport').getBoundingClientRect().top+scrollY)+'px');}
+document.getElementById('pages-touch-settings').onclick=()=>{document.body.classList.toggle('pages-show-settings');if(!document.body.classList.contains('pages-show-settings'))scrollTo(0,0);requestAnimationFrame(fitTouchViewport);};
+document.getElementById('pages-touch-fullscreen').onclick=()=>document.getElementById('fullscreen').click();
+addEventListener('resize',fitTouchViewport);requestAnimationFrame(fitTouchViewport);
 const inputSelect = document.getElementById('pages-input');
 inputSelect.value = touchRequested === '1' ? '1' : touchRequested === '0' ? '0' : 'auto';
 inputSelect.onchange = () => { const url = new URL(location.href); if(inputSelect.value==='auto')url.searchParams.delete('touch');else url.searchParams.set('touch',inputSelect.value);location.assign(url); };
 document.querySelector('form').onsubmit = event => { event.preventDefault();const url=new URL(location.href);url.searchParams.set('name',document.getElementById('name').value);url.searchParams.delete('connect');url.searchParams.set('interactive','1');location.assign(url); };
 const patchSessionUserIni = ${patchNativeUserIni.toString()};`;
- return source.replace('<style>', '<style>\n.mobile-input-button[data-id=bullet]{top:54px;right:8px;bottom:auto;left:auto}')
+ return source.replace('<style>', `<style>
+.mobile-input-button[data-id=bullet]{top:54px;right:8px;bottom:auto;left:auto}
+#pages-touch-tools{display:none}
+body.pages-touch{margin:0}
+body.pages-touch nav{padding:6px;line-height:1.5;font-size:14px}
+body.pages-touch #pages-touch-tools{display:inline-flex;gap:8px;margin-left:8px}
+body.pages-touch:not(.pages-show-settings) nav>label,body.pages-touch:not(.pages-show-settings) nav>button,body.pages-touch:not(.pages-show-settings) nav>pre,body.pages-touch:not(.pages-show-settings) h1,body.pages-touch:not(.pages-show-settings) form,body.pages-touch:not(.pages-show-settings) .controls,body.pages-touch:not(.pages-show-settings) #input-help,body.pages-touch:not(.pages-show-settings) #log{display:none}
+body.pages-touch.pages-playing:not(.pages-show-settings) #status{display:none}
+body.pages-touch #viewport{width:100%;height:max(220px,calc(100svh - var(--pages-toolbar-height,48px)));min-height:0;display:flex;align-items:center;justify-content:center}
+body.pages-touch #viewport canvas{width:min(100%,calc((100svh - var(--pages-toolbar-height,48px))*var(--aspect)));height:auto;max-height:100%;object-fit:contain}
+body.pages-touch #viewport:fullscreen{height:100svh}
+body.pages-touch #viewport:fullscreen canvas{width:min(100vw,calc(100svh*var(--aspect)));max-height:100svh}
+body.pages-touch #pages-gpu{line-height:1.4;font-size:12px}
+`)
  .replace(/(["'])(?:\.\.\/|\/)assets\//g,'$1assets/')
  .replace(/dataBaseURL:\s*[^,\n]+/,"dataBaseURL: new URL('data/', location.href).href")
- .replace('<h1>', '<nav><a href="../../?setup=1">← Game launcher</a> · <label>Input <select id="pages-input" aria-label="Input controls"><option value="auto">Automatic</option><option value="1">Touch</option><option value="0">Mouse and keyboard</option></select></label> · <label>Power <select id="pages-power"><option value="efficient">Efficient</option><option value="balanced">Balanced</option><option value="quality">Quality</option></select></label> · <label>Frame cap <select id="pages-fps"><option value="30">30</option><option value="60">60</option><option value="native">Native</option></select></label> <button id="pages-graphics" type="button">Graphics info</button><pre id="pages-gpu" role="status"></pre></nav><h1>')
+ .replace('<h1>', '<nav><a href="../../?setup=1">← Game launcher</a><span id="pages-touch-tools"><button id="pages-touch-settings" type="button">Settings</button><button id="pages-touch-fullscreen" type="button">Fullscreen</button></span> · <label>Input <select id="pages-input" aria-label="Input controls"><option value="auto">Automatic</option><option value="1">Touch</option><option value="0">Mouse and keyboard</option></select></label> · <label>Power <select id="pages-power"><option value="efficient">Efficient</option><option value="balanced">Balanced</option><option value="quality">Quality</option></select></label> · <label>Frame cap <select id="pages-fps"><option value="30">30</option><option value="60">60</option><option value="native">Native</option></select></label> <button id="pages-graphics" type="button">Graphics info</button><pre id="pages-gpu" role="status"></pre></nav><h1>')
  .replace('<input type="hidden" name="connect" value="1">','')
  .replace('Join multiplayer</button>','Restart local session</button>')
  .replace(/<p><a href="\?interactive=1&map=DM-Rankin">[\s\S]*?<button id="stop" type="button">Stop client<\/button><\/p>/, '<p><button id="stop" type="button">Stop client</button></p>')
@@ -148,8 +168,8 @@ const patchSessionUserIni = ${patchNativeUserIni.toString()};`;
  .replace("const [width, height] = value === 'dynamic' ? dynamicSize() : value.split('x').map(Number);", "const [width,height] = budgetPixels(...(value === 'dynamic' ? dynamicSize() : value.split('x').map(Number)),powerProfile);")
  .replace(/innerWidth \* devicePixelRatio/g,'innerWidth * Math.min(devicePixelRatio,powerProfile.maxDPR)')
  .replace(/innerHeight \* devicePixelRatio/g,'innerHeight * Math.min(devicePixelRatio,powerProfile.maxDPR)')
- .replace('++Module.frameCount;', "if(!Module.powerEvidence?.mainLoopReady)installPowerLoop(powerProfile,options.get('fps')); ++Module.frameCount;")
- .replace('configFiles: {}', "postRun: [() => installPowerLoop(powerProfile,options.get('fps'))], configFiles: {}")
+ .replace('++Module.frameCount;', "if(!Module.powerEvidence?.mainLoopReady)installPowerLoop(powerProfile,options.get('fps')); if(!Module.frameCount){document.body.classList.add('pages-playing');requestAnimationFrame(fitTouchViewport);} ++Module.frameCount;")
+ .replace('configFiles: {}', "pagesLowPowerGPU: powerProfile.name === 'efficient', postRun: [() => installPowerLoop(powerProfile,options.get('fps'))], configFiles: {}")
  .replace(/const defaultJoin = [^;]+;/,'const defaultJoin = false;')
  .replace("interactive: defaultJoin || options.has('interactive') || options.has('map'),", "interactive: !options.has('bounded'),")
  .replace("connect: defaultJoin || options.has('connect'),", "connect: options.has('connect'),")

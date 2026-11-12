@@ -2,6 +2,8 @@
 
 This client uses the actual upstream engine's OpenGLDrv → GL4ES → WebGL rendering path. It has no native Metal renderer and does not use WebGPU/wgpu. On supported Mac browsers, WebGL can be translated to Metal by the browser's graphics implementation. [ANGLE documents its Metal backend](https://github.com/google/angle/blob/main/doc/MetalBackendShaders.md); [WebKit's release notes also identify its Metal WebGL backend](https://webkit.org/blog/18482/release-notes-for-safari-technology-preview-255/). A site cannot force the browser's backend or guarantee a hardware renderer.
 
+Efficient mode requests the WebGL `low-power` adapter preference at context creation. The browser chooses the physical GPU. Graphics info also shows the context’s power preference.
+
 ## Controls
 
 The imported client shell exposes Power, Frame cap and Graphics info controls. Parameters remain scoped to the current local game profile:
