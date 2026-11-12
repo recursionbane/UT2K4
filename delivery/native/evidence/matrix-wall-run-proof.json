@@ -1,0 +1,199 @@
+{
+  "errors": [],
+  "setup": "Temporary non-shipped MatrixWallQA mutator traces vertical world geometry, places/orients original player beside it once; state/physics observed through logs. All wall run and flip actions use normal keyboard input.",
+  "testConfig": {
+    "AdrenalineBasedOnPlayers": false,
+    "AdrenalineRegenRate": 0.05
+  },
+  "placed": {
+    "player": {
+      "tick": 161,
+      "position": [
+        2085.19140625,
+        385.8244934082031,
+        -142.14999389648438
+      ],
+      "rotation": [
+        0,
+        16383,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 159,
+    "qa": [
+      "ScriptLog: WALL_QA_SETUP: location=2085.19,385.82,-145.50 normal=1.00,0.00,0.00 facing=0,16383,0 wall=DM-Rankin.LevelInfo0",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=2 location=2085.19,385.82,-145.50 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2085.19,385.82,-142.15 velocity=0.00,0.00,0.00"
+    ]
+  },
+  "bullet": {
+    "player": {
+      "tick": 199,
+      "position": [
+        2085.19140625,
+        385.8244934082031,
+        -142.14999389648438
+      ],
+      "rotation": [
+        0,
+        16383,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 196,
+    "qa": [
+      "ScriptLog: WALL_QA_SETUP: location=2085.19,385.82,-145.50 normal=1.00,0.00,0.00 facing=0,16383,0 wall=DM-Rankin.LevelInfo0",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=2 location=2085.19,385.82,-145.50 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2085.19,385.82,-142.15 velocity=0.00,0.00,0.00"
+    ]
+  },
+  "wallRun": {
+    "player": {
+      "tick": 223,
+      "position": [
+        2090.9423828125,
+        434.3046569824219,
+        -142.14999389648438
+      ],
+      "rotation": [
+        0,
+        16380,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 221,
+    "qa": [
+      "ScriptLog: WALL_QA_SETUP: location=2085.19,385.82,-145.50 normal=1.00,0.00,0.00 facing=0,16383,0 wall=DM-Rankin.LevelInfo0",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=2 location=2085.19,385.82,-145.50 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2085.19,385.82,-142.15 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2084.65,385.82,-142.15 velocity=-33.34,0.01,0.00",
+      "ScriptLog: WALL_QA_STATE: state=MMWallrun physics=9 location=2098.89,386.69,-142.15 velocity=373.26,65.08,0.00"
+    ]
+  },
+  "wallFlip": {
+    "player": {
+      "tick": 243,
+      "position": [
+        2152.172607421875,
+        539.4417114257812,
+        -70.6611557006836
+      ],
+      "rotation": [
+        0,
+        16385,
+        -31937
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 240,
+    "qa": [
+      "ScriptLog: WALL_QA_SETUP: location=2085.19,385.82,-145.50 normal=1.00,0.00,0.00 facing=0,16383,0 wall=DM-Rankin.LevelInfo0",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=2 location=2085.19,385.82,-145.50 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2085.19,385.82,-142.15 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2084.65,385.82,-142.15 velocity=-33.34,0.01,0.00",
+      "ScriptLog: WALL_QA_STATE: state=MMWallrun physics=9 location=2098.89,386.69,-142.15 velocity=373.26,65.08,0.00",
+      "ScriptLog: WALL_QA_STATE: state=MMRolling physics=2 location=2110.78,522.07,-39.72 velocity=291.05,62.29,-107.01"
+    ]
+  },
+  "after": {
+    "player": {
+      "tick": 260,
+      "position": [
+        2174.680908203125,
+        616.5143432617188,
+        -162.64663696289062
+      ],
+      "rotation": [
+        0,
+        16377,
+        0
+      ],
+      "pawn": true,
+      "netMode": 0,
+      "admin": false,
+      "cinematic": false,
+      "cinematicPawnSpawned": false,
+      "guiActive": false,
+      "menuClass": "",
+      "level": "DM-Rankin"
+    },
+    "frames": 257,
+    "qa": [
+      "ScriptLog: WALL_QA_SETUP: location=2085.19,385.82,-145.50 normal=1.00,0.00,0.00 facing=0,16383,0 wall=DM-Rankin.LevelInfo0",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=2 location=2085.19,385.82,-145.50 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2085.19,385.82,-142.15 velocity=0.00,0.00,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2084.65,385.82,-142.15 velocity=-33.34,0.01,0.00",
+      "ScriptLog: WALL_QA_STATE: state=MMWallrun physics=9 location=2098.89,386.69,-142.15 velocity=373.26,65.08,0.00",
+      "ScriptLog: WALL_QA_STATE: state=MMRolling physics=2 location=2110.78,522.07,-39.72 velocity=291.05,62.29,-107.01",
+      "ScriptLog: WALL_QA_STATE: state=MMRolling physics=2 location=2174.18,561.90,-111.53 velocity=142.97,210.38,-384.56",
+      "ScriptLog: WALL_QA_STATE: state=MMRolling physics=1 location=2178.03,610.08,-159.87 velocity=-157.83,302.60,0.00",
+      "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2174.68,616.51,-162.65 velocity=0.00,0.00,0.00"
+    ]
+  },
+  "proofLines": [
+    "ScriptLog: MATRIX_COMPAT_LOGIN: controller=Matrix2004_v130.MatrixPlayer pawn=Matrix2004_v130.MatrixPawn",
+    "ScriptLog: MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130.MatrixPlayer",
+    "ScriptLog: WALL_QA_SETUP: location=2085.19,385.82,-145.50 normal=1.00,0.00,0.00 facing=0,16383,0 wall=DM-Rankin.LevelInfo0",
+    "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=2 location=2085.19,385.82,-145.50 velocity=0.00,0.00,0.00",
+    "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2085.19,385.82,-142.15 velocity=0.00,0.00,0.00",
+    "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2084.65,385.82,-142.15 velocity=-33.34,0.01,0.00",
+    "ScriptLog: WALL_QA_STATE: state=MMWallrun physics=9 location=2098.89,386.69,-142.15 velocity=373.26,65.08,0.00",
+    "ScriptLog: WALL_QA_STATE: state=MMRolling physics=2 location=2110.78,522.07,-39.72 velocity=291.05,62.29,-107.01",
+    "ScriptLog: WALL_QA_STATE: state=MMRolling physics=2 location=2174.18,561.90,-111.53 velocity=142.97,210.38,-384.56",
+    "ScriptLog: WALL_QA_STATE: state=MMRolling physics=1 location=2178.03,610.08,-159.87 velocity=-157.83,302.60,0.00",
+    "ScriptLog: WALL_QA_STATE: state=PlayerWalking physics=1 location=2174.68,616.51,-162.65 velocity=0.00,0.00,0.00"
+  ],
+  "gl": {
+    "glErrors": 0,
+    "webglErrors": 0
+  },
+  "verifiedBehaviors": [
+    "Original MMWallrun state with PHYS_Spider (9) after actual directional double tap",
+    "Original MMRolling state with PHYS_Falling (2) after actual jump from wall",
+    "Return to original PlayerWalking after landing"
+  ],
+  "setupCodeShipped": false,
+  "temporarySetupSourceSha256": "3a23780102ec3cdef06365d4ee5e84c4fc1be1396fc976272aa55d89e73550c8",
+  "input": "D held70ms; release90ms; hold D+W550ms; Space160ms while D+W held; wait450ms; release D+W; wait1000ms",
+  "physicsCodes": {
+    "1": "PHYS_Walking",
+    "2": "PHYS_Falling",
+    "9": "PHYS_Spider"
+  },
+  "measurements": {
+    "wallRunDistanceFromPlaced": 48.82007775091546,
+    "flipHeightFromWallRun": 71.48883819580078,
+    "flipCameraRollDegrees": -175.4351806640625
+  }
+}

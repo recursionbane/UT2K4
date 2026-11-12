@@ -1,5 +1,7 @@
 # Native original-mutator verification
 
+Current full-game coverage: original human controller/pawn, walking, bullet time, late double jump, air dodge with view roll, crouch jump, crouch hover, wall run, and wall flip have all been observed through real browser input. Multiplayer movement prediction remains unverified. The sections below retain individual run scope and setup details.
+
 Executed 2026-11-12 on macOS, using installed CrossOver with a separate `ut2k4-matrix-check` Windows XP bottle. Runtime: Windows UT2004 demo, version **3334**, build dated 2004-09-21. A cloned installation at `/tmp/mmm-research/native` kept this experiment independent of the other game setup.
 
 ## Recovery and integration checks
@@ -113,3 +115,13 @@ A final bounded real-input run used the same original MatrixPlayer/MatrixPawn, f
 - **Crouch jump:** after landing at Z≈−270.10, holding C before Space raised the pawn to Z≈−92.09, a rise of **178.01 units**. This exceeds an ordinary jump's standard-gravity maximum and is consistent with the original 800 crouch-jump speed.
 
 Telemetry, exact input timings, source-class proof lines, and the test settings are in `delivery/native/evidence/matrix-additional-moves-proof.json`; screenshots are `matrix-late-jump.png`, `matrix-air-dodge.png`, and `matrix-crouch-jump.png` beside it. Wall running was not attempted in this focused pass, because locating and validating an appropriate wall contact would require a separate controlled setup. Multiplayer movement prediction also remains unverified. No additional movement runs were performed after this pass.
+
+## Controlled wall run and flip: final original-movement check
+
+One isolated run used a temporary **QA-only** UnrealScript helper compiled outside the repository with matching original UCC (0 errors, 0 warnings). After normal human spawn, it traced vertical world geometry and a valid floor, placed the original MatrixPawn beside that surface once, oriented it along the wall, and allowed ordinary falling physics to settle it into `PlayerWalking`/`PHYS_Walking`. It also supplied adrenaline for the test. It never selected a wall-run or rolling state; afterward it only logged the original controller state and pawn physics.
+
+The setup found a Rankin BSP wall with outward normal `[1,0,0]`, placed the pawn near `[2085.19,385.82,-142.15]`, and faced it along +Y. Actual keyboard input was D for 70 ms, a 90 ms release, then held D+W for 550 ms. The original controller entered **`MMWallrun` with `PHYS_Spider` (9)** and moved **48.82 units** from the setup position.
+
+Pressing Space for 160 ms while continuing D+W switched the original controller to **`MMRolling` with `PHYS_Falling` (2)**. The sampled flip rose **71.49 units**, moved away from the wall, and reported approximately **−175.44° camera roll**. Subsequent state logs showed the return to `PlayerWalking` after landing. Every sampled action retained an owned pawn; page exceptions and reported GL/WebGL errors were zero.
+
+The exact setup, input timings, state/physics log lines, telemetry, settings, and temporary helper source fingerprint are in `delivery/native/evidence/matrix-wall-run-proof.json`. Screenshots are `matrix-wall-run.png` and `matrix-wall-flip.png`. The helper source and compiler output remain outside the repository in temporary research storage. Its `.u` file was removed from the isolated game data, its map-list entry was removed from the isolated browser shell, and the HTTP manifest was regenerated after the test. No QA-only gameplay modification is shipped.

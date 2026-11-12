@@ -1,0 +1,107 @@
+{
+  "testedAt": "2026-11-12",
+  "deployment": "https://recursionbane.github.io/UT2K4/",
+  "environment": {
+    "browser": "Installed Google Chrome headless with --use-angle=metal",
+    "viewport": [
+      844,
+      450
+    ],
+    "coarsePointer": true,
+    "maxTouchPoints": 1,
+    "physicalPhone": false,
+    "inputMethod": "Trusted CDP Input.dispatchTouchEvent finger presses and joystick drag; no injected game commands"
+  },
+  "passed": true,
+  "touchEnabled": true,
+  "pointerLocked": false,
+  "viewport": {
+    "x": 0,
+    "y": 33,
+    "width": 844,
+    "height": 417,
+    "top": 33,
+    "right": 844,
+    "bottom": 450,
+    "left": 0
+  },
+  "toolbarHeight": 33,
+  "originalRuntime": {
+    "map": "DM-Rankin",
+    "controller": "Matrix2004_v130.MatrixPlayer",
+    "pawn": "Matrix2004_v130.MatrixPawn",
+    "compatibilityMutator": "MatrixModern.MutMatrixModern",
+    "ownedPawn": true,
+    "proof": "ScriptLog: MATRIX_COMPAT_PLAYER: pawn=Matrix2004_v130.MatrixPawn controller=Matrix2004_v130.MatrixPlayer"
+  },
+  "actions": {
+    "joinedByTouchFire": true,
+    "moveUnrealUnits": 485.63,
+    "jumpRiseUnrealUnits": 60.04,
+    "canvasInputEvents": [
+      {
+        "type": "mousedown",
+        "button": 0
+      },
+      {
+        "type": "mouseup",
+        "button": 0
+      },
+      {
+        "type": "mousedown",
+        "button": 0
+      },
+      {
+        "type": "mouseup",
+        "button": 0
+      },
+      {
+        "type": "keydown",
+        "code": "KeyW"
+      },
+      {
+        "type": "keyup",
+        "code": "KeyW"
+      },
+      {
+        "type": "keydown",
+        "code": "Space"
+      },
+      {
+        "type": "keyup",
+        "code": "Space"
+      },
+      {
+        "type": "mousedown",
+        "button": 0
+      },
+      {
+        "type": "mouseup",
+        "button": 0
+      }
+    ],
+    "soundsStartedBeforeFire": 44,
+    "soundsStartedAfterFire": 46
+  },
+  "graphics": {
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)",
+    "api": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+    "glError": 0,
+    "resolution": [
+      640,
+      480
+    ]
+  },
+  "power": {
+    "profile": "efficient",
+    "targetFPS": 30,
+    "scheduler": "asyncify-engine-requestAnimationFrame-cap",
+    "schedulerCallbacks": 259,
+    "mainLoopReady": true,
+    "hiddenPolicy": "Browser requestAnimationFrame suspension; existing audio visibility handling",
+    "lastCallbackAt": 34977.88,
+    "observedSchedulerFPS": 29
+  },
+  "pageErrors": [],
+  "physicalListeningCheck": false
+}
