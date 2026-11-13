@@ -1,0 +1,100 @@
+{
+  "target": "http://127.0.0.1:8789/ut2004/?map=DM-Rankin&game=XGame.xDeathMatch&NumBots=3",
+  "origin": "http://127.0.0.1:8789",
+  "freshContext": true,
+  "noExistingFiles": true,
+  "externalNetworkPolicy": "Exact-origin HTTP routing; dead proxy for non-loopback worker/WebSocket requests; non-proxied WebRTC UDP disabled",
+  "completed": true,
+  "controlledPawnNeedsVisualReview": false,
+  "elapsedMs": 56613,
+  "mapLoadedAt": 32586,
+  "networkBytes": 822621652,
+  "pageCDPByteScope": "Page target only; worker transfers may be omitted",
+  "actions": [
+    {
+      "action": "normal-start-button",
+      "ms": 1707
+    },
+    {
+      "action": "canvas-focus-and-fire-join-with-countdown-retry",
+      "ms": 53742
+    },
+    {
+      "action": "W-held-900ms",
+      "ms": 54646
+    },
+    {
+      "action": "Space-held-150ms",
+      "ms": 54799
+    },
+    {
+      "action": "fire-held-300ms",
+      "ms": 55102
+    }
+  ],
+  "webSocketAttempts": [],
+  "httpErrors": [
+    {
+      "ms": 605,
+      "status": 404,
+      "url": "http://127.0.0.1:8789/ut2004/SDLLaunch-debug.js"
+    },
+    {
+      "ms": 609,
+      "status": 404,
+      "url": "http://127.0.0.1:8789/ut2004/SDLLaunch-debug.js"
+    }
+  ],
+  "pageErrors": [],
+  "cspMessages": [
+    "Connecting to 'https://e.unrealcollection.games/e' violates the following Content Security Policy directive: \"connect-src 'self' blob: data:\". The action has been blocked.",
+    "Connecting to 'https://unrealpeer-we.azurewebsites.net/' violates the following Content Security Policy directive: \"connect-src 'self' blob: data:\". The action has been blocked.",
+    "Fetch API cannot load https://unrealpeer-we.azurewebsites.net/. Refused to connect because it violates the document's Content Security Policy.",
+    "Connecting to 'https://e.unrealcollection.games/e' violates the following Content Security Policy directive: \"connect-src 'self' blob: data:\". The action has been blocked.",
+    "Connecting to 'https://e.unrealcollection.games/e' violates the following Content Security Policy directive: \"connect-src 'self' blob: data:\". The action has been blocked."
+  ],
+  "documentSecurityHeaders": {
+    "cross-origin-opener-policy": "same-origin",
+    "cross-origin-embedder-policy": "require-corp",
+    "cross-origin-resource-policy": "same-origin",
+    "content-security-policy": "connect-src 'self' blob: data:; frame-ancestors 'self'"
+  },
+  "servedShellHashes": [
+    {
+      "file": "index.html",
+      "sha256": "c271e22e569a254fa0f9b4267559378c8ffee974c39b76c0a48620ee334fa67f",
+      "expected": "c271e22e569a254fa0f9b4267559378c8ffee974c39b76c0a48620ee334fa67f",
+      "matches": true
+    },
+    {
+      "file": "SDLLaunch.js",
+      "sha256": "e0bd873093fd5e7fdb60e3f038bf81fe8e65852802ffcb76a6adc0175e7ee1d4",
+      "expected": "e0bd873093fd5e7fdb60e3f038bf81fe8e65852802ffcb76a6adc0175e7ee1d4",
+      "matches": true
+    },
+    {
+      "file": "SDLLaunch.wasm",
+      "sha256": "7bf1f105becdc9c405735cfc98863cb9165a33ebc641b42d3dd96a5ef786e9da",
+      "expected": "7bf1f105becdc9c405735cfc98863cb9165a33ebc641b42d3dd96a5ef786e9da",
+      "matches": true
+    },
+    {
+      "file": "assets/index-CF2lRGBL.js",
+      "sha256": "c7ac80dbf0884c22e460704d759a09b46dbe80e4d1a7503009640b58ec5516e5",
+      "expected": "c7ac80dbf0884c22e460704d759a09b46dbe80e4d1a7503009640b58ec5516e5",
+      "matches": true
+    }
+  ],
+  "visualReview": {
+    "passed": true,
+    "controlledPawn": true,
+    "movementObserved": true,
+    "firingObserved": true,
+    "evidence": "After-join screenshot shows owned first-person assault rifle,100 health,97 ammo on upper bridge. After native W/Space/fire, screenshot shows changed location below bridge, Rocket Launcher pickup message, owned rocket launcher and firing effect.",
+    "externalConnections": "Telemetry and peer-relay attempts refused by self-only CSP; dead proxy and no non-proxied UDP also active. Browser asset requests use loopback.",
+    "limitations": "Fresh isolated context produced original cache-quota warning; fallback continued. Physical internet adapter was not disabled; browser egress was blocked. No multiplayer or physical listening check."
+  },
+  "build": "76b3561335650487",
+  "blockedExternalRequests": [],
+  "screenshot": "private-collection-rankin.jpg"
+}
