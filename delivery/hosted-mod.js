@@ -90,7 +90,11 @@
     });
   }
   function launchURL() {
-    const url = new URL('http://127.0.0.1:8789/ut2004/');
+    const origin =
+      root.location?.hostname === '127.0.0.1'
+        ? root.location.origin
+        : 'http://127.0.0.1:8789';
+    const url = new URL('/ut2004/', origin);
     url.searchParams.set('map', 'DM-Rankin');
     url.searchParams.set('Game', 'XGame.xDeathMatch');
     url.searchParams.set('NumBots', '2');

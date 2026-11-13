@@ -49,6 +49,10 @@ async function openStream(source) {
     source: url.href,
     runtime: wrapped && raw.runtime ? streamURL(raw.runtime, url).href : null,
     client: wrapped && raw.client ? streamURL(raw.client, url).href : null,
+    matrixArchive:
+      wrapped && raw.matrixArchive
+        ? streamURL(raw.matrixArchive, url).href
+        : null,
   };
   await mediaSave([
     ['dataset/' + id, sizes],

@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """Serve a player's full game to the Pages launcher over read-only HTTP ranges."""
 import argparse
+import hashlib
+import io
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+from ipaddress import ip_address
+from mirror_collection_http import CollectionMirror
 import tarfile
 from threading import Lock
 from pathlib import Path
@@ -10,6 +14,17 @@ import re
 from urllib.parse import quote, unquote, urlsplit
 
 PAGES = 'https://recursionbane.github.io'
+MATRIX_SHA256 = '03f1d4fa6fe07feb3704e019cbec93db120172497ebb3755e8c7ead7a724bd96'
+MATRIX_NAME = 'MonkeyMatrixMoves2004_v130_selfextractor.exe'
+
+
+def matrix_archive(path):
+    """Retain only the pinned release bytes, independently of later file changes."""
+    payload = path.read_bytes()
+    if hashlib.sha256(payload).hexdigest() != MATRIX_SHA256:
+        raise ValueError('Matrix archive checksum mismatch; use the verified original v130 release.')
+    return payload
+
 DIRECTORIES = {'animations', 'forcefeedback', 'karmadata', 'maps', 'music', 'sounds',
                'speech', 'staticmeshes', 'system', 'textures'}
 EXTENSIONS = set('ukx ifr ka ut2 ogg uax xml usx u ucl upl ini int utx md5 dat det est frt itt kot tmt rut plt het het_utx rut_utx'.split())
@@ -59,12 +74,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('data', type=Path)
     parser.add_argument('--client', type=Path, help='Upstream ut2004-web-v0.2.0.tar.gz')
+    parser.add_argument('--matrix-archive', type=Path, help='Private original v130 archive; verified and served locally, never copied to the public site')
     parser.add_argument('--port', type=int, default=8789)
     parser.add_argument('--bind', default='127.0.0.1')
     parser.add_argument('--origin', action='append', default=[PAGES])
     parser.add_argument('--site', type=Path, default=Path(__file__).resolve().parents[1] / '_site',
                         help='Generated public launcher directory (only allowlisted assets are served)')
+    parser.add_argument('--collection', type=Path,
+                        default=Path(__file__).resolve().parents[1] / '.local-runtime/collection',
+                        help='Private Unreal Collection mirror, served on loopback at /ut2004/')
     args = parser.parse_args()
+    try:
+        loopback = ip_address(args.bind).is_loopback
+    except ValueError:
+        loopback = args.bind == 'localhost'
+    collection = CollectionMirror(args.collection) if loopback else None
     root = args.data.resolve(strict=True)
     files = {}
     for folder in root.iterdir():
@@ -76,8 +100,19 @@ def main():
     if not {'maps/dm-antalus.ut2', 'system/core.u'} <= {p.lower() for p in files}:
         parser.error('Select the full game directory containing System and Maps.')
     site = args.site.resolve()
+    matrix_path = args.matrix_archive
+    if matrix_path is None:
+        cached = Path(__file__).resolve().parents[1] / 'mutators/monkey-matrix-moves/local' / MATRIX_NAME
+        if cached.is_file():
+            matrix_path = cached
+    try:
+        matrix_payload = matrix_archive(matrix_path) if matrix_path is not None else None
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
     manifest = {'format': 'ut2k4-stream-v1', 'data': 'data/',
                 'files': {k: p.stat().st_size for k, p in files.items()}}
+    if matrix_payload is not None:
+        manifest['matrixArchive'] = 'matrix-release.exe'
     if play_asset(site, 'index.html') and play_asset(site, 'sw.js'):
         manifest.update(launcher='play/', launcherVersion=1)
     if args.client:
@@ -139,6 +174,8 @@ def main():
         def serve(self, body):
             if not self.authorized():
                 return self.send_error(403)
+            if collection and collection.serve(self, self.path, body):
+                return
             path = unquote(urlsplit(self.path).path)
             if path == '/play':
                 self.send_response(302)
@@ -195,10 +232,11 @@ def main():
                 if body:
                     self.wfile.write(payload)
                 return
+            payload = matrix_payload if path == '/matrix-release.exe' else None
             source = files.get(path[6:]) if path.startswith('/data/') else args.client if path == '/client.tar.gz' else None
-            if not source:
+            if source is None and payload is None:
                 return self.send_error(404)
-            size = source.stat().st_size
+            size = len(payload) if payload is not None else source.stat().st_size
             start, end, code = 0, size - 1, 200
             requested = self.headers.get('Range')
             if requested:
@@ -218,7 +256,7 @@ def main():
             self.send_header('Content-Type', 'application/octet-stream')
             self.end_headers()
             if body:
-                with source.open('rb') as stream:
+                with (io.BytesIO(payload) if payload is not None else source.open('rb')) as stream:
                     stream.seek(start)
                     remaining = end - start + 1
                     while remaining:

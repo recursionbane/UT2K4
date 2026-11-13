@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-11-12T23:56:56.415063+00:00",
+  "entryURL": "http://127.0.0.1:8796/play/",
+  "freshBrowserProfile": true,
+  "permissionGrants": [],
+  "manualImports": false,
+  "manualSourceSelection": false,
+  "matrixAndAddonAutostart": true,
+  "ownedPawn": true,
+  "graphics": {
+    "api": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+    "renderer": "ANGLE (Apple, ANGLE Metal Renderer: Apple M1 Max, Unspecified Version)",
+    "glError": 0,
+    "resolution": [
+      640,
+      480
+    ]
+  },
+  "scheduler": {
+    "profile": "efficient",
+    "targetFPS": 30,
+    "scheduler": "asyncify-engine-requestAnimationFrame-cap",
+    "schedulerCallbacks": 136,
+    "mainLoopReady": true,
+    "hiddenPolicy": "Browser requestAnimationFrame suspension; existing audio visibility handling",
+    "lastCallbackAt": 35997.985,
+    "observedSchedulerFPS": 11.3
+  },
+  "audio": {
+    "running": true,
+    "peakRms": 0.020789369737357802,
+    "lastError": 0
+  },
+  "normalSavedSessionReload": {
+    "url": "http://127.0.0.1:8796/play/native/9a6e6158-2d68-4e5d-80c8-b1dbf60112dd/index.html?interactive=1&map=DM-Rankin&power=efficient&mutator=Matrix2004_v130.MutMonkeyMatrixMoves%2CMatrixModern.MutMatrixModern",
+    "frame": 3
+  },
+  "closedTabReopenAfterServiceWorkerRemoval": {
+    "url": "http://127.0.0.1:8796/play/native/9a6e6158-2d68-4e5d-80c8-b1dbf60112dd/index.html?interactive=1&map=DM-Rankin&power=efficient&mutator=Matrix2004_v130.MutMonkeyMatrixMoves%2CMatrixModern.MutMatrixModern",
+    "frame": 3,
+    "controlled": true,
+    "bootstrapObserved": true
+  },
+  "pageErrors": [],
+  "unitTests": {
+    "count": 3,
+    "result": "pass",
+    "coverage": "streaming backward compatibility; public asset allowlist/path/symlink rejection; legacy-helper migration and same-origin launcher URLs"
+  },
+  "testBrowser": "Isolated headless Google Chrome with --use-angle=metal; no autoplay override"
+}

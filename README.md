@@ -10,6 +10,12 @@ The [Pages launcher](https://recursionbane.github.io/UT2K4/) stays on this deplo
 
 On the prepared Mac, [play the original Matrix match](http://127.0.0.1:8789/play/). If the helper is stopped, double-click `tools/play-on-mac.command`. The launcher, engine, game packages and audio use the same loopback origin. The Unreal Collection release uses a separate private route, `/ut2004/`, for its v3369 build. The local mirror and game distribution stay out of Git and the public Pages artifact.
 
+### Private collection mirror
+
+On the prepared Mac, open [the local v3369 collection](http://127.0.0.1:8789/ut2004/?map=DM-Rankin&Game=XGame.xDeathMatch&NumBots=2). Click **Start to menu** and fire to join. This build reads compressed files directly from the private copy on disk. The separate [Matrix match](http://127.0.0.1:8789/play/) uses the full 3374 installation and loads its mutator automatically.
+
+To recreate the private copy, install the `zstd` command-line utility and run `python3 tools/mirror-collection.py`. The tool reads the upstream release manifest, keeps assets compressed, verifies each completed file and records local hashes in `.local-runtime/collection/receipts/`. Rerun after an interrupted transfer to resume. A completed release has `.local-runtime/collection/complete.json`. Start `tools/play-on-mac.command` to serve it. Single-player uses loopback; upstream telemetry and multiplayer services are outside this offline deployment.
+
 The upstream collection’s [third-party notices](https://unrealcollection.games/third-party-notices.html) identify ownership of the games and license individual software components. We found no grant there to republish the complete UT2004 collection. Its manifest enumerates 6,911 content entries totaling 8,510,961,043 bytes in their distributed forms; a [published GitHub Pages site](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) is limited to 1 GB.
 
 ## Stream and autostart
@@ -35,7 +41,7 @@ Efficient mode targets 30 fps with a 307,200-pixel budget. Balanced and Quality 
 3. Select a map and mutator, then **Play full game**. The initial configuration uses DM-Rankin and Monkey Matrix Moves. Click the viewport to focus or join. Use WASD, mouse, Space and C. Touchscreen controls are capability-detected with a manual override in Display and controls. Browser audio may need a tap or click.
 4. For other mutators, select **Local mutator packages**, choose their files and dependencies, and enter the UnrealScript `Package.Class` names. Classes already present in the selected install can be used directly. Package compatibility depends on the game build and game type. This site launches local bot matches.
 
-The site fetches the original Matrix package from Unreal Archive, checks its SHA-256, and mounts its five files plus the independent MatrixModern compatibility package. The adapter restores the original controller and pawn during human login on 3374. The Matrix profile binds **B** to `slowtimedown`. The original mod supports deathmatch, CTF and bombing run. Its authors exclude Assault and Onslaught.
+On the prepared Mac the helper serves the verified Matrix archive from disk. When using a separate personal installation, the launcher can obtain the archive from Unreal Archive. The launcher checks its SHA-256 and mounts five original files plus the independent MatrixModern compatibility package. The adapter restores the original controller and pawn during human login on 3374. The Matrix profile binds **B** to `slowtimedown`. The original mod supports deathmatch, CTF and bombing run. Its authors exclude Assault and Onslaught.
 
 ## Preservation
 

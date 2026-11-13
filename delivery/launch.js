@@ -217,6 +217,14 @@ $('mod-download').onclick = async () => {
   const q = new URLSearchParams(location.search);
   const isMacLauncher =
     location.hostname === '127.0.0.1' && location.pathname.startsWith('/play/');
+  if (isMacLauncher) {
+    for (const link of document.querySelectorAll(
+      'a[href^="http://127.0.0.1:8789/"]',
+    )) {
+      const local = new URL(link.href);
+      link.href = new URL(local.pathname + local.search, location.origin).href;
+    }
+  }
   const source =
     q.get('source') ||
     (isMacLauncher ? new URL('/manifest.json', location.origin).href : null);

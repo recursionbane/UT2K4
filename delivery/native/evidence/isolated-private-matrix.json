@@ -1,0 +1,15 @@
+{
+  "out": {
+    "map": "DM-Rankin",
+    "pawn": true,
+    "frames": 91,
+    "mutators": "Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern",
+    "secureContext": true
+  },
+  "origins": [
+    "http://127.0.0.1:8789"
+  ],
+  "blocked": [],
+  "permissionsGrantedByTest": 0,
+  "method": "Fresh isolated Chromium context, public network requests blocked, owned pawn on original full-game DM-Rankin. No automation-granted permissions."
+}
