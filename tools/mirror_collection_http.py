@@ -24,6 +24,13 @@ class CollectionMirror:
 
     def serve(self, handler, raw_url_path, body=True):
         url=urlsplit(raw_url_path);path=unquote(url.path)
+        if path!='/ut2004' and not path.startswith('/ut2004/'):
+            return False
+        # Requesting a local copy from an unrelated website must not turn this
+        # private loopback route into a CORS asset host.
+        origin=handler.headers.get('Origin')
+        if origin and origin != 'http://' + handler.headers.get('Host', ''):
+            handler.send_error(403);return True
         if path=='/ut2004':
             handler.send_response(302);handler.send_header('Location','/ut2004/'+('?' + url.query if url.query else ''))
             handler.send_header('Content-Length','0');handler.end_headers();return True

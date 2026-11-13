@@ -25,7 +25,8 @@ class CollectionServingTests(unittest.TestCase):
             file = root / 'files' / name
             file.write_bytes(data)
             (root / 'catalog.json').write_text(json.dumps({'files': {
-                name: {'size': len(data), 'sha256': digest}
+                name: {'size': len(data), 'sha256': digest},
+                'missing.js': {'size': 1}
             }}))
             receipt = hashlib.sha256(name.encode()).hexdigest() + '.json'
             (root / 'receipts' / receipt).write_text(json.dumps({'sha256':digest}))
@@ -34,6 +35,10 @@ class CollectionServingTests(unittest.TestCase):
             class Handler(BaseHTTPRequestHandler):
                 def do_GET(self):
                     if not mirror.serve(self, self.path, True):
+                        self.send_error(404)
+
+                def do_HEAD(self):
+                    if not mirror.serve(self, self.path, False):
                         self.send_error(404)
 
                 def log_message(self, *args):
@@ -48,8 +53,22 @@ class CollectionServingTests(unittest.TestCase):
                     with urlopen(req,timeout=4) as res:
                         self.assertEqual(res.status, 206)
                         self.assertEqual(res.read(), data[7:11])
+                        self.assertEqual(res.headers['Content-Range'],f'bytes 7-10/{len(data)}')
+                        self.assertEqual(res.headers['ETag'],'"'+digest+'"')
                         self.assertEqual(res.headers['Cross-Origin-Opener-Policy'], 'same-origin')
+                        self.assertEqual(res.headers['Cross-Origin-Embedder-Policy'], 'require-corp')
+                        self.assertEqual(res.headers['Cross-Origin-Resource-Policy'], 'same-origin')
                         self.assertIn("connect-src 'self'", res.headers['Content-Security-Policy'])
+                    with urlopen(Request(base,method='HEAD'),timeout=4) as res:
+                        self.assertEqual(res.read(),b'')
+                    with self.assertRaises(HTTPError) as missing:
+                        urlopen(base+'missing.js',timeout=4)
+                    self.assertEqual(missing.exception.code,503)
+                    missing.exception.close()
+                    with self.assertRaises(HTTPError) as external:
+                        urlopen(Request(base, headers={'Origin': 'https://example.org'}), timeout=4)
+                    self.assertEqual(external.exception.code, 403)
+                    external.exception.close()
                     for path in ('secrets.txt','%2e%2e/catalog.json'):
                         with self.assertRaises(HTTPError) as err:
                             urlopen(base+path,timeout=4)

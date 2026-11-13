@@ -23,6 +23,7 @@ jobs:
           node-version: 22
       - run: |
           python3 -m unittest discover -s tests -p 'test_*.py'
+          python3 tools/mirror-collection-resume-test.py
           node arena/test.mjs
           node tests/test-hosted-mod.cjs
           node tests/test-matrix-source.cjs
