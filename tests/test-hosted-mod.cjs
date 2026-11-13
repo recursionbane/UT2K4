@@ -32,7 +32,7 @@ const api = require('../delivery/hosted-mod.js');
       target,
     ]);
     const url = new URL(api.launchURL());
-    assert.equal(url.origin, 'https://unrealcollection.games');
+    assert.equal(url.origin, 'http://127.0.0.1:8789');
     assert.equal(url.searchParams.get('map'), 'DM-Rankin');
     assert.equal(url.searchParams.get('Game'), 'XGame.xDeathMatch');
     assert.equal(url.searchParams.get('NumBots'), '2');

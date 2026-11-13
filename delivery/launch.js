@@ -194,16 +194,18 @@ $('connect-stream').onclick = async () => {
     status(e.message);
   }
 };
-const hostedGame = document.getElementById('hosted-game').href;
-function playHosted() {
-  location.replace(hostedGame);
+function showLocalPlay(message) {
+  status(
+    message ||
+      'Play with the game files on this Mac, or select your installation in settings.',
+  );
 }
 $('mod-download').onclick = async () => {
   $('mod-download').disabled = true;
   try {
     await HostedMatrixMod.download({ onProgress: modStatus });
     modStatus(
-      'Your Matrix ZIP is ready. Import it in the hosted game’s Mods tab.',
+      'Your Matrix ZIP is ready. Import it in the local collection’s Mods tab.',
     );
   } catch (error) {
     modStatus(error.message);
@@ -224,12 +226,12 @@ $('mod-download').onclick = async () => {
       $('client-info').textContent = 'v0.2.0 verified on this device';
     current = await mediaGet('current-game');
     if (quickStart) {
-      if (!current) return playHosted();
+      if (!current) return showLocalPlay();
       if (
         current.handle &&
         (await current.handle.queryPermission({ mode: 'read' })) !== 'granted'
       )
-        return playHosted();
+        return showLocalPlay();
     }
     if (source && source !== current?.source) {
       status('Connecting to the full-game stream…');
@@ -275,12 +277,15 @@ $('mod-download').onclick = async () => {
     ) {
       $('setup').requestSubmit();
     } else if (quickStart) {
-      playHosted();
+      showLocalPlay();
     }
   } catch (e) {
-    if (quickStart) return playHosted();
+    if (quickStart)
+      return showLocalPlay(
+        'Game storage is unavailable. Open settings to select a source.',
+      );
     status(
-      'Could not resume the game. Check source access and allow local network access for a stream on this computer. ' +
+      'Could not reach the game source. For the prepared Mac, start play-on-mac.command and allow browser access to the local network. ' +
         e.message,
     );
   }

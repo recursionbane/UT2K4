@@ -31,15 +31,16 @@
       <div class="boot-copy">
         <p class="edition">DM–RANKIN &nbsp; / &nbsp; DEATHMATCH</p>
         <h1 id="boot-title">Unreal<br />Tournament <em>2004</em></h1>
-        <p id="boot-status" role="status">Opening the full game…</p>
+        <p id="boot-status" role="status">Checking for your game files…</p>
         <a
           class="start-link"
-          id="hosted-game"
-          href="https://unrealcollection.games/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2"
-          >Play DM-Rankin →</a
+          id="play-local"
+          href="?source=http%3A%2F%2F127.0.0.1%3A8789%2Fmanifest.json"
+          >Play using this Mac →</a
         >
         <p class="boot-options">
-          <a href="?setup=1">Matrix moves &amp; settings</a>
+          <a href="?setup=1">Choose game files &amp; settings</a> ·
+          <a href="arena/">Movement arena</a>
         </p>
       </div>
     </section>
@@ -49,9 +50,8 @@
           <p class="edition">FULL GAME &nbsp; / &nbsp; WEBASSEMBLY</p>
           <h1>Unreal<br />Tournament <em>2004</em></h1>
           <p class="intro">
-            <a
-              href="https://unrealcollection.games/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2"
-              >Play the hosted full game →</a
+            <a href="?source=http%3A%2F%2F127.0.0.1%3A8789%2Fmanifest.json"
+              >Play with this Mac’s game files →</a
             >
           </p>
         </div>
@@ -75,18 +75,17 @@
           >
         </div>
         <div>
-          <h2>Matrix on the hosted game</h2>
+          <h2>Private Unreal Collection build</h2>
           <p>
-            Download the mod ZIP. Open the host’s <strong>Mods</strong> tab and
-            import it once, then launch the Matrix match. To bind bullet time,
-            enter <code>set input B slowtimedown</code> in the game console.
+            The collection runs on the prepared Mac. For Monkey Matrix Moves in
+            that build, download the mod ZIP and import it once using the
+            launcher’s Mods tab. Enter <code>set input B slowtimedown</code> in
+            the game console to bind bullet time.
           </p>
           <p>
             <a
-              href="https://unrealcollection.games/ut2004/"
-              target="_blank"
-              rel="noopener"
-              >Open the host’s launcher ↗</a
+              href="http://127.0.0.1:8789/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2"
+              >Open the local collection →</a
             >
           </p>
           <button id="mod-download" type="button">
@@ -94,8 +93,8 @@
           </button>
           <p id="mod-status" role="status" aria-live="polite"></p>
           <a
-            href="https://unrealcollection.games/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2&amp;Mutator=Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern"
-            >Open hosted Matrix match →</a
+            href="http://127.0.0.1:8789/ut2004/?map=DM-Rankin&amp;Game=XGame.xDeathMatch&amp;NumBots=2&amp;Mutator=Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern"
+            >Open local collection Matrix match →</a
           >
         </div>
       </section>

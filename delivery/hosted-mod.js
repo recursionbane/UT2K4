@@ -6,7 +6,7 @@
   const filename = 'monkey-matrix-moves-hosted.zip';
   const bindingCommand = 'set input B slowtimedown';
   const instructions =
-    'Open the hosted game, choose Mods, and upload this ZIP with Preserve structure (or Sort by type). Then open the Matrix launch link. In the game console, run: ' +
+    'Open the local collection, choose Mods, and upload this ZIP with Preserve structure (or Sort by type). Then open the Matrix launch link. In the game console, run: ' +
     bindingCommand +
     '. C crouches/hovers; Space jumps. Original bullet time requires 75 adrenaline.';
   const encoder = new TextEncoder();
@@ -90,7 +90,7 @@
     });
   }
   function launchURL() {
-    const url = new URL('https://unrealcollection.games/ut2004/');
+    const url = new URL('http://127.0.0.1:8789/ut2004/');
     url.searchParams.set('map', 'DM-Rankin');
     url.searchParams.set('Game', 'XGame.xDeathMatch');
     url.searchParams.set('NumBots', '2');
