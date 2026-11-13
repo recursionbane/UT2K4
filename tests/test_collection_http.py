@@ -8,6 +8,7 @@ from threading import Thread
 import unittest
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
+from urllib.parse import parse_qs, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'tools'))
 from mirror_collection_http import CollectionMirror
@@ -49,8 +50,16 @@ class CollectionServingTests(unittest.TestCase):
                 thread.start()
                 base = f'http://127.0.0.1:{server.server_port}/ut2004/'
                 try:
-                    req = Request(base+'?map=DM-Rankin', headers={'Range':'bytes=7-10'})
+                    req = Request(base+'?map=DM-Rankin&Mutator=One.A%2CTwo.B&peerhost=external.example&turnurl=turn%3Aexternal.example', headers={'Range':'bytes=7-10'})
                     with urlopen(req,timeout=4) as res:
+                        canonical=res.geturl()
+                        query=parse_qs(urlsplit(canonical).query,keep_blank_values=True)
+                        self.assertEqual(query['map'],['DM-Rankin'])
+                        self.assertEqual(query['Mutator'],['One.A,Two.B'])
+                        self.assertEqual(query['peerhost'],['127.0.0.1'])
+                        self.assertEqual(query['peerport'],[str(server.server_port)])
+                        self.assertEqual(query['stun'],['stun:127.0.0.1:9'])
+                        self.assertEqual(query['turnurl'],[''])
                         self.assertEqual(res.status, 206)
                         self.assertEqual(res.read(), data[7:11])
                         self.assertEqual(res.headers['Content-Range'],f'bytes 7-10/{len(data)}')
@@ -59,8 +68,14 @@ class CollectionServingTests(unittest.TestCase):
                         self.assertEqual(res.headers['Cross-Origin-Embedder-Policy'], 'require-corp')
                         self.assertEqual(res.headers['Cross-Origin-Resource-Policy'], 'same-origin')
                         self.assertIn("connect-src 'self'", res.headers['Content-Security-Policy'])
-                    with urlopen(Request(base,method='HEAD'),timeout=4) as res:
+                    with urlopen(Request(canonical,method='HEAD'),timeout=4) as res:
                         self.assertEqual(res.read(),b'')
+                        self.assertEqual(res.geturl(),canonical)
+                    with self.assertRaises(HTTPError) as injected:
+                        urlopen(Request(base,headers={'Host':'injected.invalid'}),timeout=4)
+                    self.assertEqual(injected.exception.code,403)
+                    self.assertIsNone(injected.exception.headers.get('Location'))
+                    injected.exception.close()
                     with self.assertRaises(HTTPError) as missing:
                         urlopen(base+'missing.js',timeout=4)
                     self.assertEqual(missing.exception.code,503)

@@ -5,6 +5,7 @@ import io
 import json
 from pathlib import Path
 import struct
+import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -13,6 +14,23 @@ spec=importlib.util.spec_from_file_location('mirror',Path(__file__).with_name('m
 mirror=importlib.util.module_from_spec(spec);spec.loader.exec_module(mirror)
 
 class ResumeTests(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('zstd'),'zstd verifies the fixture')
+    def test_legacy_guid_table_can_cross_a_stream_chunk(self):
+        raw=bytearray(1024*1024+16);offset=1024*1024-8
+        struct.pack_into('<I',raw,0,0x9E2A83C1);struct.pack_into('<H',raw,4,65)
+        struct.pack_into('<II',raw,36,1,offset)
+        struct.pack_into('<4I',raw,offset,0xAABBCCDD,0x10203040,0x50607080,0x99887766)
+        packed=mirror.subprocess.run(['zstd','-q','-c'],input=raw,capture_output=True,check=True).stdout
+        class Response(io.BytesIO):
+            status=200;url=mirror.BASE+'old.uax.zst'
+            headers={'Content-Length':str(len(packed))}
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);fetcher=mirror.Fetcher(root)
+            with patch.object(fetcher,'request',return_value=Response(packed)):
+                self.assertTrue(fetcher.fetch('old.uax.zst',{'size':len(packed),'rawSize':len(raw),'guid':'AABBCCDD102030405060708099887766'}))
+            receipt=json.loads(fetcher.receipt('old.uax.zst').read_text())
+            self.assertEqual(receipt['rawSha256'],hashlib.sha256(raw).hexdigest())
+
     def test_legacy_and_modern_package_guid_locations(self):
         header=bytearray(80);struct.pack_into('<H',header,4,65);struct.pack_into('<II',header,36,2,44)
         self.assertEqual(mirror.package_guid_offset(header,80),60)

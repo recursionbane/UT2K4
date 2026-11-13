@@ -3,7 +3,7 @@ import hashlib
 import json
 from pathlib import Path, PurePosixPath
 from threading import RLock
-from urllib.parse import unquote, urlsplit
+from urllib.parse import unquote, urlsplit, parse_qsl, urlencode
 
 TYPES = {'.html':'text/html; charset=utf-8','.js':'text/javascript',
          '.css':'text/css','.json':'application/json','.webmanifest':'application/manifest+json',
@@ -28,14 +28,28 @@ class CollectionMirror:
             return False
         # Requesting a local copy from an unrelated website must not turn this
         # private loopback route into a CORS asset host.
+        hosts={f'127.0.0.1:{handler.server.server_port}',f'localhost:{handler.server.server_port}',f'[::1]:{handler.server.server_port}'}
         origin=handler.headers.get('Origin')
-        if origin and origin != 'http://' + handler.headers.get('Host', ''):
+        if handler.headers.get('Host') not in hosts or (origin and origin not in {'http://'+host for host in hosts}):
             handler.send_error(403);return True
-        if path=='/ut2004':
-            handler.send_response(302);handler.send_header('Location','/ut2004/'+('?' + url.query if url.query else ''))
-            handler.send_header('Content-Length','0');handler.end_headers();return True
+        slash_redirect=path=='/ut2004'
+        if slash_redirect:path='/ut2004/'
         if not path.startswith('/ut2004/'): return False
         relative=path[len('/ut2004/'):] or 'index.html'
+        if relative=='index.html':
+            # Supported upstream query keys keep the exact asset bytes intact.
+            network={'peerhost':'127.0.0.1','peerport':str(handler.server.server_port),
+                     'peersecure':'false','stun':'stun:127.0.0.1:9',
+                     'turnurl':'','turnuser':'','turncred':''}
+            pairs=parse_qsl(url.query,keep_blank_values=True)
+            existing=[(k,v) for k,v in pairs if k.lower() in network]
+            canonical=len(existing)==len(network) and all(existing.count((k,v))==1 for k,v in network.items())
+            if slash_redirect or not canonical:
+                query=[(k,v) for k,v in pairs if k.lower() not in network]+list(network.items())
+                handler.send_response(302)
+                handler.send_header('Location',path+'?'+urlencode(query))
+                handler.send_header('Cache-Control','no-store')
+                handler.send_header('Content-Length','0');handler.end_headers();return True
         if relative.startswith('/') or '..' in PurePosixPath(relative).parts:
             handler.send_error(404);return True
         try: item=self.catalog().get(relative)
@@ -48,6 +62,9 @@ class CollectionMirror:
             if target.is_symlink() or not target.is_file(): raise FileNotFoundError()
             target.resolve().relative_to((self.root/'files').resolve())
             evidence=json.loads(receipt.read_text())
+            expected_identity=hashlib.sha256(json.dumps(item,sort_keys=True).encode()).hexdigest()
+            if evidence.get('identity') and evidence['identity']!=expected_identity:
+                raise ValueError('catalog identity mismatch')
             stat=target.stat();key=(stat.st_mtime_ns,stat.st_size,evidence['sha256'])
             if stat.st_size!=item['size']: raise ValueError('size mismatch')
             if item.get('sha256') and item['sha256']!=evidence['sha256']: raise ValueError('identity mismatch')
