@@ -16,10 +16,12 @@ The normal preset is:
 LocalAim.MutLocalAim,LocalRecovery.MutLocalRecovery,Matrix2004_v130.MutMonkeyMatrixMoves,MatrixModern.MutMatrixModern
 ```
 
+The [menu-only bootstrap](../../mutators/menu-profile/README.md) makes Deathmatch the initial Instant Action choice and pairs it with the saved stock `DM-Rankin` map. Pass `{bootstrapMutator: 'MenuProfile.MenuProfileBootstrap'}` to `menuLaunch()` after including its small authored package. It is used only by the NoIntro cinematic world and is not part of the four-addon gameplay preset.
+
 Apply the pure transformations to copies of the runtime files:
 
 1. `startup-data.mjs`: call `applyEmbeddedMenuDefaults({loader, data, mutators, lowMemory: true})`. Save both returned loader and data together. The helper safely parses embedded metadata, preserves unrelated files, merges menu presets and GoreLevel=0, and rebuilds every offset and total size.
-2. `startup-policy.mjs`: inject `startupClient({lowMemory: true, mutators})` and use `menuLaunch()` for the native-menu route. Startup goes through the existing Start control; its wrapper preserves the normal launch arguments and appends the validated settings.
+2. `startup-policy.mjs`: inject `startupClient({lowMemory: true, mutators})` and use `menuLaunch(prior, {bootstrapMutator: 'MenuProfile.MenuProfileBootstrap'})` for the native-menu route. Startup goes through the existing Start control; its wrapper preserves the normal launch arguments and appends the validated settings.
 3. `menu-touch.mjs`: apply **both** `patchMenuTouch(loader)` and `patchMenuTouchFrontend(appBundle)`. The latter lets menu touches bypass the upstream virtual-gamepad capture router. The loader hides the pad while native menus own input, primes the native cursor, and forwards the original touch after a frame delay. Gameplay retains the original pad path.
 4. `jit-patches.mjs`: apply the glue and cache-worker patches to an unpatched compatible source. Add `jit: {format: "zstd-pages-v1", blockSize: 262144}` only for manifest entries whose verified container and descriptor are actually present. Unmarked entries retain ordinary whole-file loading.
 5. `tiny-bundle.mjs`: rebuild the tiny-file bundle and its worker patch after changing INI, INT, UCL or localization bytes. A previously built bundle must not replace newer same-size configurations.

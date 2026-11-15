@@ -13,3 +13,7 @@ console.log('menu launch, safe preset args, quality config and normal single-cli
 const {menuUserIni}=await import('./startup-policy.mjs');
 const ini=menuUserIni('[Other]\nA=1\n[GUI2K4.UT2K4Tab_MutatorSP]\nLastActiveMutators=Old.Mod\nKeep=3\n',['LocalAim.MutLocalAim']);
 assert(ini.includes('A=1'));assert(ini.includes('Keep=3'));assert(!ini.includes('Old.Mod'));assert.equal(menuUserIni(ini,['LocalAim.MutLocalAim']),ini);assert.equal((ini.match(/LastActiveMutators=LocalAim.MutLocalAim/g)||[]).length,2);
+
+assert(ini.includes('[GUI2K4.UT2K4Tab_MainSP]\nLastSelectedMap=DM-Rankin'));assert(!ini.includes('LastGameType='));assert.throws(()=>menuUserIni('', ['LocalAim.MutLocalAim'],{map:'AS-Unsafe'}));const oldMap=menuUserIni('[GUI2K4.UT2K4Tab_MainSP]\nLastSelectedMap=AS-Aarjskaw\nKeep=2\n',['LocalAim.MutLocalAim']);assert(oldMap.includes('Keep=2'));assert(!oldMap.includes('AS-Aarjskaw'));assert.equal(menuUserIni(oldMap,['LocalAim.MutLocalAim']),oldMap);
+
+const boot=new URL(menuLaunch('/v/ut2004/?map=DM-Rankin&Mutator=LocalAim.MutLocalAim&mutator=Other.Mod',{bootstrapMutator:'MenuProfile.MenuProfileBootstrap'}),'https://unit.invalid');assert.equal(boot.searchParams.get('map'),'NoIntro');assert.equal(boot.searchParams.getAll('Mutator').length,1);assert.equal(boot.searchParams.get('Mutator'),'MenuProfile.MenuProfileBootstrap');assert(!boot.search.includes('LocalAim'));assert.throws(()=>menuLaunch('/v/ut2004/',{bootstrapMutator:'Other.Anything'}));
