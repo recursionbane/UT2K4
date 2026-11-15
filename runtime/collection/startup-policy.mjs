@@ -13,10 +13,11 @@ export function menuMutatorArgs(mutators){
  const value=[...new Set(mutators)].join(',');
  return ['UT2K4Tab_MutatorSP','UT2K4Tab_MutatorBase'].map(name=>'-ini:User:[GUI2K4.'+name+']:LastActiveMutators='+value);
 }
-export function menuLaunch(prior='/v/ut2004/'){
+export function menuLaunch(prior='/v/ut2004/',{bootstrapMutator}={}){
  const u=new URL(prior,'https://placeholder.invalid');
  if(u.origin!=='https://placeholder.invalid'||!u.pathname.startsWith('/v/ut2004/'))throw Error('Invalid menu route');
  u.searchParams.set('map','NoIntro');u.searchParams.delete('Game');u.searchParams.delete('game');u.searchParams.delete('NumBots');for(const name of [...u.searchParams.keys()])if(name.toLowerCase()==='mutator')u.searchParams.delete(name);
+ if(bootstrapMutator!==undefined){if(bootstrapMutator!=='MenuProfile.MenuProfileBootstrap')throw Error('Invalid menu bootstrap mutator');u.searchParams.set('Mutator',bootstrapMutator);}
  return u.pathname+u.search;
 }
 export function installMenuStartup(scope,args){
@@ -36,17 +37,18 @@ export function installMenuStartup(scope,args){
 }
 export function startupClient({lowMemory=true,mutators=[]}={}){const args=[...(lowMemory?LOW_MEMORY_ARGS:[]),...(mutators.length?menuMutatorArgs(mutators):[])];return '('+installMenuStartup.toString()+')(globalThis,'+JSON.stringify(args)+');';}
 // Packaging-time alternative when the engine's CLI INI override support is unknown.
-// Preserve other keys/comments; replace this key only in the two native GUI sections.
-export function menuUserIni(source,mutators){
+// Preserve other keys/comments; replace only the selected keys in the native GUI sections.
+export function menuUserIni(source,mutators,{map='DM-Rankin'}={}){
+ if(!/^DM-[A-Za-z0-9_-]+$/.test(map))throw Error('Invalid default deathmatch map');
  const value=menuMutatorArgs(mutators)[0].split(':LastActiveMutators=')[1];
- const names=['GUI2K4.UT2K4Tab_MutatorSP','GUI2K4.UT2K4Tab_MutatorBase'];
- const found=new Set();let active=false;const out=[];
+ const sections=[['GUI2K4.UT2K4Tab_MutatorSP','LastActiveMutators',value],['GUI2K4.UT2K4Tab_MutatorBase','LastActiveMutators',value],['GUI2K4.UT2K4Tab_MainSP','LastSelectedMap',map]];
+ const found=new Set();let active=null;const out=[];
  for(const line of String(source).replace(/\r\n/g,'\n').split('\n')){
   const header=line.match(/^\[([^\]]+)\]\s*$/);
-  if(header){active=names.some(n=>n.toLowerCase()===header[1].toLowerCase());out.push(line);if(active){found.add(header[1].toLowerCase());out.push('LastActiveMutators='+value);}continue;}
-  if(active&&/^LastActiveMutators\s*=/i.test(line))continue;
+  if(header){active=sections.find(n=>n[0].toLowerCase()===header[1].toLowerCase())||null;out.push(line);if(active){found.add(active[0].toLowerCase());out.push(active[1]+'='+active[2]);}continue;}
+  if(active&&line.split('=')[0].trim().toLowerCase()===active[1].toLowerCase())continue;
   out.push(line);
  }
- for(const name of names)if(!found.has(name.toLowerCase()))out.push('['+name+']','LastActiveMutators='+value);
+ for(const [name,key,val] of sections)if(!found.has(name.toLowerCase()))out.push('['+name+']',key+'='+val);
  return out.join('\n').replace(/\n*$/,'\n');
 }

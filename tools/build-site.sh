@@ -10,3 +10,4 @@ for asset in arena.js index.html movement.wasm; do cp "arena/$asset" "$site_dir/
 cp mutators/matrix-modern/System/MatrixModern.u mutators/matrix-modern/System/MatrixModern.ucl "$site_dir/compat/"
 cp mutators/local-assist/System/LocalAim.u mutators/local-assist/System/LocalAim.ucl "$site_dir/compat/"
 cp mutators/local-recovery/System/LocalRecovery.u mutators/local-recovery/System/LocalRecovery.ucl "$site_dir/compat/"
+cp mutators/menu-profile/System/MenuProfile.u "$site_dir/compat/"

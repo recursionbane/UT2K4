@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build authored LocalAim and LocalRecovery packages with a user-supplied UT2004 compiler."""
+"""Build authored assist, recovery and menu packages with a user-supplied UT2004 compiler."""
 import argparse
 import hashlib
 from pathlib import Path
@@ -24,11 +24,11 @@ def main():
     root = Path(__file__).resolve().parents[1]
     system = args.compiler_system.resolve()
     game = system.parent
-    for name in ('UCC.exe', 'Default.ini', 'Core.u', 'Engine.u', 'XGame.u', 'Matrix2004_v130.u'):
+    for name in ('UCC.exe', 'Default.ini', 'Core.u', 'Engine.u', 'XGame.u', 'XInterface.u', 'GUI2K4.u', 'Matrix2004_v130.u'):
         if not (system / name).is_file():
             parser.error('Missing compiler dependency: ' + name)
-    packages = [('LocalAim', 'local-assist'), ('LocalRecovery', 'local-recovery')]
-    for package, folder in packages:
+    packages = [('LocalAim', 'local-assist', ('u', 'ucl')), ('LocalRecovery', 'local-recovery', ('u', 'ucl')), ('MenuProfile', 'menu-profile', ('u',))]
+    for package, folder, _ in packages:
         destination = game / package / 'Classes'
         destination.mkdir(parents=True, exist_ok=True)
         sources = list((root / 'mutators' / folder / 'Classes').glob('*.uc'))
@@ -42,7 +42,7 @@ def main():
         parser.error('Default.ini has no Editor.EditorEngine section')
     # Preserve the compiler's stock package order; original Matrix is a dependency.
     addition = ''.join('EditPackages=' + package + '\n' for package in
-                       ('Matrix2004_v130', 'LocalAim', 'LocalRecovery')
+                       ('Matrix2004_v130', 'LocalAim', 'LocalRecovery', 'MenuProfile')
                        if not re.search(r'(?mi)^EditPackages=' + re.escape(package) + r'\s*$', section[0]))
     ini = ini[:section.end()] + addition + ini[section.end():]
     def compiler_path(path):
@@ -61,7 +61,7 @@ def main():
         paths += 'Paths=' + compiler_path(directory / '*.utx') + '\n'
     ini = ini.replace('[Core.System]', '[Core.System]\n' + paths)
     (system / 'LocalAssistBuild.ini').write_text(ini)
-    for package, _ in packages:
+    for package, _, _ in packages:
         (system / (package + '.u')).unlink(missing_ok=True)
     command = [str(system / 'UCC.exe'), 'make', '-ini=LocalAssistBuild.ini']
     if args.wine:
@@ -74,14 +74,14 @@ def main():
     (system / 'LocalAssistBuild.log').write_text(result.stdout + '\n' + result.stderr)
     if result.returncode or 'Success - 0 error(s)' not in result.stdout:
         raise SystemExit('Compile failed; inspect LocalAssistBuild.log in the compiler System directory')
-    for package, folder in packages:
+    for package, folder, extensions in packages:
         output = root / 'mutators' / folder / 'System'
         output.mkdir(parents=True, exist_ok=True)
-        for extension in ('u', 'ucl'):
+        for extension in extensions:
             target = output / (package + '.' + extension)
             shutil.copy2(system / target.name, target)
             print(hashlib.sha256(target.read_bytes()).hexdigest(), target.relative_to(root))
-    print('Compiled both authored packages with zero errors.')
+    print('Compiled all authored packages with zero errors.')
 
 
 if __name__ == '__main__':

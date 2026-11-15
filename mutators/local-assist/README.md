@@ -25,7 +25,7 @@ Aim/view overrides use cached camera scalars and collision traces. They never in
 
 ## Build
 
-Use a matching, user-supplied Windows UT2004 compiler installation with the original Matrix package and its assets already available. No compiler or game data is downloaded by the tool. The script builds both authored packages:
+Use a matching, user-supplied Windows UT2004 compiler installation with the original Matrix package and its assets already available. No compiler or game data is downloaded by the tool. The script builds the authored assist, recovery and menu-bootstrap packages:
 
 ```sh
 python3 tools/build-assist.py \
@@ -34,4 +34,4 @@ python3 tools/build-assist.py \
   --matrix-assets /path/to/original-matrix/Textures
 ```
 
-On a Wine host, add `--wine /path/to/wine`; for CrossOver, also pass `--wine-bottle your-bottle`. The script preserves stock compiler package order, writes temporary build configuration/logs into the supplied compiler directory, and replaces only the two authored packages' build outputs. It copies compiled `.u`/`.ucl` files here and into local-recovery, and prints their SHA-256 hashes. Run from the repository checkout; arguments are explicit and contain no machine-specific defaults.
+On a Wine host, add `--wine /path/to/wine`; for CrossOver, also pass `--wine-bottle your-bottle`. The script preserves stock compiler package order, writes temporary build configuration/logs into the supplied compiler directory, and replaces only the authored packages' build outputs. It copies compiled files into each mutator's System folder and prints their SHA-256 hashes. The menu bootstrap deliberately has no UCL gameplay registration. Run from the repository checkout; arguments are explicit and contain no machine-specific defaults.
