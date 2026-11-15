@@ -1,5 +1,5 @@
 const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict'),http=require('http');
-const {chromium}=require('/usr/local/lib/node_modules/playwright');
+const {chromium}=require('playwright');
 const source=fs.readFileSync(__dirname+'/assist-client.js','utf8');
 const context={module:{exports:{}}};vm.runInNewContext(source,context);const {viewportPoint,selectCommand,parseTelemetry,TapPair}=context.module.exports;
 const geometry={rect:{left:20,top:80,width:800,height:450},width:1600,height:900,offsetWidth:800,offsetHeight:450,style:{}};
@@ -20,7 +20,7 @@ taps=new TapPair();taps.down(1,point(),0);assert.equal(taps.up(1,point(),500,'to
 (async()=>{
  const html=`<!doctype html><body style="margin:0"><canvas id="canvas" width="1600" height="900" style="position:absolute;left:20px;top:80px;width:800px;height:450px"></canvas><div id="touch-gamepad-overlay"><div class="tp-zone tp-zone-move" data-zone="move" style="position:absolute;left:20px;top:80px;width:320px;height:450px"></div><div class="tp-zone tp-zone-look" data-zone="look" style="position:absolute;left:500px;top:80px;width:320px;height:450px"></div><button id="pad" data-control="fire" style="position:absolute;left:740px;top:440px;width:60px;height:60px">Fire</button><div data-stick="move" style="position:absolute;left:40px;top:400px;width:80px;height:80px"></div></div><script>window.commands=[];window.nativeSettings={auto:0,thirdperson:0,wallrun:0,timeToggle:0,timeActive:0,timeNative:1};window.Module={canvas:document.getElementById('canvas'),print:()=>{},playerState:{netMode:0}};window.ueExecResult=async function(cmd){commands.push(cmd);await new Promise(r=>setTimeout(r,20));if(cmd.startsWith('mutate mmAim auto '))nativeSettings.auto=cmd.endsWith('on')?1:0;if(cmd.startsWith('mutate mmMatrix camera '))nativeSettings.thirdperson=cmd.endsWith('on')?1:0;if(cmd.startsWith('mutate mmMatrix wallrun '))nativeSettings.wallrun=cmd.endsWith('on')?1:0;if(cmd.startsWith('mutate mmMatrix time mode '))nativeSettings.timeToggle=cmd.endsWith('toggle')?1:0;if(cmd==='mutate mmMatrix time toggle')nativeSettings.timeActive=1-nativeSettings.timeActive;const output='MMAIM_STATUS standalone=1 manual=0 target=None '+Object.entries(nativeSettings).map(([k,v])=>k+'='+v).join(' ');setTimeout(()=>Module.print(output),30);return {ok:true,output:''};}</script><script src="/aim.js"></script>`;
  const server=http.createServer((req,res)=>{res.setHeader('Content-Type',req.url==='/aim.js'?'text/javascript':'text/html');res.end(req.url==='/aim.js'?source:html)});await new Promise(r=>server.listen(0,'127.0.0.1',r));
- const browser=await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+ const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH}:{})});
  try{
  const page=await browser.newPage({viewport:{width:1000,height:700}});await page.goto('http://127.0.0.1:'+server.address().port+'/v/ut2004/');
  await page.waitForFunction(()=>!!window.__privateAimBridge);

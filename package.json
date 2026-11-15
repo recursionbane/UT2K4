@@ -1,0 +1,10 @@
+{
+  "name": "ut2k4-runtime-tools",
+  "private": true,
+  "scripts": {
+    "test:runtime": "node --test runtime/collection/test.mjs && node runtime/collection/startup-policy.test.mjs && node runtime/collection/menu-touch.test.mjs && node runtime/collection/pointer-capture.test.mjs && node runtime/collection/assist-client.test.cjs && node runtime/collection/pad-native-routing.test.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.65.1"
+  }
+}

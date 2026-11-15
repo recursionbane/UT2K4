@@ -13,12 +13,14 @@ concurrency:
   cancel-in-progress: false
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
       - run: |
           python3 -m unittest discover -s tests -p 'test_*.py'
           python3 tools/mirror-collection-resume-test.py
@@ -45,7 +47,7 @@ jobs:
   publish:
     if: github.event_name != 'pull_request'
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

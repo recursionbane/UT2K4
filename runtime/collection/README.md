@@ -40,6 +40,8 @@ Do not assume splitting every package saves bandwidth. Independently compressed 
 ## Validation
 
 ```sh
+npm ci
+npx playwright install chromium
 node --test runtime/collection/test.mjs
 node runtime/collection/startup-policy.test.mjs
 node runtime/collection/menu-touch.test.mjs

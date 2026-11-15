@@ -7,3 +7,4 @@ mutators/*/local/
 /local/
 /private-deploy/
 /.wrangler/
+/node_modules/
