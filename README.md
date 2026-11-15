@@ -20,6 +20,16 @@ The upstream collection’s [third-party notices](https://unrealcollection.games
 
 ## Stream and autostart
 
+### Collection runtime profile
+
+The authored [Collection runtime modules](runtime/collection/README.md) provide automatic native-main-menu startup, lower-resolution texture streaming, native-menu touch routing, and bounded asset caches for the 3369 runtime. The public Pages site provides the data-source launcher; operators supply their own game files and hosting configuration.
+
+[Local Matrix Assist](mutators/local-assist/README.md) adds first-person aiming with a red target ring, directional damage indicators, unlimited Matrix adrenaline, and temporary third person during wallruns and rolls. It removes the recursive native camera calls from aim callbacks. [Local Health Recovery](mutators/local-recovery/README.md) is a separate default profile mutator, with a five-second damage-free delay and 20 HP per gameplay second. Both authored packages and sources are included, with a [portable compiler helper](tools/build-assist.py). The profile preserves global blood/gore-off defaults.
+
+The default menu preset contains LocalAim, LocalRecovery, the original Matrix mod, and MatrixModern. The original Matrix package remains an external dependency. These additions have native 3369 test coverage; the existing 3374 launcher is a separate integration target.
+
+### Full-installation stream helper
+
 Run the supplied read-only helper on the computer holding the game. It serves the player’s own packages without copying the game into the browser or uploading them to Pages.
 
 ```sh
