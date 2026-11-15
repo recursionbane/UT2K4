@@ -2,6 +2,18 @@
 // The original mutator must also be enabled. No original source is included.
 class MutMatrixModern extends Mutator;
 
+// Respect the base game's presentation choice independently of LocalAim.
+// Matrix's custom projectile flesh puff otherwise bypasses its NoBlood flag.
+function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+    if(class'GameInfo'.static.NoBlood())
+    {
+        class'Matrix2004_v130.HitEffect_Matrix'.default.HitEffectFlesh=class'XEffects.pclImpactSmoke';
+        Log("MATRIX_COMPAT_PRESENTATION noBlood=1 fleshImpact=neutral");
+    }
+}
+
 function ModifyLogin(out string Portal, out string Options)
 {
     local class<PlayerController> MatrixController;
