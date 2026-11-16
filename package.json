@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "test:runtime": "node --test runtime/collection/test.mjs runtime/collection/*.test.mjs runtime/collection/*.test.cjs",
-    "test:tools": "node --test tools/*.test.mjs"
+    "test:tools": "node --test tools/*.test.mjs tools/audio/*.test.mjs"
   },
   "devDependencies": {
     "playwright": "1.65.1"

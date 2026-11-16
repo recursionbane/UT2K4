@@ -6,7 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import {applyEmbeddedMenuDefaults, embeddedIndex} from './startup-data.mjs';
-import {buildPackage, DEFAULT_POLICY} from './jit-packages.mjs';
+import {buildPackage, buildRawPackage, DEFAULT_POLICY} from './jit-packages.mjs';
 import {createJitCache} from './jit-cache.mjs';
 import {installMenuStartup, menuMutatorArgs, LOW_MEMORY_ARGS} from './startup-policy.mjs';
 
@@ -77,6 +77,23 @@ test('synthetic Zstd packaging round-trips independent frames and resumes verifi
  for(const b of small.index.blocks)assert.deepEqual(zlib.zstdDecompressSync(small.packed.subarray(b.offset,b.offset+b.length)),small.raw.subarray(small.index.blocks.indexOf(b)*small.index.blockSize,small.index.blocks.indexOf(b)*small.index.blockSize+b.rawLength));
  const again=await buildPackage({logical:'synthetic.utx',entry:small.entry,transport:small.transport,output:small.dir,policy:{...DEFAULT_POLICY,blockSize:65536,level:1}});assert.equal(again.resumed,true);
  await assert.rejects(()=>buildPackage({logical:'synthetic.utx',entry:{...small.entry,path:'../escape'},transport:small.transport,output:small.dir}),/Unsafe/);
+});
+test('raw skeleton builds resume and reuse unchanged frames with exact target verification',async()=>{
+ const output=fs.mkdtempSync(path.join(os.tmpdir(),'raw-skeleton-'));
+ try{
+  const raw=Buffer.from(small.raw);raw[65540]^=255;
+  const args={logical:'synthetic.utx',entry:small.entry,raw,output,policy:{...DEFAULT_POLICY,blockSize:65536,level:1},base:{index:small.index,container:small.packed}};
+  const first=await buildRawPackage(args);assert.equal(first.reusedFrames,small.index.blocks.length-1);
+  const packed=fs.readFileSync(path.join(output,first.container));
+  assert.deepEqual(zlib.zstdDecompressSync(packed),raw);
+  assert.equal((await buildRawPackage(args)).resumed,true);
+  const descriptor=JSON.parse(fs.readFileSync(path.join(output,first.index)));descriptor.blocks[0].sha256='f'.repeat(64);fs.writeFileSync(path.join(output,first.index),JSON.stringify(descriptor));
+  assert.equal((await buildRawPackage(args)).resumed,false);
+  for(const [field,value]of [['format','wrong-format'],['size',raw.length+1]]){
+   const changed=JSON.parse(fs.readFileSync(path.join(output,first.index)));changed[field]=value;fs.writeFileSync(path.join(output,first.index),JSON.stringify(changed));
+   assert.equal((await buildRawPackage(args)).resumed,false);
+  }
+ }finally{fs.rmSync(output,{recursive:true,force:true});}
 });
 test('JIT exact first, cross-page and EOF reads; overlapping requests deduplicate',async()=>{
  const h=cache(small);assert.equal(await read(h,small,0,37),37);assert.equal(await read(h,small,65530,35),35);

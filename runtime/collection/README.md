@@ -39,6 +39,8 @@ Refresh shell integrity hashes and any transport encodings after changing bytes.
 
 `jit-packages.mjs` creates independently compressed Zstd frames and adjacent `.jit.json` descriptors. It verifies every decoded frame and records raw/container hashes. The browser requests only the needed ranges, validates HTTP206 identity and decoded hashes, and keeps bounded memory caches. Optional read-ahead fetches at most four pages after sequential demand; random reads stay at one page.
 
+Offline assemblers can use `buildRawPackage` for an already merged skeleton. It avoids compressing and immediately decompressing the whole package, resumes outputs by their raw hash, and can reuse unchanged verified frames from a compatible base. The resulting runtime format and compression level remain the same.
+
 Supply a decoded length when using the older bundled WASM Zstd decoder with new frames. Its legacy callback also receives a codec object as the second argument, so the wrapper forwards only positive integer length hints. This is covered by the private native integration tests and the published callback implementation.
 
 Do not assume splitting every package saves bandwidth. Independently compressed frames can be larger if fully consumed. Keep frequently read small/code packages whole when measured results support that decision, and measure the actual menu/match working set.
