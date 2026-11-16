@@ -1,5 +1,6 @@
 // Pinned-source patch generators. They do not read secrets or edit a deployment.
 import {createJitCache}from'./jit-cache.mjs';
+const jitIndexFetchSource="    const jitIndexFetch=async(input,init={})=>{const url=new URL(input,self.location.href),base=new URL(pageBase||self.location.href,self.location.href);if((init.method||'GET').toUpperCase()==='GET'&&!new Headers(init.headers).has('Range')&&url.origin===base.origin&&url.pathname.endsWith('.jit.json')&&typeof globalThis.__collectionTinyBody==='function'){try{const cached=await globalThis.__collectionTinyBody(url.href);if(cached?.ok&&cached.status===200&&cached.bytes)return new Response(cached.bytes,{status:200,headers:{'Content-Type':'application/json','Content-Length':String(cached.bytes.length)}});}catch{}}return fetch(input,init);};";
 function once(source,needle,replacement,label){const n=source.split(needle).length-1;if(n!==1)throw Error(label+' seam changed ('+n+')');return source.replace(needle,replacement);}
 export function patchJitGlue(source,{engineCacheBytes=32*1024*1024}={}){
  if(source.includes('/* private-jit-range-v1 */'))return source;
@@ -23,7 +24,7 @@ export function patchJitGlue(source,{engineCacheBytes=32*1024*1024}={}){
 }
 export function patchJitCacheWorker(source,{readAheadPages=1}={}){
  if(!Number.isSafeInteger(readAheadPages)||readAheadPages<1||readAheadPages>4)throw Error('Invalid JIT read-ahead policy');
- if(source.includes('/* private-jit-cache-v1 */'))return source;
+ if(source.includes('/* private-jit-cache-v1 */')){if(source.includes('const jitIndexFetch='))return source;return once(source,'    const jit = __createPrivateJitCache({baseURL:',jitIndexFetchSource+'\n    const jit = __createPrivateJitCache({fetcher:jitIndexFetch,baseURL:','JIT bundled-index upgrade');}
  const helper='/* private-jit-cache-v1 */\n  const __createPrivateJitCache = '+createJitCache.toString()+';\n';
  source=helper+source;
  source=once(source,'return (bytes) => decoder.decode(bytes);','return (bytes, expectedSize) => decoder.decode(bytes, Number.isSafeInteger(expectedSize) && expectedSize > 0 ? expectedSize : undefined);','bounded page decoder');
@@ -31,7 +32,8 @@ export function patchJitCacheWorker(source,{readAheadPages=1}={}){
     const modernEvents=e=>{try{globalThis.__collectionTransferTelemetry?.emit(e);}catch{}};
     const decodeZstd=async(bytes,expectedSize)=>{const decoder=await getDecoder({name:'zstd',ext:'.zst'});if(!decoder)throw Error('JIT decoder unavailable');return decoder(bytes,expectedSize);};
     const reconstruct=async request=>{codecRegions??=import(pageUrl('runtime/collection/codec-regions.mjs',pageBase)).then(m=>m.createCodecReconstructor({baseURL:pageBase||self.location.href,onEvent:modernEvents,decodeZstd}));return (await codecRegions)(request);};
-    const jit = __createPrivateJitCache({baseURL:pageBase||self.location.href,readAheadPages:${readAheadPages},reconstruct,onEvent:modernEvents,decode:decodeZstd,onProgress:stats=>{try{postMessage({ufrontJitProgress:stats});}catch{}}});\n    const readHold = createReadHold();`,'cache reader init');
+${jitIndexFetchSource}
+    const jit = __createPrivateJitCache({fetcher:jitIndexFetch,baseURL:pageBase||self.location.href,readAheadPages:${readAheadPages},reconstruct,onEvent:modernEvents,decode:decodeZstd,onProgress:stats=>{try{postMessage({ufrontJitProgress:stats});}catch{}}});\n    const readHold = createReadHold();`,'cache reader init');
  source=once(source,'      const off = req.off | 0;','      const off = req.off | 0;\n      if(req.jit&&req.jit.format===\'zstd-pages-v1\'&&!unsupportedRegionPackages.has(req.path)){if(!req.url)return {needUrl:true};try{return await jit.read(req,window);}catch(error){if(error&&error.code===\'UNSUPPORTED_REGION_CODEC\'){unsupportedRegionPackages.add(req.path);console.warn(\'[PackageCache] codec unavailable, using original package: \'+req.path);}else return {error:\'JIT read failed: \'+String(error&&error.message||error)};}}','cache range read');
  return source;
 }
