@@ -17,7 +17,7 @@ Controls through the normal Unreal console:
 - `mutate mmMatrix wallrun on|off`.
 - `mutate mmMatrix time toggle`, or `mutate mmMatrix time mode toggle|hold`.
 
-These commands and features apply only to local standalone play. Native `MMAIM_READY`/`MMAIM_STATUS` telemetry distinguishes the preferred camera (`preferredThird`) from effective and temporary third person (`thirdperson`, `temporaryThird`). `guiActive` identifies native menus/chat so input bridges can preserve their controls.
+These commands and features apply only to local standalone play. Native `MMAIM_READY`/`MMAIM_STATUS` telemetry distinguishes the preferred camera (`preferredThird`) from effective and temporary third person (`thirdperson`, `temporaryThird`). `guiActive` identifies native menus/chat so input bridges can preserve their controls. A one-time `COLLECTION_STAGE_RENDERED map=<name>` marker reports a valid world PostRender even before Fire to join; Entry is excluded. Loading UI should combine that evidence with drained transfer/decode queues.
 
 ## Native callback safety
 

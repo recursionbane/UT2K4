@@ -27,7 +27,7 @@ def main():
     for name in ('UCC.exe', 'Default.ini', 'Core.u', 'Engine.u', 'XGame.u', 'XInterface.u', 'GUI2K4.u', 'Matrix2004_v130.u'):
         if not (system / name).is_file():
             parser.error('Missing compiler dependency: ' + name)
-    packages = [('LocalAim', 'local-assist', ('u', 'ucl')), ('LocalRecovery', 'local-recovery', ('u', 'ucl')), ('MenuProfile', 'menu-profile', ('u',))]
+    packages = [('LocalAim', 'local-assist', ('u', 'ucl')), ('LocalRecovery', 'local-recovery', ('u', 'ucl')), ('MenuProfile', 'menu-profile', ('u',)), ('DeferredMenu', 'deferred-menu', ('u',))]
     for package, folder, _ in packages:
         destination = game / package / 'Classes'
         destination.mkdir(parents=True, exist_ok=True)
@@ -42,7 +42,7 @@ def main():
         parser.error('Default.ini has no Editor.EditorEngine section')
     # Preserve the compiler's stock package order; original Matrix is a dependency.
     addition = ''.join('EditPackages=' + package + '\n' for package in
-                       ('Matrix2004_v130', 'LocalAim', 'LocalRecovery', 'MenuProfile')
+                       ('Matrix2004_v130', 'LocalAim', 'LocalRecovery', 'MenuProfile', 'DeferredMenu')
                        if not re.search(r'(?mi)^EditPackages=' + re.escape(package) + r'\s*$', section[0]))
     ini = ini[:section.end()] + addition + ini[section.end():]
     def compiler_path(path):

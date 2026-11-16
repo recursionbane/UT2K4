@@ -11,8 +11,9 @@ import {createJitCache} from './jit-cache.mjs';
 import {installMenuStartup, menuMutatorArgs, LOW_MEMORY_ARGS} from './startup-policy.mjs';
 
 const preset=['Fixture.First','Fixture.Second'];
-function archive() {
+function archive(controller) {
  const parts=[Buffer.from([0,255,3,4]),Buffer.from('[Other]\nKeep=abc\n[GUI2K4.UT2K4Tab_MutatorSP]\nLastActiveMutators=Old.Entry\n'),Buffer.from('[URL]\nLocalMap=Old.ut2\n[SDL2Drv.SDL2Client]\nTextureDetailWorld=High\nKeep=7\n[Engine.GameInfo]\nGoreLevel=2\nGoreLevel=1\n'),Buffer.from([10,0,128,255,12])];
+ if(controller)parts[2]=Buffer.concat([parts[2],Buffer.from('[Engine.Engine]\nGUIController='+controller+'\n')]);
  const names=['Build.ini','DefUser.ini','Default.ini','Packages.md5'];let offset=0;
  const files=parts.map((p,i)=>{const f={filename:'/System/'+names[i],start:offset,end:offset+p.length};offset=f.end;return f;});
  return {parts,data:Buffer.concat(parts),loader:'/* before */loadPackage('+JSON.stringify({files,remote_package_size:offset})+');/* after */'};
@@ -30,6 +31,17 @@ test('embedded archive repacks offsets while preserving unrelated binary bytes a
  assert.equal((parts[1].toString().match(/LastActiveMutators=Fixture.First,Fixture.Second/g)||[]).length,2);
  const twice=applyEmbeddedMenuDefaults({...result,mutators:preset,userIni:result.userIni});assert.deepEqual(twice.data,result.data);assert.equal(twice.loader,result.loader);assert.equal(twice.userIni,result.userIni);
  const normal=applyEmbeddedMenuDefaults({...original,mutators:preset,lowMemory:false});assert.match(normal.data.toString(),/TextureDetailWorld=High/);
+});
+test('menu warmup deferral replaces only the stock GUI controller',()=>{
+ const guiController='DeferredMenu.DeferredPlayerRecordsController';
+ for(const controller of ['GUI2K4.UT2K4GUIController',guiController]){
+  const result=applyEmbeddedMenuDefaults({...archive(controller),mutators:preset,guiController});
+  assert.match(result.data.toString(),/GUIController=DeferredMenu\.DeferredPlayerRecordsController/);
+ }
+ const custom=applyEmbeddedMenuDefaults({...archive('Conversion.CustomGUI'),mutators:preset,guiController});
+ assert.match(custom.data.toString(),/GUIController=Conversion\.CustomGUI/);
+ assert(!custom.data.toString().includes('GUIController='+guiController));
+ assert.throws(()=>applyEmbeddedMenuDefaults({...archive(),mutators:preset,guiController:'Unknown.Controller'}),/Unsupported/);
 });
 test('embedded archive rejects ambiguous, overlapping, truncated and unexpected layouts',()=>{
  const a=archive();assert.throws(()=>embeddedIndex(a.loader+a.loader),/Multiple/);
@@ -83,6 +95,26 @@ test('long Retry-After and invalid range identities fail promptly',async()=>{
 test('bounded LRU evicts least recently used pages and retains in-flight multi-page results',async()=>{
  const h=cache(small,{maxBytes:2*65536});await read(h,small,0,8);await read(h,small,65536,8);await read(h,small,0,8);await read(h,small,2*65536,8);assert.equal(h.c.residentBytes,2*65536);await read(h,small,65536,8);assert.equal(ranges(h).length,4);assert(h.c.residentBytes<=2*65536);
  const tiny=cache(small,{maxBytes:65536});await read(tiny,small,65530,2*65536+50);assert(tiny.c.residentBytes<=65536);assert.equal(ranges(tiny).length,1);
+});
+test('package index metadata has a separate LRU budget across maps',async()=>{
+ const n=Buffer.byteLength(JSON.stringify(small.index)),h=cache(small,{maxIndexBytes:n*2});
+ const other=name=>({...small,entry:{...small.entry,path:'assets/'+name+'.zst'}});
+ const a=other('a'),b=other('b'),c=other('c');
+ await read(h,a,0,4);await read(h,b,0,4);await read(h,a,0,4);await read(h,c,0,4);
+ assert.equal(h.c.indexResidentBytes,n*2);assert.equal(h.c.stats.indexEvictions,1);
+ const before=h.c.stats.indexRequests;await read(h,a,0,4);assert.equal(h.c.stats.indexRequests,before);
+ await read(h,b,0,4);assert.equal(h.c.stats.indexRequests,before+1);assert(h.c.indexResidentBytes<=n*2);
+});
+test('native read deadlines return before late codec work and never overwrite a reused destination',async()=>{
+ let release,started,finished,aborted=false;
+ const begun=new Promise(r=>started=r),done=new Promise(r=>finished=r),gate=new Promise(r=>release=r);
+ const f={...small,index:{...small.index,regions:[{fixture:true}]}};
+ const h=cache(f,{readBudgetMs:50,reconstruct:async({view,signal})=>{started();await gate;aborted=signal.aborted;view.fill(0);finished();}});
+ const view=new Uint8Array(12).fill(77);
+ const reading=h.c.read({url:f.entry.path,size:f.raw.length,off:0,max:12,jit:{format:'zstd-pages-v1',blockSize:f.index.blockSize,regions:true}},view);
+ const rejected=assert.rejects(reading,/deadline/);await begun;await rejected;
+ assert(view.every(n=>n===77));view.fill(99);release();await done;await Promise.resolve();
+ assert(aborted);assert(view.every(n=>n===99));assert.equal(h.c.stats.readCalls,0);
 });
 test('adaptive read-ahead starts only after sequential demand, stays at 1MiB and serves prefetched pages',async()=>{
  const h=cache(large,{readAheadPages:4,maxBytes:8*large.index.blockSize}),bs=large.index.blockSize;

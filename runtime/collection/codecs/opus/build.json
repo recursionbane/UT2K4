@@ -1,0 +1,23 @@
+{
+  "codec": "Opus reference decoder",
+  "version": "1.6.1",
+  "source": "https://downloads.xiph.org/releases/opus/opus-1.6.1.tar.gz",
+  "sourceSha256": "6ffcb593207be92584df15b32466ed64bbec99109f007c82205f0194572411a1",
+  "wasmSha256": "06593beb69e2f3de8d02d9bead0a727f347f0977af446ff35d0918629d988ddd",
+  "wasmBytes": 114107,
+  "memoryBytes": 2097152,
+  "memoryGrowth": false,
+  "stackBytes": 262144,
+  "compiler": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.8-git",
+  "sourcePrefixMap": "<source>=opus",
+  "simd": false,
+  "neuralEnhancements": false,
+  "standaloneReactor": true,
+  "initialization": "_initialize once before decoder creation",
+  "imports": [
+    "wasi_snapshot_preview1.fd_close",
+    "wasi_snapshot_preview1.fd_seek",
+    "wasi_snapshot_preview1.fd_write"
+  ],
+  "license": "BSD-style; see LICENSE"
+}

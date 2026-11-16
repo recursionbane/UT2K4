@@ -4,7 +4,7 @@ These authored modules adapt the pinned UT2004 3369 Collection browser runtime. 
 
 The profile starts the normal engine launcher automatically, skips the cinematic with `NoIntro`, and reaches the native main menu. It acknowledges only unavailable IndexedDB and synchronous OPFS storage capabilities, which have a memory fallback; unsupported rendering and threading features still remain visible. Instant Action receives its four default mutators through real `DefUser.ini` configuration, so matches started with the normal GUI retain them.
 
-Native texture detail is **Low** for world, terrain, player/weapon skins, render maps and lightmaps; interface textures remain Normal. This selects lower-resolution mip levels through the engine while sparse package reads avoid unnecessary bulk data. Package bytes remain intact, and the user can change graphics settings in the game. Original viewport defaults are retained for correct responsive input/rendering.
+Native texture detail is **Low** for world, terrain, player/weapon skins, render maps and lightmaps; interface textures remain Normal. This selects lower-resolution mip levels through the engine while sparse package reads avoid unnecessary bulk data. The basic range transport preserves package bytes. The optional [compact asset profile](asset-profile.md) changes eligible texture, audio, and float payloads while preserving their native layout. Its texture-resolution caps still apply when in-game detail settings are raised.
 
 ## Integration
 
@@ -28,6 +28,10 @@ Apply the pure transformations to copies of the runtime files:
 6. Include `assist-client.js` and `pad-native-routing.js` in the page, and apply `input-patches.mjs`'s `patchPadOwnership(loader)`. It installs each ownership guard once even when other input patches are already present. Keep game and interface control events separate.
 7. Optionally apply `runtime-diagnostics.mjs`. It records a bounded, origin-redacted WASM fault context and rethrows the original exception; it does not suppress traps or claim their cause.
 8. Apply `pointer-capture.mjs`'s `patchPointerCapture()` to the compatible virtual-gamepad library. It tolerates only inactive-pointer DOM exceptions, releases controls when menus hide the pad, and retains native pointer capture for real active contacts. The original library license header is preserved.
+9. For codec regions, include `codec-regions.mjs`, its imported modules, and the licensed Basis and Opus codec assets on the same origin. Add `regions: true` to the JIT manifest declaration only when the package descriptor contains validated regions and its encoded payload ranges exist. Use `tools/codec-package-merge.mjs` to combine disjoint sound, texture, and geometry changes from the same original source. One converter must not overwrite another converter's skeleton.
+10. Install `loadingProgressClient()` and `transferTelemetryClient()` in the page, and the telemetry client in the native loader and cache worker. The existing assist client's log observer forwards native phase changes. `LocalAim` emits a first-render marker for match readiness; integrations without that addon must provide an equivalent verified native signal. Phase forecasts are estimates, while transferred and decoded byte counts come from observed work.
+
+The optional [DeferredMenu controller](../../mutators/deferred-menu/README.md) avoids eager character-record warmup. Include its authored package and pass `guiController: 'DeferredMenu.DeferredPlayerRecordsController'` to `applyEmbeddedMenuDefaults`. The helper replaces only the stock controller and preserves custom mod controllers.
 
 Refresh shell integrity hashes and any transport encodings after changing bytes. Rebuild from the pinned original source when a patch implementation changes, except where the patch explicitly supports installer replacement. All resources should share the game's origin; the range transport rejects cross-origin assets.
 
@@ -44,12 +48,9 @@ Do not assume splitting every package saves bandwidth. Independently compressed 
 ```sh
 npm ci
 npx playwright install chromium
-node --test runtime/collection/test.mjs
-node runtime/collection/startup-policy.test.mjs
-node runtime/collection/menu-touch.test.mjs
-node runtime/collection/pointer-capture.test.mjs
-node runtime/collection/assist-client.test.cjs
-node runtime/collection/pad-native-routing.test.cjs
+npm run test:runtime
+npm run test:tools
+node tests/test-public-runtime-build.cjs
 python3 tools/check-assist-source.py
 ```
 

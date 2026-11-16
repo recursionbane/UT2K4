@@ -10,6 +10,9 @@ struct TargetFrame
 var config bool bAutoAim, bMarkTarget, bThirdPerson, bAutoWallrun, bTimeToggle;
 var bool bSavedCrosshair, bComputingAim, bRenderedView, bTemporaryThirdPerson;
 var Pawn RenderPawn;
+var bool bStageRendered;
+var string StageRenderLevelName;
+var float StageRenderTime;
 var vector RenderPawnLocation;
 var rotator RenderControlRotation;
 struct IncomingHit
@@ -435,7 +438,24 @@ function PostRender(Canvas C)
     local float Radius,Angle;
     local color OldColor;
     local float OldX,OldY;
+    local string StageMap,StageLevelName;
+    local int StageDot;
     PC=OwnerPC();
+    // Rendering evidence also applies before a player owns a pawn (Fire to join).
+    if(PC!=None && PC.Level!=None && C!=None && C.ClipX>0 && C.ClipY>0)
+    {
+        StageLevelName=string(PC.Level);
+        if(StageRenderLevelName!=StageLevelName || PC.Level.TimeSeconds<StageRenderTime)
+        {StageRenderLevelName=StageLevelName;bStageRendered=false;}
+        StageRenderTime=PC.Level.TimeSeconds;
+        if(!bStageRendered)
+        {
+            StageMap=StageLevelName;StageDot=InStr(StageMap,".");
+            if(StageDot>=0)StageMap=Left(StageMap,StageDot);
+            if(StageMap!="" && Caps(StageMap)!="ENTRY" && Caps(StageMap)!="NONE")
+            {bStageRendered=true;Log("COLLECTION_STAGE_RENDERED map=" $ StageMap);}
+        }
+    }
     if(!Allowed(PC)){RestoreCrosshair();return;}
     Width=C.ClipX;Height=C.ClipY;
     C.GetCameraLocation(CameraLocation,CameraRotation);
