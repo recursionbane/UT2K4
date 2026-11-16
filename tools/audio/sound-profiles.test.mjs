@@ -1,0 +1,11 @@
+import assert from'node:assert/strict';import{compactSoundBitrate}from'./sound-profiles.mjs';
+const sound=(seconds,name='cue')=>({frames:Math.round(seconds*22050),sampleRate:22050,channels:1,bits:16,soundName:name});
+assert.equal(compactSoundBitrate('AlienSwarm/Sounds/AOMusicEventsSolly.uax',sound(61,'ambient_loop')),48000);
+assert.equal(compactSoundBitrate('Sounds/IntroTrack.uax',sound(40,'voice_music')),48000);
+assert.equal(compactSoundBitrate('Sounds/MenuSounds.uax',sound(2)),48000);
+assert.equal(compactSoundBitrate('Sounds/Announcer.uax',sound(5)),16000);
+assert.equal(compactSoundBitrate('Sounds/Announcer.uax',sound(1)),20000);
+assert.equal(compactSoundBitrate('Sounds/WeaponSounds.uax',sound(2,'fire')),32000);
+assert.equal(compactSoundBitrate('Sounds/Ambience.uax',sound(20,'wind')),20000);
+const stereo={...sound(3),channels:2};compactSoundBitrate('effects.uax',stereo);assert.equal(stereo.channels,2);
+console.log('PASS: music-like USound priority, critical cues, speech/effect/ambience tiers and channel-layout preservation');

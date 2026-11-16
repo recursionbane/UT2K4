@@ -26,11 +26,17 @@ function setIni(source,section,values){
  flush();if(!found){out.push('['+section+']');for(const [k,v]of Object.entries(values))out.push(k+'='+v);}
  return out.join('\n').replace(/\n*$/,'\n');
 }
-export function applyEmbeddedMenuDefaults({loader,data,mutators,lowMemory=true,userIni}){
+export function applyEmbeddedMenuDefaults({loader,data,mutators,lowMemory=true,userIni,guiController}){
  const bytes=Buffer.from(data),{index,start,end}=embeddedIndex(loader);if(bytes.length!==index.remote_package_size)throw Error('Embedded data length mismatch');
  const parts=index.files.map(f=>Buffer.from(bytes.subarray(f.start,f.end)));
  parts[1]=Buffer.from(menuUserIni(parts[1].toString('utf8'),mutators));
  let ini=parts[2].toString('utf8');ini=setIni(ini,'URL',{LocalMap:'NoIntro.ut2'});
+ if(guiController!==undefined){
+  if(guiController!=='DeferredMenu.DeferredPlayerRecordsController')throw Error('Unsupported GUI warmup override');
+  const section=ini.match(/^\[Engine\.Engine\]\s*\n([\s\S]*?)(?=^\[|$(?![\s\S]))/mi)?.[1]||'';
+  const current=section.match(/^GUIController\s*=\s*([^\r\n]+)/mi)?.[1]?.trim();
+  if(current==='GUI2K4.UT2K4GUIController'||current===guiController)ini=setIni(ini,'Engine.Engine',{GUIController:guiController});
+ }
  if(lowMemory){if(!/^\[SDL2Drv\.SDL2Client\]/mi.test(ini))throw Error('Pinned SDL2 client section absent');ini=setIni(ini,'SDL2Drv.SDL2Client',{TextureDetailWorld:'Low',TextureDetailTerrain:'Low',TextureDetailPlayerSkin:'Low',TextureDetailWeaponSkin:'Low',TextureDetailRenderMap:'Low',TextureDetailLightmap:'Low',TextureDetailInterface:'Normal',WindowedViewportX:1024,WindowedViewportY:768,FullscreenViewportX:1280,FullscreenViewportY:720});}
  // This is the existing no-gore policy, preserved explicitly when rebuilding config.
  ini=setIni(ini,'Engine.GameInfo',{GoreLevel:0});parts[2]=Buffer.from(ini);

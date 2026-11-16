@@ -27,14 +27,12 @@ jobs:
           node arena/test.mjs
           node tests/test-hosted-mod.cjs
           node tests/test-matrix-source.cjs
+          node tests/test-matrix-lifecycle.cjs
           node tests/test_launch_origin.cjs
           python3 tools/check-assist-source.py
-          node --test runtime/collection/test.mjs
-          node runtime/collection/startup-policy.test.mjs
-          node runtime/collection/menu-touch.test.mjs
-          node runtime/collection/pointer-capture.test.mjs
-          node runtime/collection/assist-client.test.cjs
-          node runtime/collection/pad-native-routing.test.cjs
+          npm run test:runtime
+          npm run test:tools
+          node tests/test-public-runtime-build.cjs
           curl --fail --silent --show-error --location --retry 3 https://github.com/rgnv/ut2004-wasm/releases/download/v0.2.0/ut2004-web-v0.2.0.tar.gz -o "$RUNNER_TEMP/ut2004-web.tar.gz"
           echo "946071180231747b43217886fa52190187031ae94ad54343c41788e75702c259  $RUNNER_TEMP/ut2004-web.tar.gz" | sha256sum --check
           node delivery/test-native-import.cjs "$RUNNER_TEMP/ut2004-web.tar.gz"

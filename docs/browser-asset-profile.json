@@ -1,0 +1,371 @@
+{
+  "format": "collection-codec-aggregate-v1",
+  "status": "native-validated-release-candidate",
+  "scope": {
+    "originalLogicalAssets": 6911,
+    "activeLogicalAssets": 6924,
+    "mapsRetained": 861,
+    "originalExpandedBytes": 24493864755,
+    "originalTransportBytes": 8510961043,
+    "activeGameDataBytes": 3977789262,
+    "transportReductionPercent": 53.2627
+  },
+  "accounting": {
+    "basis": "Unique active game-data file lengths before HTTP compression. Not a startup download.",
+    "excluded": [
+      "Application shell and browser runtime",
+      "Original recovery transports superseded by active codecs",
+      "Duplicate phase-prefetch bundles",
+      "HTTP headers and TLS overhead"
+    ],
+    "sharedEncodedPools": {
+      "files": 1928,
+      "bytes": 232490322
+    },
+    "transportCategories": {
+      "original-or-reencoded-file": {
+        "files": 4487,
+        "bytes": 552841252
+      },
+      "package-index": {
+        "files": 2437,
+        "bytes": 54741944
+      },
+      "package-frames": {
+        "files": 2437,
+        "bytes": 3137715744
+      },
+      "encoded-regions": {
+        "files": 1928,
+        "bytes": 232490322
+      }
+    },
+    "baseByExtension": [
+      {
+        "extension": ".ut2",
+        "logicalAssets": 861,
+        "baseBytes": 2347440997
+      },
+      {
+        "extension": ".ogg",
+        "logicalAssets": 271,
+        "baseBytes": 367196319
+      },
+      {
+        "extension": ".utx",
+        "logicalAssets": 1404,
+        "baseBytes": 334412607
+      },
+      {
+        "extension": ".ukx",
+        "logicalAssets": 113,
+        "baseBytes": 310928781
+      },
+      {
+        "extension": ".usx",
+        "logicalAssets": 385,
+        "baseBytes": 285277730
+      },
+      {
+        "extension": ".u",
+        "logicalAssets": 140,
+        "baseBytes": 32214026
+      },
+      {
+        "extension": ".uax",
+        "logicalAssets": 138,
+        "baseBytes": 31253699
+      },
+      {
+        "extension": ".jpg",
+        "logicalAssets": 403,
+        "baseBytes": 17699929
+      },
+      {
+        "extension": ".umx",
+        "logicalAssets": 5,
+        "baseBytes": 5310598
+      },
+      {
+        "extension": ".jar",
+        "logicalAssets": 1,
+        "baseBytes": 2418020
+      },
+      {
+        "extension": ".rut_utx",
+        "logicalAssets": 2,
+        "baseBytes": 1848106
+      },
+      {
+        "extension": "(none)",
+        "logicalAssets": 1,
+        "baseBytes": 1653304
+      },
+      {
+        "extension": ".dat",
+        "logicalAssets": 1,
+        "baseBytes": 1118781
+      },
+      {
+        "extension": ".bmp",
+        "logicalAssets": 65,
+        "baseBytes": 1078989
+      },
+      {
+        "extension": ".doc",
+        "logicalAssets": 2,
+        "baseBytes": 960424
+      },
+      {
+        "extension": ".ucl",
+        "logicalAssets": 2096,
+        "baseBytes": 807552
+      },
+      {
+        "extension": ".het_utx",
+        "logicalAssets": 2,
+        "baseBytes": 780746
+      },
+      {
+        "extension": ".pdf",
+        "logicalAssets": 3,
+        "baseBytes": 485510
+      },
+      {
+        "extension": ".psk",
+        "logicalAssets": 7,
+        "baseBytes": 370649
+      },
+      {
+        "extension": ".int",
+        "logicalAssets": 112,
+        "baseBytes": 315568
+      },
+      {
+        "extension": ".txt",
+        "logicalAssets": 161,
+        "baseBytes": 272584
+      },
+      {
+        "extension": ".jpeg",
+        "logicalAssets": 12,
+        "baseBytes": 214347
+      },
+      {
+        "extension": ".html",
+        "logicalAssets": 47,
+        "baseBytes": 139767
+      },
+      {
+        "extension": ".det",
+        "logicalAssets": 38,
+        "baseBytes": 139316
+      },
+      {
+        "extension": ".ifr",
+        "logicalAssets": 4,
+        "baseBytes": 126067
+      },
+      {
+        "extension": ".est",
+        "logicalAssets": 37,
+        "baseBytes": 121848
+      },
+      {
+        "extension": ".frt",
+        "logicalAssets": 36,
+        "baseBytes": 114943
+      },
+      {
+        "extension": ".itt",
+        "logicalAssets": 35,
+        "baseBytes": 113882
+      },
+      {
+        "extension": ".ka",
+        "logicalAssets": 9,
+        "baseBytes": 81337
+      },
+      {
+        "extension": ".htm",
+        "logicalAssets": 142,
+        "baseBytes": 73585
+      },
+      {
+        "extension": ".kot",
+        "logicalAssets": 20,
+        "baseBytes": 62918
+      },
+      {
+        "extension": ".gif",
+        "logicalAssets": 51,
+        "baseBytes": 55535
+      },
+      {
+        "extension": ".ico",
+        "logicalAssets": 8,
+        "baseBytes": 54362
+      },
+      {
+        "extension": ".ini",
+        "logicalAssets": 38,
+        "baseBytes": 38227
+      },
+      {
+        "extension": ".md5",
+        "logicalAssets": 1,
+        "baseBytes": 32052
+      },
+      {
+        "extension": ".inc",
+        "logicalAssets": 222,
+        "baseBytes": 26340
+      },
+      {
+        "extension": ".png",
+        "logicalAssets": 4,
+        "baseBytes": 22444
+      },
+      {
+        "extension": ".upl",
+        "logicalAssets": 25,
+        "baseBytes": 20572
+      },
+      {
+        "extension": ".css",
+        "logicalAssets": 10,
+        "baseBytes": 11010
+      },
+      {
+        "extension": ".xml",
+        "logicalAssets": 6,
+        "baseBytes": 3335
+      },
+      {
+        "extension": ".vcproj",
+        "logicalAssets": 1,
+        "baseBytes": 1803
+      },
+      {
+        "extension": ".m3u",
+        "logicalAssets": 1,
+        "baseBytes": 175
+      },
+      {
+        "extension": ".url",
+        "logicalAssets": 1,
+        "baseBytes": 117
+      },
+      {
+        "extension": ".me",
+        "logicalAssets": 3,
+        "baseBytes": 39
+      }
+    ]
+  },
+  "conversionCoverage": {
+    "texturePackagesScanned": 3038,
+    "texturePackagesParsed": 2981,
+    "texturePackagesUnsupportedRetained": 57,
+    "basisTexturePackages": 1870,
+    "authoredMipSupplementPackages": 1382,
+    "geometryPackagesScanned": 1190,
+    "geometryCandidatePackages": 1124,
+    "geometryFrameProfitAccepted": 1008,
+    "geometryFrameProfitRejected": 116,
+    "soundPackagesScanned": 272,
+    "opusSoundCandidatePackages": 140,
+    "musicTracksScanned": 271,
+    "vorbisMusicTracksConverted": 253,
+    "musicTracksRetained": 18,
+    "codecRegions": 103259,
+    "geometryPackagesActivated": 733,
+    "geometryWholePackageFramingRetained": 275
+  },
+  "codecSettings": {
+    "packageTransport": {
+      "codec": "Independent Zstandard frames",
+      "frameBytes": 262144,
+      "level": 15,
+      "lossless": true
+    },
+    "textures": {
+      "transport": "Basis Universal ETC1S plus exact-authored-mip Zstandard supplement",
+      "worldDimensionCap": 128,
+      "skinWeaponPreviewDimensionCap": 256,
+      "protectedInterfaceBackgroundDimensionCap": 512,
+      "nativeFormats": [
+        "BC1",
+        "BC2",
+        "BC3",
+        "BGRA8"
+      ],
+      "basisQualityPrimary": 128,
+      "basisQualityFallback": 192,
+      "rgbPsnrMinimumDb": 30,
+      "alphaMeanSquaredErrorMaximum": 64,
+      "alphaAbsoluteErrorMaximum": 34,
+      "alphaThresholdMismatchMaximumFraction": 0.02,
+      "notes": [
+        "Original native package layout, mip dimensions and payload lengths reconstructed on demand.",
+        "Fonts, reticles, unsupported formats and special data remain protected.",
+        "Authored-mip supplement uses existing original lower mips, with exact compressed-block alpha reconstruction."
+      ]
+    },
+    "sound": {
+      "transport": "Opus with exact native PCM byte-count reconstruction",
+      "notes": [
+        "Profile varies by effect versus music-like cue.",
+        "Lossy PCM reconstruction does not imply bit-identical audio."
+      ],
+      "bitratePerChannelBpsRange": [
+        16000,
+        48000
+      ],
+      "nativeSampleRate": "original retained",
+      "opusDecodeRateHz": 48000
+    },
+    "music": {
+      "transport": "Vorbis",
+      "quality": 0,
+      "channels": "mono",
+      "sampleRate": "original retained"
+    },
+    "geometry": {
+      "transport": "Zstandard after bounded float precision reduction",
+      "staticMeshes": "Normals only; positions, topology and collision retained",
+      "animation": "Quaternion and position key payloads; timing, hierarchy and event data retained",
+      "maximumStaticNormalAngleErrorDegrees": 0.05,
+      "maximumAnimationRotationErrorDegrees": 0.005,
+      "maximumAnimationLocalTranslationErrorEngineUnits": 0.002
+    }
+  },
+  "proofAndLimits": {
+    "canonicalBasisAudit": {
+      "packages": 1870,
+      "regions": 60662,
+      "uniqueEncodedPayloads": 25201,
+      "hashesAndSkeletonBoundsVerified": true
+    },
+    "validated": [
+      "Per-frame roundtrip and hash checks",
+      "Encoded payload and reconstructed-region bounds and integrity",
+      "Representative browser decoder and native menu/match tests on preceding matching codec profiles",
+      "Exact frozen candidate: Chrome and WebKit each completed at least330 seconds of real-bot auto-aim gameplay and owned-pawn Rankin-to-Deck17 travel with no OOB/page errors or manager warnings"
+    ],
+    "pending": [],
+    "limits": [
+      "No claim of perceptual losslessness.",
+      "Complete inventory coverage does not mean every retained map and gameplay mode has been playtested.",
+      "Full active game data remains about four gigabytes; a 100\u2013200 MB whole-collection target was not achieved.",
+      "Startup traffic depends on requested map, cache state, device and playback path.",
+      "Geometry acceptance counts refer to candidate package decisions, not a promise of equivalent percentage savings across entire packages.",
+      "Two-map browser coverage does not prove absence of every intermittent fault or physical-iPhone compatibility."
+    ]
+  },
+  "nativeSafety": {
+    "cameraGetter": "cached scalar/vector calculations only; no collision/render queries or enemy-pawn field reads",
+    "references": "fresh current-level controller/pawn ownership before retained pawn fields; current-HUD identity before HUD writes",
+    "mapTravel": "current-level afterimage manager bound before player tick"
+  }
+}

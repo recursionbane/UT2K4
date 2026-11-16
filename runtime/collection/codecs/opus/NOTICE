@@ -1,0 +1,7 @@
+Opus 1.6.1 reference decoder by the Opus contributors (Xiph.Org Foundation,
+Skype, Broadcom and other contributors), distributed under the accompanying
+BSD-style LICENSE. The WebAssembly artifact was compiled from the official
+checksum-verified release. Encoder entry points and optional neural models are
+not exposed by the authored wrapper. No game content is included.
+
+The small decoder.c / decoder.mjs interface is authored integration code.

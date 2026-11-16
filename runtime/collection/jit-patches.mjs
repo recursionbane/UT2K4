@@ -6,8 +6,19 @@ export function patchJitGlue(source,{engineCacheBytes=32*1024*1024}={}){
  source=once(source,'return { path: f.path, size: entry ? entry.size : 0, mtime: entry ? entry.mtime : 0 };','return { path: f.path, size: entry ? entry.size : 0, mtime: entry ? entry.mtime : 0, jit: entry ? entry.jit || null : null };','main metadata');
  source=once(source,'{ path: answer.path, size: answer.size | 0, mtime: answer.mtime || 0, data: null }','{ path: answer.path, size: answer.size | 0, mtime: answer.mtime || 0, jit: answer.jit || null, data: null }','worker metadata');
  const cache=`/* private-jit-range-v1 */\n    const jitPages = new Map(); let jitBytes = 0;\n    function jitKeep(k,v){if(jitPages.has(k)){jitBytes-=jitPages.get(k).length;jitPages.delete(k);}while(jitPages.size&&jitBytes+v.length>${engineCacheBytes}){const old=jitPages.keys().next().value;jitBytes-=jitPages.get(old).length;jitPages.delete(old);}jitPages.set(k,v);jitBytes+=v.length;}\n    function jitRead(file,f,buffer,length,offset){\n      const want=Math.min(length,Math.max(0,f.size-offset));if(want<=0)return 0;\n      const block=f.jit.blockSize;if(!Number.isSafeInteger(block)||block<65536||block>1048576)throw Error('Invalid JIT page size');\n      let filled=0;while(filled<want){const pos=offset+filled,start=Math.floor(pos/block)*block,k=f.path+'@'+start;let page=jitPages.get(k);\n        if(page){jitPages.delete(k);jitPages.set(k,page);}else{const url=f.jitUrl||(f.jitUrl=call({op:'url',path:f.path}));const answer=fetchChunk({op:'read',path:f.path,off:start,max:Math.min(block,f.size-start),size:f.size,mtime:f.mtime,url,jit:f.jit});\n          if(!(answer instanceof Uint8Array)||answer.length!==Math.min(block,f.size-start)){unservableReport(f,'JIT page could not be served'+(answer&&answer.error?': '+answer.error:''));return 0;}page=answer;jitKeep(k,page);stats.jitPageFetches=(stats.jitPageFetches||0)+1;}\n        const within=pos-start,n=Math.min(want-filled,page.length-within);if(n<=0){unservableReport(f,'JIT short read');return 0;}Module.HEAPU8.set(page.subarray(within,within+n),buffer+filled);filled+=n;}\n      stats.jitReadCalls=(stats.jitReadCalls||0)+1;stats.jitReadBytes=(stats.jitReadBytes||0)+filled;return filled;\n    }\n    `;
- source=once(source,'    const unservable = /* @__PURE__ */ new Set();',cache+'const unservable = /* @__PURE__ */ new Set();','worker sparse cache');
- source=once(source,'      read(file, buffer, length, offset) {\n        const f = resolve(file);','      read(file, buffer, length, offset) {\n        const f = resolve(file);\n        if (!f.data && f.jit && f.jit.format === "zstd-pages-v1") return jitRead(file,f,buffer,length,offset);','worker read');
+ const regionRead=`function regionRead(file,f,buffer,length,offset){
+      const want=Math.min(length,Math.max(0,f.size-offset));
+      if(![buffer,length,offset].every(Number.isSafeInteger)||buffer<0||length<0||offset<0||buffer+want>Module.HEAPU8.byteLength){unservableReport(f,'Reconstructed read bounds rejected');return 0;}
+      if(want<=0)return 0;let filled=0;
+      const url=f.jitUrl||(f.jitUrl=call({op:'url',path:f.path}));
+      while(filled<want){const take=Math.min(chunk,want-filled),answer=fetchChunk({op:'read',path:f.path,off:offset+filled,max:take,size:f.size,mtime:f.mtime,url,jit:f.jit});
+        if(!(answer instanceof Uint8Array)||answer.length!==take){unservableReport(f,'Reconstructed region unavailable'+(answer&&answer.error?': '+answer.error:''));return 0;}
+        Module.HEAPU8.set(answer,buffer+filled);filled+=take;}
+      stats.regionReadCalls=(stats.regionReadCalls||0)+1;stats.regionReadBytes=(stats.regionReadBytes||0)+filled;return filled;
+    }
+    `;
+ source=once(source,'    const unservable = /* @__PURE__ */ new Set();',cache+regionRead+'const unservable = /* @__PURE__ */ new Set();','worker sparse cache');
+ source=once(source,'      read(file, buffer, length, offset) {\n        const f = resolve(file);','      read(file, buffer, length, offset) {\n        const f = resolve(file);\n        if (!f.data && f.jit && f.jit.format === "zstd-pages-v1") return f.jit.regions ? regionRead(file,f,buffer,length,offset) : jitRead(file,f,buffer,length,offset);','worker read');
  return source;
 }
 export function patchJitCacheWorker(source,{readAheadPages=1}={}){
@@ -16,8 +27,12 @@ export function patchJitCacheWorker(source,{readAheadPages=1}={}){
  const helper='/* private-jit-cache-v1 */\n  const __createPrivateJitCache = '+createJitCache.toString()+';\n';
  source=helper+source;
  source=once(source,'return (bytes) => decoder.decode(bytes);','return (bytes, expectedSize) => decoder.decode(bytes, Number.isSafeInteger(expectedSize) && expectedSize > 0 ? expectedSize : undefined);','bounded page decoder');
- source=once(source,'    const readHold = createReadHold();',`    const jit = __createPrivateJitCache({baseURL:pageBase||self.location.href,readAheadPages:${readAheadPages},decode:async(bytes,expectedSize)=>{const decoder=await getDecoder({name:'zstd',ext:'.zst'});if(!decoder)throw Error('JIT decoder unavailable');return decoder(bytes,expectedSize);},onProgress:stats=>{try{postMessage({ufrontJitProgress:stats});}catch{}}});\n    const readHold = createReadHold();`,'cache reader init');
- source=once(source,'      const off = req.off | 0;','      const off = req.off | 0;\n      if(req.jit&&req.jit.format===\'zstd-pages-v1\'){if(!req.url)return {needUrl:true};try{return await jit.read(req,window);}catch(error){return {error:\'JIT read failed: \'+String(error&&error.message||error)};}}','cache range read');
+ source=once(source,'    const readHold = createReadHold();',`    let codecRegions; const unsupportedRegionPackages = new Set();
+    const modernEvents=e=>{try{globalThis.__collectionTransferTelemetry?.emit(e);}catch{}};
+    const decodeZstd=async(bytes,expectedSize)=>{const decoder=await getDecoder({name:'zstd',ext:'.zst'});if(!decoder)throw Error('JIT decoder unavailable');return decoder(bytes,expectedSize);};
+    const reconstruct=async request=>{codecRegions??=import(pageUrl('runtime/collection/codec-regions.mjs',pageBase)).then(m=>m.createCodecReconstructor({baseURL:pageBase||self.location.href,onEvent:modernEvents,decodeZstd}));return (await codecRegions)(request);};
+    const jit = __createPrivateJitCache({baseURL:pageBase||self.location.href,readAheadPages:${readAheadPages},reconstruct,onEvent:modernEvents,decode:decodeZstd,onProgress:stats=>{try{postMessage({ufrontJitProgress:stats});}catch{}}});\n    const readHold = createReadHold();`,'cache reader init');
+ source=once(source,'      const off = req.off | 0;','      const off = req.off | 0;\n      if(req.jit&&req.jit.format===\'zstd-pages-v1\'&&!unsupportedRegionPackages.has(req.path)){if(!req.url)return {needUrl:true};try{return await jit.read(req,window);}catch(error){if(error&&error.code===\'UNSUPPORTED_REGION_CODEC\'){unsupportedRegionPackages.add(req.path);console.warn(\'[PackageCache] codec unavailable, using original package: \'+req.path);}else return {error:\'JIT read failed: \'+String(error&&error.message||error)};}}','cache range read');
  return source;
 }
 export function patchReadTelemetry(source){

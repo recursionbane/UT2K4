@@ -10,4 +10,6 @@ Console controls: `mutate mmRecovery on`, `mutate mmRecovery off`, `mutate mmRec
 
 The GameRules hook observes incoming damage and delegates the normal damage chain without changing its return value. A timer tracks the currently living local pawn, retains fractional healing between ticks and never revives a corpse. No game assets, external services or credentials are required by this package.
 
+Before reading health or applying recovery, a retained record must match a fresh current-level player-controller/pawn pair. Records for deleted, replaced, or unrelated actors are discarded before pawn-specific fields are accessed.
+
 Build the authored packages using [tools/build-assist.py](../../tools/build-assist.py); see the [build instructions](../local-assist/README.md#build). LocalRecovery itself depends only on stock Engine. The combined build also needs the original Matrix dependency for LocalAim and GUI2K4/XInterface for the menu profile.

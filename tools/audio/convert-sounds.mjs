@@ -1,0 +1,19 @@
+// Candidate-only PCM→Opus transport. Never changes a source package or release.
+import{readUe2AudioLayout}from'../../runtime/collection/ue2-audio-layout.mjs';
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import{spawnSync}from'node:child_process';import zlib from'node:zlib';
+export const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+export function pcmSpans(bytes){
+ const layout=readUe2AudioLayout(bytes);
+ return layout.sounds.filter(s=>s.wave?.supported).map(s=>({...s.wave,soundExportIndex:s.exportIndex,soundName:s.name})).sort((a,b)=>a.offset-b.offset);
+}
+export function convertPackage({logical,raw,output,bitrate=96000,bitrateForSound=null,profile='opus-pcm-c10-vbr20-cap16m-profit256-usound-v2',ffmpeg='ffmpeg'}){
+ fs.mkdirSync(output,{recursive:true});const source=Buffer.from(raw),skeleton=Buffer.from(raw),spans=pcmSpans(raw),sounds=[];let total=0;const begin=performance.now();
+ for(const span of spans){if(span.sampleRate<8000||span.sampleRate>48000||span.frames<32||span.length<1024||span.frames*48000/span.sampleRate*span.channels*4>16*1024*1024)continue;
+  const selectedBitrate=bitrateForSound?bitrateForSound(logical,span):bitrate;if(!Number.isInteger(selectedBitrate)||selectedBitrate<6000||selectedBitrate>128000)throw Error('Invalid Opus bitrate policy');const pcm=source.subarray(span.offset,span.offset+span.length),key=sha(Buffer.concat([pcm,Buffer.from(JSON.stringify({sampleRate:span.sampleRate,channels:span.channels,bits:span.bits,bitrate:selectedBitrate}))]));const file=key+'.opus',target=path.join(output,file);
+  if(!fs.existsSync(target)){const result=spawnSync(ffmpeg,['-v','error','-f',span.bits===8?'u8':'s16le','-ar',String(span.sampleRate),'-ac',String(span.channels),'-i','pipe:0','-c:a','libopus','-b:a',String(selectedBitrate*span.channels),'-vbr','on','-compression_level','10','-application','audio','-frame_duration','20','-f','opus','-y',target+'.part'],{input:pcm,maxBuffer:8*1024*1024});if(result.status!==0)throw Error(result.stderr.toString());fs.renameSync(target+'.part',target);}
+  const encoded=fs.readFileSync(target);const identity=zlib.zstdCompressSync(pcm,{params:{[zlib.constants.ZSTD_c_compressionLevel]:15}});if(encoded.length+256>=identity.length)continue;total+=encoded.length;skeleton.fill(0,span.offset,span.offset+span.length);sounds.push({...span,transportBitratePerChannel:selectedBitrate,opus:{path:file,size:encoded.length,sha256:sha(encoded)}});
+ }
+ const base=sha(Buffer.from(logical)).slice(0,16),skeletonPath=base+'.skeleton.zst';const compressed=zlib.zstdCompressSync(skeleton,{params:{[zlib.constants.ZSTD_c_compressionLevel]:15}});fs.writeFileSync(path.join(output,skeletonPath)+'.part',compressed);fs.renameSync(path.join(output,skeletonPath)+'.part',path.join(output,skeletonPath));
+ const descriptor={format:'ue-pcm-opus-v1',logical,size:source.length,sourceSha256:sha(source),skeletonSha256:sha(skeleton),skeleton:{path:skeletonPath,size:compressed.length},bitratePerChannel:bitrate,profile,regions:sounds.map(s=>({offset:s.offset,length:s.length,codec:'opus-pcm-v1',encoded:{url:s.opus.path,offset:0,length:s.opus.size,sha256:s.opus.sha256},params:{sampleRate:s.sampleRate,channels:s.channels,bits:s.bits,frames:s.frames,decodedByteLength:s.length,transportBitratePerChannel:s.transportBitratePerChannel}}))};fs.writeFileSync(path.join(output,base+'.audio.json.part'),JSON.stringify(descriptor));fs.renameSync(path.join(output,base+'.audio.json.part'),path.join(output,base+'.audio.json'));
+ return{logical,sourceBytes:source.length,originalZstdBytes:zlib.zstdCompressSync(source,{params:{[zlib.constants.ZSTD_c_compressionLevel]:15}}).length,skeletonBytes:compressed.length,opusBytes:total,totalBytes:compressed.length+total,sounds:sounds.length,pcmBytes:sounds.reduce((n,s)=>n+s.length,0),encodeMs:Math.round(performance.now()-begin),descriptor:base+'.audio.json'};
+}

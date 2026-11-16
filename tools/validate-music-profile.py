@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+"""Accept structurally valid music candidates with hash-bound native codec evidence."""
+from pathlib import Path
+import argparse,collections,hashlib,json,statistics
+ROOT=Path(__file__).resolve().parents[1]
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('--corpus',required=True,type=Path);p.add_argument('--native-proof',required=True,type=Path);p.add_argument('--native-candidates',required=True,type=Path);p.add_argument('--cancellation-db',type=float,default=-9.0);a=p.parse_args();out=a.corpus.resolve();rows=json.loads((out/'inventory.json').read_text());quality={r['logical']:r for r in json.loads((out/'quality.json').read_text())};native=json.loads(a.native_proof.read_text());played=json.loads(a.native_candidates.read_text());logs='\n'.join(x['text']for x in native['logs']);proofPath=str(a.native_proof.resolve().relative_to(ROOT))if a.native_proof.resolve().is_relative_to(ROOT)else str(a.native_proof.resolve());nativeBy={}
+if native['errors']:raise SystemExit('Native probe has errors')
+seekLogs=[x for x in native['logs']if'MUSICQA_SEEK'in x['text']]
+if len(seekLogs)!=3 or not all('result=1'in x['text']for x in seekLogs):raise SystemExit('Three successful native loop seeks required')
+for r in played:
+ song=Path(r['sourcePath']).stem;play=[x for x in native['logs']if'MUSICQA_PLAY song='+song+' 'in x['text']];samples=[x for x in native['samples']if x['label']==song+'-near-end-and-loop'];rms=[v['rms']for x in samples[len(samples)//2:]for v in x['value']]
+ if not play or not rms or statistics.median(rms)<.001:raise SystemExit('Native playback/loop evidence missing for '+song)
+ nativeBy[r['logical']]={'candidateSha256':r['candidateSha256'],'status':'native playback and loop verified','nativeSeekSucceeded':True,'audibleBeyondExpectedEnd':True,'medianRMSAfterExpectedEnd':statistics.median(rms),'proof':proofPath}
+if len(nativeBy)<3 or'MUSICQA_FADE song=KR-Rankin'not in logs:raise SystemExit('Native codec/fade evidence incomplete')
+accepted=[];retained=[]
+for r in rows:
+ if r['decision']!='candidate':retained.append(r);continue
+ q=quality.get(r['logical']);delta=q.get('rmsDeltaDb')if q else None
+ structural=r.get('shapeVerified')and r.get('metadataByteExact')and r.get('candidateDecodedFrames')==r.get('sampleFrames')and r.get('candidateSampleRate')==r.get('sampleRate')and r.get('candidateChannels')==1
+ if not structural or not q or q.get('candidateSha256')!=r['candidateSha256']or delta is None or delta<a.cancellation_db:r['decision']='retain-original';r['reason']='Structural or catastrophic downmix-energy gate failed; retain original';retained.append(r);continue
+ target=Path(r['candidatePath']);target=target if target.is_absolute()else ROOT/target
+ if hashlib.sha256(target.read_bytes()).hexdigest()!=r['candidateSha256']:raise SystemExit('Candidate hash changed: '+r['logical'])
+ validation=nativeBy.get(r['logical'])
+ if validation and validation['candidateSha256']!=r['candidateSha256']:raise SystemExit('Native evidence hash mismatch')
+ accepted.append({**r,'eligible':True,'nativePlaybackVerified':validation is not None,'nativeCodecPathValidated':True,'nativeValidation':validation or{'status':'shared native codec path verified; not played individually','representativeTracks':list(nativeBy)},'downmixEnergyGatePassed':True,'downmixEnergyThresholdDb':a.cancellation_db,'objectiveQuality':q,'structuralValidation':{'candidateHashVerified':True,'exactDecodedSampleCount':True,'originalSampleRatePreserved':True,'originalCommentPacketByteExact':True,'loopMetadataPreserved':True,'intentionalMonoDownmix':True},'actualEncoder':'Xiph.Org libVorbis1.3.7 VBR quality0'})
+summary={'format':'native-vorbis-mono-vbr0-original-rate-v1','tracksScanned':len(rows),'acceptedCandidates':len(accepted),'retainedOriginalTracks':len(retained),'sourceBytes':sum(r['sourceBytes']for r in rows),'acceptedSourceBytes':sum(r['sourceBytes']for r in accepted),'acceptedBytes':sum(r['candidateBytes']for r in accepted),'nativeCodecPathValidated':True,'nativeFastFadeVerified':True,'nativeRepresentativeTracks':list(nativeBy),'nativePauseResumeReturnedTrue':logs.count('MUSICQA_PAUSE result=True')==2,'allAcceptedMetadataByteExact':True,'allAcceptedSampleCountsExact':True,'originalSampleRatePreserved':True,'intentionalMonoDownmix':True,'downmixEnergyThresholdDb':a.cancellation_db,'worstAcceptedRMSDeltaDb':min(r['objectiveQuality']['rmsDeltaDb']for r in accepted),'retainedReasons':dict(collections.Counter(r['reason']for r in retained)),'policy':'Eligible tracks use Vorbis VBR quality0 mono at original sample rate; below10% wins/unsupported originals retained.','listeningLimit':'No full-corpus human listening/ABX test. Objective energy and representative native playback do not establish transparency.'};summary['savedBytes']=summary['acceptedSourceBytes']-summary['acceptedBytes'];summary['candidateCorpusBytes']=summary['sourceBytes']-summary['savedBytes'];summary['savedPercent']=100*summary['savedBytes']/summary['sourceBytes'];(out/'accepted-candidates.json').write_text(json.dumps({'summary':summary,'candidates':accepted,'retainedOriginals':retained},indent=2,allow_nan=False)+'\n');(out/'accepted-summary.json').write_text(json.dumps(summary,indent=2)+'\n');print(json.dumps(summary,indent=2))

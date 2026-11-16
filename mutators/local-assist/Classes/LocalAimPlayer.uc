@@ -28,7 +28,6 @@ simulated function rotator GetViewRotation()
     local LocalAimInteraction Assist;
     local rotator Aim;
     Assist=class'LocalAimInteraction'.static.Find(Self);
-    if(Assist!=None && Pawn!=None && Assist.FireAim(Pawn.Location+Pawn.EyePosition(),Aim))return Aim;
-    if(Assist!=None && Pawn!=None && Assist.CameraAim(Pawn.Location+Pawn.EyePosition(),Rotation,Aim))return Aim;
+    if(Assist!=None && Assist.CachedViewAim(Aim))return Aim;
     return Super.GetViewRotation();
 }

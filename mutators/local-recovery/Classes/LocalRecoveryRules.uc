@@ -17,10 +17,23 @@ function int Track(Pawn P)
  i=Players.Length;Players.Length=i+1;Players[i].Body=P;
  Players[i].LastDamage=Level.TimeSeconds;Players[i].LastHealth=P.Health;return i;
 }
-function bool Eligible(Pawn P)
+function bool Eligible(Pawn Candidate)
 {
- return P!=None && !P.bDeleteMe && P.Health>0 && PlayerController(P.Controller)!=None
-   && PlayerController(P.Controller).Player!=None && Level.NetMode==NM_Standalone;
+ local Controller C;
+ local PlayerController PC;
+ local Pawn P;
+ if(Candidate==None || Level.NetMode!=NM_Standalone)return false;
+ // Held record pointers are never read as Pawn layouts until current ownership is proven.
+ for(C=Level.ControllerList;C!=None;C=C.NextController)
+ {
+  if(C.Pawn!=Candidate || C.bDeleteMe || C.Level!=Level)continue;
+  PC=PlayerController(C);
+  if(PC==None || PC.Player==None || PC.Player.Actor!=PC)return false;
+  P=C.Pawn;
+  return P!=None && P.IsA('Pawn') && !P.bDeleteMe && P.Level==Level
+    && P.Controller==C && P.Health>0;
+ }
+ return false;
 }
 function int NetDamage(int OriginalDamage,int Damage,Pawn Injured,Pawn InstigatedBy,vector HitLocation,out vector Momentum,class<DamageType> DamageType)
 {

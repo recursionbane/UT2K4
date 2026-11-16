@@ -79,6 +79,7 @@
       else uiText(state.wantedAuto?'Full auto aim is on. Double-tap an enemy to select it.':'Automatic acquisition is off. Double-tap an enemy to select it.');
     }
     function ingest(line){
+      scope.__collectionTransferTelemetry?.observeLog?.(String(line));
       if(/^\s*(?:Log:\s*)?Browse:|^\s*Init:\s*LoadMap:/.test(String(line))){state.ready=false;state.actualAuto=null;state.actualThirdPerson=null;state.actualWallrun=null;state.timeToggle=null;state.timeActive=null;state.timeNative=null;state.telemetry=null;state.epoch++;configPending.clear();taps.reset();show();}
       const status=parseTelemetry(line);if(!status)return false;
       state.telemetry=status;state.ready=status.standalone==='1';

@@ -1,0 +1,12 @@
+import assert from'node:assert/strict';import{webcrypto}from'node:crypto';import{validateAudioDescriptor,reconstructPCM,createAudioOverlay,digest,demuxOpus}from'./audio-opus.mjs';
+if(!globalThis.crypto)globalThis.crypto=webcrypto;
+const encoded=new Uint8Array([1,2,3]),hash=await digest(encoded),params={sampleRate:48000,channels:1,bits:16,frames:8,decodedByteLength:16},region={offset:8,length:16,codec:'opus-pcm-v1',encoded:{url:'a'.repeat(64)+'.opus',offset:0,length:3,sha256:hash},params},descriptor={format:'ue-pcm-opus-v1',size:32,regions:[region]};
+assert.equal(validateAudioDescriptor(descriptor),descriptor);
+for(const change of [{offset:-1},{offset:30},{length:15},{codec:'unknown'},{encoded:{...region.encoded,url:'../private'}},{params:{...params,frames:Infinity}}])assert.throws(()=>validateAudioDescriptor({...descriptor,regions:[{...region,...change}]}));
+assert.throws(()=>demuxOpus(new Uint8Array(20)));assert.throws(()=>reconstructPCM({channels:1,frames:8}, {...params,length:14}));
+let calls=0,reads=0;const decoder=async()=>{calls++;return{channels:1,frames:8,sampleRate:48000,gain:1,planes:[new Float32Array(8).fill(.25)]}};const overlay=createAudioOverlay({descriptors:{'sounds/test.uax':descriptor},readEncoded:async()=>{reads++;return encoded},decoder,budget:16});
+let header=new Uint8Array([9,9,9,9]);assert.deepEqual(await overlay.overlayRead('sounds/test.uax',0,header),header);assert.equal(calls,0);
+let result=await overlay.overlayRead('sounds/test.uax',6,new Uint8Array(12).fill(9));assert.deepEqual([...result.subarray(0,2)],[9,9]);assert.deepEqual([...result.subarray(2)],[0,32,0,32,0,32,0,32,0,32]);await overlay.overlayRead('sounds/test.uax',20,new Uint8Array(4));assert.equal(calls,1);assert.equal(reads,1);assert.equal(overlay.stats().decodedBytes,16);overlay.clear();assert.equal(overlay.stats().decodedBytes,0);await overlay.overlayRead('sounds/test.uax',8,new Uint8Array(1));assert.equal(calls,2);
+await assert.rejects(()=>overlay.overlayRead('sounds/test.uax',31,new Uint8Array(2)));
+const corrupt=createAudioOverlay({descriptors:{test:descriptor},readEncoded:async()=>new Uint8Array([4,5,6]),decoder});await assert.rejects(()=>corrupt.overlayRead('test',8,new Uint8Array(1)),/integrity/);
+console.log('PASS: bounded descriptors, exact PCM shape, overlap-only decoding, untouched headers, LRU reuse/clear and corruption rejection');

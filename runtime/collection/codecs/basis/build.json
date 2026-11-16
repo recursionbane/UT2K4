@@ -1,0 +1,19 @@
+{
+  "source": "https://github.com/BinomialLLC/basis_universal",
+  "commit": "073eb6a0a34a23d77e75e54f41dcd9653a52da83",
+  "basisVersion": "2.50.0",
+  "emscriptenVersion": "6.0.8",
+  "dynamicExecution": false,
+  "embindAot": true,
+  "maximumMemory": 134217728,
+  "files": {
+    "basis-transcoder.mjs": {
+      "bytes": 59525,
+      "sha256": "0944d7e3f64ceb3bdc0bb8b2796d7225898b6671a14ac00f80c6402de6e4edc3"
+    },
+    "basis_transcoder.wasm": {
+      "bytes": 1058719,
+      "sha256": "25c2d4610e73bd0443ea9d7e5c5024200706b66e0364f46b3e9d9de349691cc7"
+    }
+  }
+}
