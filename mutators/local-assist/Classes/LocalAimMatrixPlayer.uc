@@ -1,4 +1,4 @@
-class LocalAimMatrixPlayer extends MatrixPlayer;
+class LocalAimMatrixPlayer extends MatrixModern.CompatibleMatrixPlayer;
 var bool bLocalBulletDown, bAutoWallArmed;
 var float AutoWallArmUntil;
 

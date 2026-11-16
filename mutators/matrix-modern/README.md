@@ -16,16 +16,20 @@ Install with the adjacent preservation tool:
 python3 mutators/monkey-matrix-moves/preserve.py --install '/path/to/UT2004' --bind-b --modern-compat
 ```
 
-The adapter logs `MATRIX_COMPAT_LOGIN` and `MATRIX_COMPAT_PLAYER` so integration tests can distinguish authentic Matrix controllers from ordinary `xPlayer`/`xPawn`. Its original package dependency is loaded dynamically and is not redistributed here.
+The adapter logs `MATRIX_COMPAT_LOGIN` and `MATRIX_COMPAT_PLAYER` so integration tests can distinguish authentic Matrix controllers from ordinary `xPlayer`/`xPawn`. The original package is a required inheritance dependency and is not redistributed here.
+
+The authored `CompatibleMatrixPlayer` subclass also repairs a map-travel lifecycle bug: the original controller counts onion managers across all loaded objects but can leave its own manager reference unset. Before the first player tick, the compatibility subclass binds a non-deleting manager from the current level or creates one. It uses the current-level actor iterator, not a global object search. Movement, physics and camera methods remain inherited from the original Matrix controller. `MATRIX_COMPAT_OSM` reports the level and manager binding.
+
+`LocalAimMatrixPlayer` inherits this compatibility controller, so the same repair applies with aiming enabled. It remains `IsA('MatrixPlayer')`; existing Matrix behavior and type checks continue to work.
 
 ## Build
 
 The included `System/MatrixModern.u` was compiled with the full original DVD Windows `UCC.exe` and matching original System packages under CrossOver. The compiler reported **0 errors, 0 warnings**. Windows UCC cannot load modern 3374 Core packages; use a matching full Windows compiler installation for rebuilding.
 
-Copy `Classes/MutMatrixModern.uc` to `<game>/MatrixModern/Classes/`, add `EditPackages=MatrixModern` under `[Editor.EditorEngine]` in a build INI, then run from `<game>/System`:
+Copy both authored `Classes/*.uc` files to `<game>/MatrixModern/Classes/`, add `EditPackages=MatrixModern` under `[Editor.EditorEngine]` in a build INI, then run from `<game>/System`:
 
 ```text
 UCC.exe make -ini=MatrixBuild.ini
 ```
 
-The result is `System/MatrixModern.u`; UCC also generates its `.ucl` mutator registration file. The source and compiled adapter are this project's own code. The original MonkeyMatrix package remains separately downloaded and local.
+Build MatrixModern before LocalAim (the latter now inherits its controller), or use `tools/build-assist.py`. The result is `System/MatrixModern.u`; UCC also generates its `.ucl` mutator registration file. The source and compiled adapter are this project's own code. The original MonkeyMatrix package remains separately downloaded and local.

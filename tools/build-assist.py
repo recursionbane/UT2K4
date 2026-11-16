@@ -27,7 +27,7 @@ def main():
     for name in ('UCC.exe', 'Default.ini', 'Core.u', 'Engine.u', 'XGame.u', 'XInterface.u', 'GUI2K4.u', 'Matrix2004_v130.u'):
         if not (system / name).is_file():
             parser.error('Missing compiler dependency: ' + name)
-    packages = [('LocalAim', 'local-assist', ('u', 'ucl')), ('LocalRecovery', 'local-recovery', ('u', 'ucl')), ('MenuProfile', 'menu-profile', ('u',)), ('DeferredMenu', 'deferred-menu', ('u',))]
+    packages = [('MatrixModern', 'matrix-modern', ('u', 'ucl')), ('LocalAim', 'local-assist', ('u', 'ucl')), ('LocalRecovery', 'local-recovery', ('u', 'ucl')), ('MenuProfile', 'menu-profile', ('u',)), ('DeferredMenu', 'deferred-menu', ('u',))]
     for package, folder, _ in packages:
         destination = game / package / 'Classes'
         destination.mkdir(parents=True, exist_ok=True)
@@ -40,11 +40,11 @@ def main():
     section = re.search(r'(?ms)^\[Editor.EditorEngine\]\n.*?(?=^\[|\Z)', ini)
     if not section:
         parser.error('Default.ini has no Editor.EditorEngine section')
-    # Preserve the compiler's stock package order; original Matrix is a dependency.
-    addition = ''.join('EditPackages=' + package + '\n' for package in
-                       ('Matrix2004_v130', 'LocalAim', 'LocalRecovery', 'MenuProfile', 'DeferredMenu')
-                       if not re.search(r'(?mi)^EditPackages=' + re.escape(package) + r'\s*$', section[0]))
-    ini = ini[:section.end()] + addition + ini[section.end():]
+    # Reorder authored packages even if an earlier local build added them already.
+    order = ('Matrix2004_v130', 'MatrixModern', 'LocalAim', 'LocalRecovery', 'MenuProfile', 'DeferredMenu')
+    editor = re.sub(r'(?mi)^EditPackages=(?:' + '|'.join(re.escape(name) for name in order) + r')\s*\n', '', section[0])
+    addition = ''.join('EditPackages=' + name + '\n' for name in order)
+    ini = ini[:section.start()] + editor + addition + ini[section.end():]
     def compiler_path(path):
         text = str(path.resolve())
         return 'Z:' + text if args.wine and text.startswith('/') else text

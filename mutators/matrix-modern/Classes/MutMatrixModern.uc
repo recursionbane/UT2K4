@@ -19,12 +19,12 @@ function ModifyLogin(out string Portal, out string Options)
     local class<PlayerController> MatrixController;
 
     MatrixController = class<PlayerController>(DynamicLoadObject(
-        "Matrix2004_v130.MatrixPlayer", class'Class'));
+        "MatrixModern.CompatibleMatrixPlayer", class'Class'));
     if (MatrixController != None)
     {
         // Modern GameInfo.Login uses a cached class before consulting its name.
         Level.Game.PlayerControllerClass = MatrixController;
-        Level.Game.PlayerControllerClassName = "Matrix2004_v130.MatrixPlayer";
+        Level.Game.PlayerControllerClassName = "MatrixModern.CompatibleMatrixPlayer";
         Level.Game.DefaultPlayerClassName = "Matrix2004_v130.MatrixPawn";
         Log("MATRIX_COMPAT_LOGIN: controller=" $ MatrixController
             $ " pawn=" $ Level.Game.DefaultPlayerClassName);

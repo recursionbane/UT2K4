@@ -27,6 +27,7 @@ jobs:
           node arena/test.mjs
           node tests/test-hosted-mod.cjs
           node tests/test-matrix-source.cjs
+          node tests/test-matrix-lifecycle.cjs
           node tests/test_launch_origin.cjs
           python3 tools/check-assist-source.py
           npm run test:runtime
