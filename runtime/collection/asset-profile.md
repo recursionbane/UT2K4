@@ -46,6 +46,8 @@ Workers without WebCodecs Opus use a same-origin reference Opus WASM decoder wit
 
 ## Measuring the result
 
+The [validated aggregate report](../../docs/browser-asset-profile.json) records the measured full-collection size, retained map count, codec settings, and validation limits. The active profile is approximately 3.98 GB; no 100–200 MB whole-collection claim is made.
+
 `tools/audit-runtime-profile.mjs` counts each active data file once, including shared codec packs. It excludes original recovery transports, duplicate prefetch bundles, and the application shell, and states those exclusions in its output. A full collection inventory is distinct from the amount transferred to reach the menu or start one match.
 
 The loading UI reports HTTP-encoded body bytes and verified decode output separately. HTTP headers are excluded. Cache hits contribute no network body bytes; actual repeated downloads are included. A forecast is labelled as an estimate and cannot declare completion before native readiness.
