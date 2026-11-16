@@ -2,7 +2,7 @@
 
 Authored standalone UT2004 addon: `LocalAim.MutLocalAim`. Tested with the Collection's **3369** browser engine. Compatibility with other engine builds, including 3374, is not established by that test.
 
-Requires the separately obtained original `Matrix2004_v130` package for Matrix play. This folder contains only authored addon classes and their compiled package, not the original mod or game assets. Enable LocalAim before the original Matrix mutator so its controller and console commands are installed correctly. Recovery is a separate optional package in [local-recovery](../local-recovery/README.md).
+Requires the separately obtained original `Matrix2004_v130` package and the authored [MatrixModern compatibility package](../matrix-modern/README.md) for Matrix play. This folder contains only authored addon classes and their compiled package, not the original mod or game assets. Enable LocalAim before the original Matrix mutator so its controller and console commands are installed correctly. Recovery is a separate optional package in [local-recovery](../local-recovery/README.md).
 
 Defaults: full automatic targeting, first-person camera, unlimited Matrix adrenaline, automatic wallrunning near a vertical wall after a moving jump, and **Y** toggles bullet time. Hold Y does not repeatedly toggle. Original Matrix movement remains in control. Wallruns, sideways rolls and wall-exit flips temporarily use third person, then restore the chosen camera preference.
 
@@ -21,7 +21,9 @@ These commands and features apply only to local standalone play. Native `MMAIM_R
 
 ## Native callback safety
 
-Aim/view overrides use cached camera scalars and collision traces. They never invoke native view calculation recursively or use a transient Canvas outside `PostRender`. Rendering alone queries camera/projection; firing is guarded against re-entry, and releasing a target clears its reference before restoring the body pose. This specifically avoids the callback cycle `GetViewRotation → aim → PlayerCalcView → GetViewRotation` when visibility changes around a corner.
+`GetViewRotation` reads a recent validated snapshot and performs scalar/vector math. Its helper chain makes no collision traces, camera/projection queries, pose changes, or enemy-pawn dereferences. Ordinary tick/render work refreshes the snapshot; firing independently checks current visibility and the muzzle path. Rendering alone uses Canvas camera/projection queries.
+
+Held target pointers must match a freshly owned pawn in the current controller list before pawn fields are read. HUD restoration requires the current HUD identity; shot telemetry stores a label rather than a retired actor reference. Owner, level, camera and targeting changes invalidate the snapshot before pose restoration. The source guard follows helper calls transitively so moving a trace into another function cannot bypass the camera-accessor boundary.
 
 ## Build
 

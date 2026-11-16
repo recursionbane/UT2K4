@@ -23,6 +23,11 @@ struct IncomingHit
 };
 var array<IncomingHit> IncomingHits;
 var Pawn CurrentTarget, ManualTarget, LastPawn;
+var bool bAimSnapshot, AimSnapshotBehind;
+var Pawn AimSnapshotPawn, AimSnapshotTarget;
+var vector AimSnapshotPoint, AimSnapshotEyeOffset, AimSnapshotPawnLocation, AimSnapshotCameraLocation;
+var rotator AimSnapshotCameraRotation, AimSnapshotControlRotation;
+var float AimSnapshotTime;
 var HUD SavedHUD;
 var bool OriginalCrosshair;
 var float Width, Height, FrameTime;
@@ -33,7 +38,7 @@ var string LastReason;
 var int ShotCount;
 var vector LastShotStart;
 var rotator LastShotAim;
-var Pawn LastShotTarget;
+var string LastShotTargetLabel,CurrentTargetLabel;
 var float LastShotTime;
 var bool bObservedState, bReportedTimeActive, bReportedGUIActive;
 var Pawn ReportedTarget;
@@ -63,25 +68,35 @@ function bool NativeGUIActive(PlayerController PC)
 
 function bool Allowed(PlayerController PC)
 {
-    if (PC == None || PC.Level.NetMode != NM_Standalone || PC.Player == None
-        || PC.Pawn == None || PC.Pawn.Health <= 0 || PC.Pawn.bDeleteMe) return false;
+    if (PC == None || PC.bDeleteMe || PC.Level==None || PC.Level.NetMode != NM_Standalone || PC.Player == None
+        || PC.Player.Actor!=PC || PC.Pawn == None || !PC.Pawn.IsA('Pawn') || PC.Pawn.bDeleteMe
+        || PC.Pawn.Level!=PC.Level || PC.Pawn.Controller!=PC || PC.Pawn.Health <= 0) return false;
     if (PC.IsInState('GameEnded') || PC.IsInState('Spectating')) return false;
     if (PC.Player.GUIController != None && PC.Player.GUIController.bActive) return false;
     if (PC.Player.Console != None && PC.Player.Console.bTyping) return false;
     return true;
 }
 
-function bool Enemy(Pawn P)
+function bool Enemy(Pawn Candidate)
 {
     local PlayerController PC;
+    local Controller C;
+    local Pawn P;
     local int Team;
-    PC = OwnerPC();
-    if (!Allowed(PC) || P == None || P == PC.Pawn || P.bDeleteMe
-        || P.Health <= 0 || P.bHidden || P.Controller == None) return false;
-    if (PC.Level.Game != None && PC.Level.Game.bTeamGame)
+    PC=OwnerPC();
+    if(!Allowed(PC) || Candidate==None)return false;
+    // Compare the held pointer against freshly owned pawns before reading its layout.
+    for(C=PC.Level.ControllerList;C!=None;C=C.NextController)
     {
-        Team = PC.Pawn.GetTeamNum();
-        if (Team != 255 && Team == P.GetTeamNum()) return false;
+        if(!C.bDeleteMe && C.Level==PC.Level && C.Pawn==Candidate)
+        {P=C.Pawn;break;}
+    }
+    if(P==None || !P.IsA('Pawn') || P==PC.Pawn || P.bDeleteMe || P.Level!=PC.Level
+        || P.Health<=0 || P.bHidden || P.Controller!=C)return false;
+    if(PC.Level.Game!=None && PC.Level.Game.bTeamGame)
+    {
+        Team=PC.Pawn.GetTeamNum();
+        if(Team!=255 && Team==P.GetTeamNum())return false;
     }
     return true;
 }
@@ -151,29 +166,79 @@ function bool Visible(Pawn P, out vector Point)
     return InCone(Point) && ClearRay(ViewLocation,Point,P) && ClearRay(Eye,Point,P);
 }
 
+// Only ordinary script Tick/PostRender code refreshes this snapshot.
+function InvalidateAimSnapshot()
+{
+    bAimSnapshot=false;AimSnapshotPawn=None;AimSnapshotTarget=None;
+}
+
+function CacheValidatedAim(vector Point)
+{
+    local PlayerController PC;
+    PC=OwnerPC();InvalidateAimSnapshot();
+    if(!Allowed(PC) || !Enemy(CurrentTarget))return;
+    AimSnapshotPawn=PC.Pawn;AimSnapshotTarget=CurrentTarget;AimSnapshotPoint=Point;
+    AimSnapshotEyeOffset=PC.Pawn.EyePosition();AimSnapshotPawnLocation=PC.Pawn.Location;
+    ActualView(AimSnapshotCameraLocation,AimSnapshotCameraRotation);
+    AimSnapshotControlRotation=PC.Rotation;AimSnapshotTime=PC.Level.TimeSeconds;
+    AimSnapshotBehind=PC.bBehindView;bAimSnapshot=true;
+}
+
+// Render/mesh accessors may call this while native collision/render code is active.
+// Keep it to cached scalars, object identity/type checks and pure vector math.
+function bool CachedViewAim(out rotator Aim)
+{
+    local PlayerController PC;
+    local Pawn Target;
+    local vector Location,D,X,Y,Z;
+    local rotator View;
+    local float Depth,TanH,TanV;
+    PC=OwnerPC();Target=AimSnapshotTarget;
+    if(!bAimSnapshot || PC==None || PC.bDeleteMe || PC.Level==None || PC.Player==None
+        || PC.Level.NetMode!=NM_Standalone || PC.Player.Actor!=PC || PC.Pawn==None
+        || !PC.Pawn.IsA('Pawn') || PC.Pawn.bDeleteMe || PC.Pawn!=AimSnapshotPawn
+        || PC.Pawn.Level!=PC.Level || PC.Pawn.Controller!=PC || PC.Pawn.Health<=0
+        || Target==None || Target!=CurrentTarget
+        || PC.bBehindView!=AimSnapshotBehind || PC.Level.TimeSeconds<AimSnapshotTime
+        || PC.Level.TimeSeconds-AimSnapshotTime>0.15 || Width<1 || Height<1)return false;
+    if(PC.Player.GUIController!=None && PC.Player.GUIController.bActive)return false;
+    if(PC.Player.Console!=None && PC.Player.Console.bTyping)return false;
+    Location=AimSnapshotCameraLocation+(PC.Pawn.Location-AimSnapshotPawnLocation);
+    View=Normalize(AimSnapshotCameraRotation+(PC.Rotation-AimSnapshotControlRotation));
+    D=AimSnapshotPoint-Location;GetAxes(View,X,Y,Z);Depth=D Dot X;
+    if(Depth<=1)return false;
+    TanH=Tan(FClamp(PC.FOVAngle,5,175)*Pi/360);TanV=TanH*Height/Width;
+    if(Abs(D Dot Y)>Depth*TanH || Abs(D Dot Z)>Depth*TanV)return false;
+    Aim=rotator(AimSnapshotPoint-(PC.Pawn.Location+AimSnapshotEyeOffset));Aim.Roll=PC.Rotation.Roll;
+    return true;
+}
+
 function Release(string Reason)
 {
     local PlayerController PC;
-    local Pawn Previous;
-    Previous=CurrentTarget;CurrentTarget=None;ManualTarget=None;
+    local string PreviousLabel;
+    InvalidateAimSnapshot();PreviousLabel=CurrentTargetLabel;CurrentTarget=None;ManualTarget=None;CurrentTargetLabel="None";
     PC=OwnerPC();
     // Invalidate first: pose restoration can call view-related native code.
-    if(PC!=None && PC.Pawn!=None && PC.Pawn.Health>0
+    if(PC!=None && PC.Pawn!=None && PC.Pawn.IsA('Pawn') && !PC.Pawn.bDeleteMe
+        && PC.Pawn.Level==PC.Level && PC.Pawn.Controller==PC && PC.Pawn.Health>0
         && !PC.IsInState('MMRolling') && !PC.IsInState('MMWallrun'))
     {
         PC.Pawn.FaceRotation(PC.Rotation,0);
         PC.Pawn.SetViewPitch(PC.Rotation.Pitch);
     }
-    if(Previous!=None)Log("MMAIM_RELEASE target=" $ Previous $ " reason=" $ Reason);
+    if(PreviousLabel!="" && PreviousLabel!="None")Log("MMAIM_RELEASE target=" $ PreviousLabel $ " reason=" $ Reason);
     LastReason=Reason;RestoreCrosshair();
 }
 
 function RestoreCrosshair()
 {
-    if (bSavedCrosshair && SavedHUD != None && !SavedHUD.bDeleteMe)
-        SavedHUD.bCrosshairShow = OriginalCrosshair;
-    bSavedCrosshair = false;
-    SavedHUD = None;
+    local PlayerController PC;
+    PC=OwnerPC();
+    if(bSavedCrosshair && PC!=None && SavedHUD!=None && PC.MyHUD==SavedHUD
+        && SavedHUD.IsA('HUD') && !SavedHUD.bDeleteMe && SavedHUD.Level==PC.Level)
+        SavedHUD.bCrosshairShow=OriginalCrosshair;
+    bSavedCrosshair=false;SavedHUD=None;
 }
 
 function Tick(float DeltaTime)
@@ -197,7 +262,7 @@ function Tick(float DeltaTime)
     {
         if (CurrentTarget != None) Release("owner-unavailable");
         else RestoreCrosshair();
-        FrameTargets.Length=0;
+        InvalidateAimSnapshot();FrameTargets.Length=0;
         return;
     }
     if (LastPawn != PC.Pawn)
@@ -208,8 +273,12 @@ function Tick(float DeltaTime)
         FrameTargets.Length = 0;
     }
     UpdateCamera(PC);
-    if (CurrentTarget != None && !Visible(CurrentTarget,Point))
-        Release("not-visible-in-viewport");
+    if(CurrentTarget!=None)
+    {
+        if(Visible(CurrentTarget,Point))CacheValidatedAim(Point);
+        else Release("not-visible-in-viewport");
+    }
+    else InvalidateAimSnapshot();
     // In third person the world body/gun faces its firing point; camera Rotation
     // remains entirely user-controlled. Original acrobatic states own body roll.
     if(PC.bBehindView && CurrentTarget!=None && !PC.IsInState('MMRolling') && !PC.IsInState('MMWallrun')
@@ -230,10 +299,11 @@ function bool FireAim(vector Start,out rotator Aim)
     local bool Result;
     if(bComputingAim)return false;
     bComputingAim=true;PC=OwnerPC();Target=CurrentTarget;
-    if(Allowed(PC) && Target!=None && Visible(Target,Point)
-        && !Target.bDeleteMe && Target.Health>0 && ClearRay(Start,Point,Target))
+    if(Allowed(PC) && Target!=None && Visible(Target,Point) && ClearRay(Start,Point,Target))
     {
-        Aim=rotator(Point-Start);Aim.Roll=PC.Rotation.Roll;Result=true;
+        // Native traces may invoke other engine work; prove the pair again afterward.
+        if(Target==CurrentTarget && Enemy(Target))
+        {Aim=rotator(Point-Start);Aim.Roll=PC.Rotation.Roll;Result=true;}
     }
     bComputingAim=false;return Result;
 }
@@ -262,7 +332,8 @@ function NeutralReticle(Canvas C)
     local color OldColor;
     local float OldX,OldY;
     PC=OwnerPC();
-    if(!Allowed(PC) || !PC.bBehindView || !bMarkTarget || PC.MyHUD==None || !PC.MyHUD.bCrosshairShow)return;
+    if(!Allowed(PC) || !PC.bBehindView || !bMarkTarget || PC.MyHUD==None || !PC.MyHUD.IsA('HUD') || PC.MyHUD.bDeleteMe
+        || PC.MyHUD.Level!=PC.Level || !PC.MyHUD.bCrosshairShow)return;
     OldColor=C.DrawColor;OldX=C.CurX;OldY=C.CurY;
     C.SetDrawColor(220,220,220,180);
     C.SetPos(Width*0.5-6,Height*0.5-1);C.DrawTile(Texture'Engine.WhiteSquareTexture',12,2,0,0,2,2);
@@ -275,7 +346,7 @@ function NoteShot(vector Start,rotator Aim)
     local PlayerController PC;
     PC=OwnerPC();
     ShotCount++;
-    LastShotStart=Start;LastShotAim=Aim;LastShotTarget=CurrentTarget;
+    LastShotStart=Start;LastShotAim=Aim;LastShotTargetLabel=CurrentTargetLabel;
     if(PC!=None)LastShotTime=PC.Level.TimeSeconds;
 }
 
@@ -303,7 +374,9 @@ function SelectNormalized(float NX, float NY)
         Distance=Square(X-FrameTargets[i].Screen.X)+Square(Y-FrameTargets[i].Screen.Y);
         if (Distance<Best){Best=Distance;Pick=FrameTargets[i].Target;}
     }
-    ManualTarget=Pick;CurrentTarget=Pick;
+    InvalidateAimSnapshot();ManualTarget=Pick;CurrentTarget=Pick;
+    CurrentTargetLabel="None";
+    if(Pick!=None && Enemy(Pick))CurrentTargetLabel=string(Pick);
     if(Pick==None) LastReason="no-target-at-tap";
     else LastReason="manual-selected";
     Status();
@@ -312,14 +385,14 @@ function SelectNormalized(float NX, float NY)
 function SetCamera(bool Behind)
 {
     local PlayerController PC;
-    PC=OwnerPC();bThirdPerson=Behind;
+    InvalidateAimSnapshot();PC=OwnerPC();bThirdPerson=Behind;
     if(PC!=None){PC.ClientSetBehindView(Behind);PC.LastPlayerCalcView=-1;}
     bRenderedView=false;FrameTargets.Length=0;LastReason="camera-setting";Status();
 }
 
 function SetAutomatic(bool Enabled)
 {
-    bAutoAim=Enabled;
+    InvalidateAimSnapshot();bAutoAim=Enabled;
     if (!Enabled && ManualTarget==None) Release("auto-off");
     LastReason="auto-setting";Status();
 }
@@ -348,7 +421,7 @@ function UpdateCamera(PlayerController PC)
     bTemporaryThirdPerson=Temporary;Wanted=bThirdPerson || Temporary;
     if(PC.bBehindView!=Wanted)
     {
-        PC.ClientSetBehindView(Wanted);PC.LastPlayerCalcView=-1;bRenderedView=false;
+        InvalidateAimSnapshot();PC.ClientSetBehindView(Wanted);PC.LastPlayerCalcView=-1;bRenderedView=false;
         Log("MMMATRIX_CAMERA thirdperson=" $ int(Wanted) $ " temporary=" $ int(Temporary) $ " preferredThird=" $ int(bThirdPerson));
     }
 }
@@ -406,8 +479,10 @@ function Status()
     Aim=PC.Rotation;
     MP=LocalAimMatrixPlayer(PC);
     if(MP!=None)TimeActive=int(MP.Activated);
-    if(PC.Pawn!=None){Physics=PC.Pawn.Physics;ViewPitch=PC.Pawn.ViewPitch;BodyRotation=PC.Pawn.Rotation;}
-    if(CurrentTarget!=None)
+    if(PC.Pawn!=None && PC.Pawn.IsA('Pawn') && !PC.Pawn.bDeleteMe
+        && PC.Pawn.Level==PC.Level && PC.Pawn.Controller==PC)
+    {Physics=PC.Pawn.Physics;ViewPitch=PC.Pawn.ViewPitch;BodyRotation=PC.Pawn.Rotation;}
+    if(CurrentTarget!=None && Enemy(CurrentTarget))
     {
         Health=CurrentTarget.Health;
         if(Visible(CurrentTarget,Point)) LOS=1;
@@ -415,7 +490,7 @@ function Status()
         Screen=LastRenderedTargetScreen();
     }
     Log("MMAIM_STATUS standalone=1 guiActive=" $ int(NativeGUIActive(PC)) $ " auto=" $ int(bAutoAim)
-        $ " manual=" $ int(ManualTarget!=None) $ " target=" $ CurrentTarget
+        $ " manual=" $ int(ManualTarget!=None) $ " target=" $ CurrentTargetLabel
         $ " health=" $ Health $ " view=" $ PC.Rotation $ " aim=" $ Aim
         $ " pawn=" $ PC.Pawn $ " screen=" $ Screen.X/ FMax(1,Width) $ "," $ Screen.Y/FMax(1,Height)
         $ " preferredThird=" $ int(bThirdPerson) $ " temporaryThird=" $ int(bTemporaryThirdPerson) $ " unlimitedAdrenaline=" $ int(MP!=None)
@@ -424,7 +499,7 @@ function Status()
         $ " state=" $ PC.GetStateName() $ " physics=" $ Physics $ " body=" $ BodyRotation $ " viewPitch=" $ ViewPitch
         $ " viewport=" $ Width $ "," $ Height $ " los=" $ LOS $ " reason=" $ LastReason
         $ " shotCount=" $ ShotCount $ " shotAim=" $ LastShotAim $ " shotStart=" $ LastShotStart
-        $ " shotTarget=" $ LastShotTarget $ " shotTime=" $ LastShotTime);
+        $ " shotTarget=" $ LastShotTargetLabel $ " shotTime=" $ LastShotTime);
 }
 
 function PostRender(Canvas C)
@@ -456,7 +531,7 @@ function PostRender(Canvas C)
             {bStageRendered=true;Log("COLLECTION_STAGE_RENDERED map=" $ StageMap);}
         }
     }
-    if(!Allowed(PC)){RestoreCrosshair();return;}
+    if(!Allowed(PC)){InvalidateAimSnapshot();RestoreCrosshair();return;}
     Width=C.ClipX;Height=C.ClipY;
     C.GetCameraLocation(CameraLocation,CameraRotation);
     RenderPawn=PC.Pawn;RenderPawnLocation=PC.Pawn.Location;RenderControlRotation=PC.Rotation;bRenderedView=true;
@@ -489,17 +564,20 @@ function PostRender(Canvas C)
     }
     if(CurrentTarget==None && bAutoAim && Pick!=None)
     {
-        CurrentTarget=Pick;LastReason="auto-acquired";
+        CurrentTarget=Pick;CurrentTargetLabel=string(Pick);LastReason="auto-acquired";
         Log("MMAIM_ACQUIRE target=" $ Pick $ " manual=0");
     }
-    if(CurrentTarget==None){RestoreCrosshair();NeutralReticle(C);return;}
+    if(CurrentTarget==None){InvalidateAimSnapshot();RestoreCrosshair();NeutralReticle(C);return;}
+    if(!Visible(CurrentTarget,Point)){Release("not-visible-in-render");return;}
+    CacheValidatedAim(Point);
     if(bSavedCrosshair && SavedHUD!=PC.MyHUD)RestoreCrosshair();
-    if(PC.MyHUD!=None && !bSavedCrosshair)
+    if(PC.MyHUD!=None && PC.MyHUD.IsA('HUD') && !PC.MyHUD.bDeleteMe
+        && PC.MyHUD.Level==PC.Level && !bSavedCrosshair)
     {
         SavedHUD=PC.MyHUD;OriginalCrosshair=SavedHUD.bCrosshairShow;
         SavedHUD.bCrosshairShow=false;bSavedCrosshair=true;
     }
-    if(!bMarkTarget || !Visible(CurrentTarget,Point))return;
+    if(!bMarkTarget)return;
     Screen=C.WorldToScreen(Point);
     OldColor=C.DrawColor;OldX=C.CurX;OldY=C.CurY;
     C.SetDrawColor(255,25,25,255);
@@ -516,12 +594,15 @@ function PostRender(Canvas C)
 
 event NotifyLevelChange()
 {
-    RestoreCrosshair();CurrentTarget=None;ManualTarget=None;
+    InvalidateAimSnapshot();RestoreCrosshair();CurrentTarget=None;ManualTarget=None;
+    LastPawn=None;RenderPawn=None;ReportedTarget=None;LastShotTargetLabel="None";CurrentTargetLabel="None";FrameTargets.Length=0;bRenderedView=false;
     if(Master!=None)Master.RemoveInteraction(Self);
 }
 
 defaultproperties
 {
+    CurrentTargetLabel="None"
+    LastShotTargetLabel="None"
     bAutoAim=True
     bMarkTarget=True
     bThirdPerson=False
