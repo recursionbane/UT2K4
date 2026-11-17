@@ -27,7 +27,7 @@ and a C compiler with libogg/libvorbis development headers. Build the small nati
 Vorbis candidate encoder (this is a build tool, not browser playback code):
 
 ```sh
-cc -O2 tools/audio/vorbis-encode.c -o /path/to/vorbis-encode $(pkg-config --cflags --libs vorbisenc ogg)
+cc -O2 tools/audio/vorbis-encode.c -o /path/to/vorbis-encode $(pkg-config --cflags --libs vorbisenc vorbis ogg)
 python3 tools/build-music-profile.py --files /path/to/catalog/files --output .local-runtime/audio-compact/music --encoder /path/to/vorbis-encode --profile mono-vbr0 --sample-rate 0 --all-folders
 python3 tools/measure-music-quality.py --files /path/to/catalog/files --corpus .local-runtime/audio-compact/music
 node tools/build-sound-profile.mjs --files /path/to/catalog/files --scope all --output .local-runtime/audio-all-packages
@@ -61,3 +61,16 @@ work is capped at 16 MiB of expanded 48-kHz Float32; temporary planes, output PC
 base/region caches and the native heap are separate allocations. See measured
 profile reports for actual peaks. Music uses the native Vorbis stream path and
 retains native volume, pause and transition ownership.
+
+A smaller native Vorbis candidate profile accepts a frequency cutoff in kHz.
+Rebuild the encoder above, then run the following on a local collection:
+
+```sh
+python3 tools/build-music-profile.py --profile mono-budget --lowpass-khz 5 --encoder /path/to/vorbis-encode --all-folders
+```
+
+It uses mono Vorbis quality −1 and preserves the original sample rate and
+timeline. The cutoff affects treble. The default 5 kHz trial retains more high
+frequencies than the 2 kHz size trial. Both profiles keep the original file when
+conversion or validation fails. The per-track inventory records the effective
+cutoff, decoded sample count and metadata verification for each selected encode.

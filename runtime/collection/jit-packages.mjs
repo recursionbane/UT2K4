@@ -1,5 +1,17 @@
 // Lossless seekable package transport. Creates candidates only; never edits a release.
 import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import zlib from 'node:zlib';import {promisify}from'node:util';
+import {bindXzFrameDecoder,wasmHash as xzWasmHash} from './codecs/xz/decoder.mjs';
+let offlineXZ;
+function decodeIndexedFrame(frame, size, codec) {
+  if(codec===undefined)return zlib.zstdDecompressSync(frame,{maxOutputLength:size});
+  if(codec!=='xz')throw Error('Unknown package frame codec');
+  if(!offlineXZ){
+    const wasm=fs.readFileSync(new URL('./codecs/xz/frame-decoder.wasm',import.meta.url));
+    if(sha(wasm)!==xzWasmHash)throw Error('XZ decoder integrity mismatch');
+    offlineXZ=bindXzFrameDecoder(new WebAssembly.Instance(new WebAssembly.Module(wasm)));
+  }
+  return Buffer.from(offlineXZ(frame,size));
+}
 const compress=promisify(zlib.zstdCompress);
 export const DEFAULT_POLICY={minimum:4*1024*1024,blockSize:256*1024,level:15,extensions:['u','ut2','utx','usx','ukx','uax','umx','ogg']};
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -7,7 +19,7 @@ const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
  * versions return incomplete output for a concatenated multi-frame buffer. */
 export function decodePackageFrames(index, container, {maxBytes=512*1024*1024}={}) {
   const packed=Buffer.from(container.buffer,container.byteOffset,container.byteLength);
-  if(index?.format!=='zstd-pages-v1'||!Number.isSafeInteger(index.size)||index.size<0||
+  if(!['zstd-pages-v1','mixed-pages-v1'].includes(index?.format)||!Number.isSafeInteger(index.size)||index.size<0||
      index.size>maxBytes||!Number.isSafeInteger(index.blockSize)||index.blockSize<1||
      !Array.isArray(index.blocks)||index.blocks.length!==Math.ceil(index.size/index.blockSize)||
      packed.length!==index.containerSize||sha(packed)!==index.containerSha256)
@@ -19,7 +31,8 @@ export function decodePackageFrames(index, container, {maxBytes=512*1024*1024}={
     if(block.offset!==encodedOffset||!Number.isSafeInteger(block.length)||block.length<1||
        encodedOffset+block.length>packed.length||block.rawLength!==expectedLength)
       throw Error('Invalid indexed package frame bounds');
-    const bytes=zlib.zstdDecompressSync(packed.subarray(encodedOffset,encodedOffset+block.length),{maxOutputLength:expectedLength});
+    if(block.codec!==undefined&&index.format!=='mixed-pages-v1')throw Error('Unexpected block codec');
+    const bytes=decodeIndexedFrame(packed.subarray(encodedOffset,encodedOffset+block.length),expectedLength,block.codec);
     if(bytes.length!==expectedLength||sha(bytes)!==block.sha256)
       throw Error('Indexed package frame integrity mismatch');
     parts.push(bytes);encodedOffset+=block.length;rawOffset+=bytes.length;

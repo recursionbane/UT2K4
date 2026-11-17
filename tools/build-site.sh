@@ -33,6 +33,10 @@ for asset in decoder.mjs opus_decoder.wasm LICENSE NOTICE BUILD.md build.json; d
   [ -f "runtime/collection/codecs/opus/$asset" ] || continue
   cp "runtime/collection/codecs/opus/$asset" "$runtime_dir/codecs/opus/"
 done
+mkdir -p "$runtime_dir/codecs/xz"
+for asset in decoder.mjs frame-decoder.wasm LICENSE BUILD.md; do
+  cp "runtime/collection/codecs/xz/$asset" "$runtime_dir/codecs/xz/"
+done
 mkdir -p "$runtime_dir/codecs/brotli"
 for asset in brotli-decoder.mjs brotli-decoder.wasm LICENSE BUILD.md build.json; do
   cp "runtime/collection/codecs/brotli/$asset" "$runtime_dir/codecs/brotli/"
