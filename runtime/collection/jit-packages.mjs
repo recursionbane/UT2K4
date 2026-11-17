@@ -3,6 +3,32 @@ import fs from 'node:fs';import path from 'node:path';import crypto from 'node:c
 const compress=promisify(zlib.zstdCompress);
 export const DEFAULT_POLICY={minimum:4*1024*1024,blockSize:256*1024,level:15,extensions:['u','ut2','utx','usx','ukx','uax','umx','ogg']};
 const sha=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+/** Offline verification must decode indexed frames separately. Some Node Zstd
+ * versions return incomplete output for a concatenated multi-frame buffer. */
+export function decodePackageFrames(index, container, {maxBytes=512*1024*1024}={}) {
+  const packed=Buffer.from(container.buffer,container.byteOffset,container.byteLength);
+  if(index?.format!=='zstd-pages-v1'||!Number.isSafeInteger(index.size)||index.size<0||
+     index.size>maxBytes||!Number.isSafeInteger(index.blockSize)||index.blockSize<1||
+     !Array.isArray(index.blocks)||index.blocks.length!==Math.ceil(index.size/index.blockSize)||
+     packed.length!==index.containerSize||sha(packed)!==index.containerSha256)
+    throw Error('Invalid indexed package identity');
+  let encodedOffset=0,rawOffset=0;
+  const parts=[];
+  for(const block of index.blocks) {
+    const expectedLength=Math.min(index.blockSize,index.size-rawOffset);
+    if(block.offset!==encodedOffset||!Number.isSafeInteger(block.length)||block.length<1||
+       encodedOffset+block.length>packed.length||block.rawLength!==expectedLength)
+      throw Error('Invalid indexed package frame bounds');
+    const bytes=zlib.zstdDecompressSync(packed.subarray(encodedOffset,encodedOffset+block.length),{maxOutputLength:expectedLength});
+    if(bytes.length!==expectedLength||sha(bytes)!==block.sha256)
+      throw Error('Indexed package frame integrity mismatch');
+    parts.push(bytes);encodedOffset+=block.length;rawOffset+=bytes.length;
+  }
+  if(encodedOffset!==packed.length||rawOffset!==index.size)throw Error('Indexed package trailing data');
+  const raw=Buffer.concat(parts,rawOffset);
+  if(index.rawSha256&&sha(raw)!==index.rawSha256)throw Error('Indexed package raw integrity mismatch');
+  return raw;
+}
 function safe(name){if(!name||name.startsWith('/')||name.includes('\\')||name.split('/').some(p=>p==='.'||p==='..'))throw Error('Unsafe transport path');return name;}
 export function eligible(logical,size,policy=DEFAULT_POLICY){return size>=policy.minimum&&new RegExp('\\.('+policy.extensions.join('|')+')$','i').test(logical);}
 export async function buildPackage({logical,entry,transport,output,policy=DEFAULT_POLICY}){

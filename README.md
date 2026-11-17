@@ -66,6 +66,10 @@ The public recovery tool, hashes, and provenance identify the original texts. A 
 
 ## Build and test
 
+The [request checklist](docs/request-checklist.json) records shipped behavior,
+superseded choices, and outstanding validation. The [remaining asset work](docs/remaining-asset-work.json)
+tracks the current compression candidates; requested size targets are not measured results.
+
 ```sh
 node arena/test.mjs
 node delivery/test-native-import.cjs /path/to/ut2004-web-v0.2.0.tar.gz

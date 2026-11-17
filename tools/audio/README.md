@@ -14,8 +14,12 @@ Sound effects use Opus transport and reconstruct the original PCM shape inside
 unchanged package headers. The compact class/duration policy uses 16–48 kbps per
 channel: music-like assets and important UI/short cues receive 48; weapon/impact/
 movement cues receive 32; voice and ambience use lower rates. Positional mono
-stays mono. Package candidates must save 5%, and all regions must be inside parsed
-USound RawData. The generic UE package reader supports its declared serialization
+stays mono. Standalone sound/script package candidates must save 5% against their
+original transport. Embedded sounds in maps, meshes, animations and texture
+packages are also inventoried; their individually profitable regions become
+candidates, pending a final comparison against the current merged package frames.
+Original whole-package comparisons are not savings against an already optimized
+deployment. All regions must be inside parsed USound RawData. The generic UE package reader supports its declared serialization
 profiles; unsupported legacy packages remain original.
 
 Requirements: Python 3.12+, Node with native Zstd support, FFmpeg with libopus,
@@ -26,8 +30,8 @@ Vorbis candidate encoder (this is a build tool, not browser playback code):
 cc -O2 tools/audio/vorbis-encode.c -o /path/to/vorbis-encode $(pkg-config --cflags --libs vorbisenc ogg)
 python3 tools/build-music-profile.py --files /path/to/catalog/files --output .local-runtime/audio-compact/music --encoder /path/to/vorbis-encode --profile mono-vbr0 --sample-rate 0 --all-folders
 python3 tools/measure-music-quality.py --files /path/to/catalog/files --corpus .local-runtime/audio-compact/music
-node tools/build-sound-profile.mjs --files /path/to/catalog/files --output .local-runtime/audio-compact/sounds
-node tools/verify-sound-profile.mjs --files /path/to/catalog/files --corpus .local-runtime/audio-compact/sounds
+node tools/build-sound-profile.mjs --files /path/to/catalog/files --scope all --output .local-runtime/audio-all-packages
+node tools/verify-sound-profile.mjs --files /path/to/catalog/files --corpus .local-runtime/audio-all-packages
 ```
 
 The music validator additionally takes representative native playback evidence
@@ -43,6 +47,10 @@ Sound `report.json` rows expose `eligible`, `logical`, `descriptor` and
 encoded-region hashes, so a packager can group encoded objects into range bundles.
 Only referenced payloads should ship; encoder-cache orphans are not release files.
 The build is resumable through source/profile/hash checks and atomic artifacts.
+Use `--scope containers` for UAX/U packages or `--scope embedded` for the other
+supported package extensions. `--reuse /path/to/previous/sounds` reuses existing
+content-and-policy-keyed Opus files, which are verified before candidate acceptance.
+No candidate builder activates or publishes its output.
 
 The Opus browser adapter prefers WebCodecs and otherwise lazily loads the bundled,
 licensed, fixed-2-MiB WASM decoder. It uses same-origin requests and no eval/CDN.

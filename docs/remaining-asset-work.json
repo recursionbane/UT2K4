@@ -1,0 +1,362 @@
+{
+  "format": "remaining-asset-work-v1",
+  "requestedTarget": {
+    "ratio": 0.1,
+    "denominator": "Current deployed compressed transport including required metadata and decoder overhead; raw-size comparisons reported separately"
+  },
+  "baseline": {
+    "activeBytes": 3977789262,
+    "mapBaseBytes": 2347440997,
+    "sharedEncodedBytes": 232490322
+  },
+  "items": [
+    {
+      "id": "model-containers",
+      "description": "Model/BSP and baked lighting",
+      "rawBytesWhereKnown": 4037318218,
+      "owner": "engine",
+      "work": "All native Model exports parsed to exact end; apply paired hidden lightmap mip regions while preserving geometry, collision, metadata and shadow masks. Reversible opaque-byte transforms and whole-Model Brotli remain research alternatives, not release requirements.",
+      "status": "audited-safe-candidate-tested-target-unmet",
+      "candidateBytes": null,
+      "nativeValidation": "Strict paired lightmap candidate passed controlled Rankin render/movement and combined normal menu\u2192Rankin play\u2192Tintagel render, with no native/page errors. This does not validate every map.",
+      "validationScope": {
+        "maps": 861,
+        "models": 341971,
+        "failed": 0,
+        "exactExportEnd": true
+      },
+      "rawBreakdown": {
+        "bspNodes": 236865332,
+        "points": 58081951,
+        "vectors": 10783263,
+        "surfaces": 55094554,
+        "vertexPool": 238097608,
+        "renderSectionsSerializedData": 482833235,
+        "lightmapShadowMasks": 982632358,
+        "lightmapMetadataExcludingShadowBytes": 432229146,
+        "hiddenLightmapMipPixels": 1371176960,
+        "hiddenLightmapTextureMetadata": 5329256
+      },
+      "limits": [
+        "Raw subcategories overlap Model total and must not be added to sibling totals.",
+        "Canonical BSP, collision and render-section geometry have not been reduced to 10% of current compressed transport.",
+        "Six largest-Model stream sample: byte/delta/bit shuffles were worse than Zstd; Brotli 11 saved about 22% on streams, not 90%, and broad Model regions overlap the new mip regions.",
+        "Cross-map 256/1,024/4,096-byte dictionary experiment did not beat the same sample Zstd baseline before required metadata/decoder overhead."
+      ]
+    },
+    {
+      "id": "mesh-instance-lighting",
+      "description": "StaticMeshInstance lighting and shadow data",
+      "rawBytesWhereKnown": 1644498627,
+      "owner": "playground",
+      "work": "Separate vertex colors, shadow masks, and control fields; compact visual data",
+      "status": "in-progress",
+      "candidateBytes": null,
+      "nativeValidation": "Controlled Rankin fixed-camera render and movement passed for RGB4. Aggressive block1024/shadow flattening rejected for visible darkening and lost lighting detail.",
+      "rawBreakdown": {
+        "vertexColors": 816728664,
+        "shadowMasks": 690575587,
+        "otherFields": 137194376
+      },
+      "validationScope": "All 773,184 instances across 861 maps parsed to exact end; native visual candidate validation pending.",
+      "selectedPolicy": {
+        "colorBits": 4,
+        "shadowMasks": "unchanged",
+        "geometry": "unchanged"
+      },
+      "currentProfileComparison": {
+        "auditedMaps": 835,
+        "acceptedMaps": 731,
+        "netSavedBytesBeforeOtherSupplements": 150763156,
+        "currentFramesAndIndexes": 2326219681,
+        "selectedFramesAndIndexes": 2175456525
+      }
+    },
+    {
+      "id": "terrain",
+      "description": "TerrainInfo data",
+      "rawBytesWhereKnown": 949704816,
+      "owner": "mutator",
+      "work": "Separate terrain layers, lighting and native arrays; preserve height/collision semantics",
+      "status": "candidate-validated",
+      "candidateBytes": null,
+      "nativeValidation": "All 617 actors hash/range exact in Chrome and WebKit. Native Torlan rendered with owned MatrixPawn; normal movement input sent, no quantified displacement claim.",
+      "currentProfileComparison": {
+        "acceptedPackages": 373,
+        "predictedActorsVerified": 617,
+        "netSavedBytesBeforeOtherSupplements": 238583195,
+        "decodedChunkBytes": 65536
+      }
+    },
+    {
+      "id": "embedded-static-meshes",
+      "description": "Embedded static meshes",
+      "rawBytesWhereKnown": 850510181,
+      "owner": "playground",
+      "work": "Review residual vertex data, instance reuse and framing",
+      "status": "in-progress",
+      "candidateBytes": null,
+      "nativeValidation": "pending"
+    },
+    {
+      "id": "embedded-audio",
+      "description": "Previously missed map and other-container sounds",
+      "rawBytesWhereKnown": 191601638,
+      "owner": "root",
+      "work": "2,770 non-UAX/U packages scanned, including all 861 maps; measure 832 Opus candidates against current merged package frames, with payload deduplication. Retain malformed RIFF and bounded-decoder exceptions.",
+      "status": "in-progress",
+      "candidateBytes": null,
+      "nativeValidation": "Combined candidate: automatic main menu, owned Rankin match and Tintagel map render passed without native/page errors. All five newly encoded Tintagel sound regions, including the new 8013 Hz shape, were decoded on demand; native audio was running with nonzero output.",
+      "candidatePackages": 167,
+      "candidateClips": 832,
+      "retainedPCMClips": 15,
+      "unsupportedSoundExports": 1,
+      "currentProfileComparison": {
+        "acceptedPackages": 163,
+        "acceptedRegions": 828,
+        "netSavedBytes": 143179944,
+        "newUniquePayloadBytes": 10142869
+      },
+      "retainedReasons": {
+        "outsideSupportedSampleRate": 1,
+        "exceeds16MiBExpandedDecoderBound": 3,
+        "notProfitableAtRegionGate": 11,
+        "malformedRiff": 1
+      },
+      "codecValidation": "All 17 candidate PCM sample-rate/channel/bit-depth shapes decoded to exact original byte lengths in Chrome and WebKit, using both WebCodecs and forced bundled WASM. Four shapes were new relative to the earlier 26-shape corpus."
+    },
+    {
+      "id": "retained-map-textures",
+      "description": "Original map pixel payloads left in base packages",
+      "rawBytesWhereKnown": 920432352,
+      "owner": "root",
+      "work": "Review color mips without authored smaller mips and retained interface images; preserve heightfields, procedural/native-data textures and legibility.",
+      "status": "audited-candidates-pending",
+      "candidateBytes": null,
+      "nativeValidation": "pending",
+      "retainedRawBreakdown": {
+        "small-mip-below-4096": {
+          "mips": 74141,
+          "rawBytes": 22788544
+        },
+        "interface": {
+          "mips": 12840,
+          "rawBytes": 247665636
+        },
+        "no-smaller-authored-mip": {
+          "mips": 2884,
+          "rawBytes": 495226880
+        },
+        "native-format-G16": {
+          "mips": 681,
+          "rawBytes": 42126336
+        },
+        "remaining-color-mip-review-profit-and-quality": {
+          "mips": 1213,
+          "rawBytes": 35020800
+        },
+        "native-format-P8": {
+          "mips": 3768,
+          "rawBytes": 62508292
+        },
+        "font-reticle-or-native-data": {
+          "mips": 329,
+          "rawBytes": 15095864
+        }
+      },
+      "validationScope": "All 861 maps parsed; retained raw pixels reconcile exactly to 920,432,352 bytes. These are raw categories, not marginal wire bytes."
+    },
+    {
+      "id": "framing-overhead",
+      "description": "Independent-frame compression overhead",
+      "rawBytesWhereKnown": null,
+      "owner": "playground",
+      "work": "Use smaller original/synchronous Zstd encoding per 256 KiB mesh/animation frame; preserve granularity, raw hashes and existing codec regions.",
+      "status": "candidate-validated",
+      "candidateBytes": null,
+      "nativeValidation": "Actual bounded browser Zstd decoder passed Chrome/WebKit page and worker fixtures; final native integration pending.",
+      "currentProfileComparison": {
+        "packagesEvaluatedAfterMerge": 188,
+        "packagesImproved": 121,
+        "netSavedBytes": 38590183
+      }
+    },
+    {
+      "id": "editor-only-data",
+      "description": "Potential editor-only Model/Polys/Brush payloads",
+      "rawBytesWhereKnown": null,
+      "owner": "engine",
+      "work": "Public native EObjectFlags constants were checked across all 861 maps. Explicit NotForClient+NotForServer/editor-only byte counts are evidence, not a complete runtime reference-graph proof.",
+      "status": "explicit-flags-audited-reachability-unproven-not-stripped",
+      "candidateBytes": null,
+      "nativeValidation": "No editor/source objects were removed or zeroed.",
+      "explicitEditorOnlyRawBytes": {
+        "Model": 19155640,
+        "Polys": 216301109,
+        "Brush": 36518528,
+        "Mover": 0
+      },
+      "limits": [
+        "Only 0.47% of serialized Model bytes have these explicit editor-only flags.",
+        "Other Model objects may still be editor-referenced; complete native reference reachability is not established.",
+        "Raw flagged sizes do not quantify marginal compressed wire savings."
+      ]
+    },
+    {
+      "id": "unsupported-media",
+      "description": "Previously retained formats and serialization variants",
+      "rawBytesWhereKnown": null,
+      "owner": "root",
+      "work": "Review 57 texture serialization failures, localized texture extensions, 18 music originals and unsupported audio; retain any still-unvalidated data",
+      "status": "in-progress",
+      "candidateBytes": null,
+      "nativeValidation": "pending"
+    },
+    {
+      "id": "hidden-model-lightmaps",
+      "description": "Two baked texture mip arrays inside Model exports, missed by Texture-export-only conversion",
+      "rawBytesWhereKnown": 1371176960,
+      "owner": "engine",
+      "status": "strict-current-profile-candidate-native-tested",
+      "work": "All 861 maps / 341,971 Models parsed to exact end; native DLL confirms two FStaticLightMapTexture mips. Strict paired cap 128 reconstruction uses existing Basis BC1/BC2 codecs; source metadata and geometry remain unchanged.",
+      "candidateBytes": null,
+      "nativeValidation": "Controlled Rankin fixed-camera render and movement passed. Combined strict audio+Model normal Tintagel render also passed without errors; relaxed Tintagel 26 dB / alpha 64 fixed-camera comparison remains pending.",
+      "currentProfileComparison": {
+        "acceptedPackages": 431,
+        "regions": 3306,
+        "savedBytes": 56312322,
+        "newUniquePayloadBytes": 4661890
+      },
+      "coverageNote": "Strict candidate covers 34.09% of hidden pixel bytes before whole-package gating; remaining pixels include quality/profitability retention. No whole 1.37 GB converted claim.",
+      "rawBreakdown": {
+        "baseMip": 1096941568,
+        "secondMip": 274235392,
+        "nonemptyBC1Textures": 564,
+        "nonemptyBC2Textures": 3910,
+        "emptyUnusedTextureRecords": 518
+      },
+      "strictCorpus": {
+        "packagesConvertedBeforeCurrentFrameGate": 454,
+        "regionsBeforeCurrentFrameGate": 3368,
+        "rawPixelBytesReplacedBeforeCurrentFrameGate": 467435520,
+        "rawPixelCoverageFraction": 0.3409009439598518,
+        "uniqueEncodedPayloadBytesBeforeCurrentFrameGate": 4718775
+      },
+      "qualityPolicy": {
+        "cap": 128,
+        "bothMipsTogether": true,
+        "rgbPsnrMinimumAtCappedResolution": 30,
+        "alphaMseMaximum": 64,
+        "alphaAbsoluteErrorMaximum": 34,
+        "alphaThresholdMismatchMaximumFraction": 0.02
+      },
+      "relaxedProbe": {
+        "rgbPsnrMinimumAtCappedResolution": 26,
+        "alphaAbsoluteErrorMaximum": 64,
+        "nativeFixedCameraValidation": "pending",
+        "scope": "Tintagel only; separate private candidate, no broad rollout. q255 alone did not recover the three rejected pairs."
+      },
+      "fullPackageExamples": [
+        {
+          "sample": "Rankin",
+          "baselineCurrentFramesAndIndex": 2287235,
+          "selectedFramesIndexAndNewUniquePayload": 1992094,
+          "savedBytes": 295141,
+          "encoderNormalizationSavings": 0
+        },
+        {
+          "sample": "Tintagel strict",
+          "baselineCurrentFramesAndIndex": 16713688,
+          "selectedFramesIndexAndNewUniquePayload": 16546497,
+          "savedBytes": 167191,
+          "encoderNormalizationSavings": 0
+        }
+      ],
+      "limits": [
+        "Codec PSNR is measured at capped resolution and excludes intentional resolution reduction.",
+        "Examples exclude existing encoded payloads unchanged on both sides.",
+        "Atlas chart detail softening is visible in standalone texture sheets; representative native render checks do not prove all-map visual equivalence."
+      ]
+    },
+    {
+      "id": "model-shadow-masks",
+      "description": "Row-padded 1-bit shadow raster arrays inside Model lightmaps",
+      "rawBytesWhereKnown": 982632358,
+      "owner": "engine",
+      "status": "lossless-research-benchmark-no-shipping-change",
+      "work": "Exact Model grammar identifies 9,530,876 row-padded1-bit lighting-mask arrays. Lossless row/horizontal predictors and complete package framing were benchmarked; masks remain unchanged in selected strict candidate.",
+      "candidateBytes": null,
+      "nativeValidation": "No new shadow transform deployed or native-validated; selected Model mip candidate leaves all shadow bytes intact.",
+      "audit": {
+        "arrays": 9530876,
+        "rawBytes": 982632358,
+        "rowStride": "ceil(width/8) bytes per row; all 15,292 Rankin arrays matched. Native sampling bit operations were inspected."
+      },
+      "experiments": [
+        {
+          "sample": "Rankin",
+          "baselineCurrentFramesAndIndex": 2287235,
+          "candidateFramesIndexAndNewPayload": 2272346,
+          "savedBytesBeforeNewRuntimeModules": 14889,
+          "encoderNormalizationSavings": 0
+        },
+        {
+          "sample": "Tintagel",
+          "baselineCurrentFramesAndIndex": 16713688,
+          "candidateFramesIndexAndNewPayload": 16658113,
+          "savedBytesBeforeNewRuntimeModules": 55575,
+          "encoderNormalizationSavings": 0
+        }
+      ],
+      "limits": [
+        "Whole-package savings were 0.65% / 0.33% before new decoder/parser overhead, not 90%.",
+        "A declared lighting bitmap is not permission to zero it; no lossy mask reduction or source stripping was applied."
+      ]
+    },
+    {
+      "id": "animation-packages",
+      "description": "Character and animation packages grow under current independent framing",
+      "currentCompressedBaseBytes": 310928781,
+      "originalCompressedBaseBytes": 236072215,
+      "owner": "playground",
+      "status": "in-progress",
+      "work": "Measure lossless framing/encoder changes separately from semantic animation encoding; no keyframe reduction assumed safe.",
+      "candidateBytes": null,
+      "nativeValidation": "pending"
+    }
+  ],
+  "constraints": [
+    "No content removal or collision changes merely to force a ratio",
+    "Original sources and currently deployed release remain intact until candidate validation",
+    "All missed categories are tracked even when an encoding is unsupported or unprofitable",
+    "Wire compression preserves native logical asset layouts; it does not imply corresponding reductions in native engine allocations."
+  ],
+  "reviewed": "2026-11-16",
+  "requestChecklist": "request-checklist.json",
+  "accountingNotes": [
+    "New semantic subcategories overlap their parent Model/instance totals; do not sum every item.",
+    "Raw serialized payload sizes are not compressed contribution sizes.",
+    "The 10% request remains unmet. Candidates are not shipped until native validation and release accounting pass."
+  ],
+  "intermediateCombinedCandidate": {
+    "activeBytes": 3778288619,
+    "savedFromBaselineBytes": 199500643,
+    "profiles": [
+      "embedded Opus audio",
+      "strict paired Model lightmap mips"
+    ],
+    "status": "candidate-only, native integration pending",
+    "accounting": "Unique active game-data files; excludes shell, original recovery, prefetch duplicates and HTTP headers."
+  },
+  "finalCandidate": {
+    "activeBytes": 3350065331,
+    "baselineActiveBytes": 3977789262,
+    "netSavedBytes": 627723931,
+    "ratioRemaining": 0.8421927634536412,
+    "mapsRetained": 861,
+    "requestedTenPercentTargetMet": false,
+    "nativeValidation": "Final frozen Chrome/WebKit automatic menu and native gameplay passed; WebKit owned Deck17 travel; native Torlan and all 617 terrain actors exact in both browser decoders.",
+    "deployment": "pending",
+    "mapBaseBytes": 1720023813
+  }
+}

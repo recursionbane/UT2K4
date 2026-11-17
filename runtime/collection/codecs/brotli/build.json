@@ -1,0 +1,23 @@
+{
+  "source": "https://github.com/google/brotli",
+  "version": "1.1.0",
+  "commit": "ed738e842d2fbdf2d6459e39267a633c4a9b2f5d",
+  "emscriptenVersion": "emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 6.0.8-git",
+  "dynamicExecution": false,
+  "maximumWasmMemoryBytes": 134217728,
+  "maximumDecodedRegionBytes": 33554432,
+  "files": {
+    "brotli-decoder.mjs": {
+      "bytes": 6915,
+      "sha256": "fcd390d70715b90945b7ec73f11ee298e56d60cd69fb77f7ab16d0df4ef29e53"
+    },
+    "brotli-decoder.wasm": {
+      "bytes": 174031,
+      "sha256": "7d6694761b44e7b20391dc02bd8be0f3b4cd81c7ddc71e6b1e13bb9926f62059"
+    },
+    "bounded-decode.c": {
+      "bytes": 514,
+      "sha256": "96055866dec2e2d3815fea69d52f76a7457f69b439b8a6fe389953d4902055a3"
+    }
+  }
+}

@@ -1,0 +1,282 @@
+{
+  "format": "user-request-checklist-v1",
+  "reviewed": "2026-11-16",
+  "purpose": "Capture earlier requests and missed work without treating implementation, measured validation and deployment as interchangeable.",
+  "releaseBaseline": "99b88116895c6213a94de0ac2f1eee76a3054b52",
+  "statuses": {
+    "shipped": "Present in the prior release; evidence has the stated scope, not universal device coverage",
+    "partial": "Implemented in part or missing requested validation",
+    "in-progress": "Candidate work; not yet deployed",
+    "open": "Not established as completed",
+    "superseded": "Replaced by a later explicit user choice",
+    "infeasible-as-stated": "Requested guarantee cannot be provided by the proposed mechanism"
+  },
+  "items": [
+    {
+      "id": "repository-pages",
+      "request": "Create UT2K4 repository and GitHub Pages",
+      "status": "shipped",
+      "evidence": [
+        ".github/workflows",
+        "README.md"
+      ],
+      "remaining": "Update both public launcher and protected release after the current compression candidate passes validation."
+    },
+    {
+      "id": "demo",
+      "request": "Port and ship the demo",
+      "status": "superseded",
+      "replacement": "Full game, using existing native WASM port."
+    },
+    {
+      "id": "prior-art",
+      "request": "Research existing WASM work and reuse it",
+      "status": "shipped",
+      "evidence": [
+        "docs/port-research.md"
+      ],
+      "scope": "rgnv v0.2.0 native engine; no claim of independently porting the engine from scratch."
+    },
+    {
+      "id": "orion-kagi",
+      "request": "Search ut2k4 wasm using Kagi in Orion",
+      "status": "open",
+      "remaining": "Exact requested browser/search-provider workflow is not established by the retained evidence."
+    },
+    {
+      "id": "full-game-local",
+      "request": "Full collection on our deployment without an external content redirect",
+      "status": "shipped",
+      "scope": "Protected Cloudflare release; public Pages remains a launcher. The game runtime and assets are served from the protected deployment."
+    },
+    {
+      "id": "mutator-support",
+      "request": "Support mutators and original Monkey Matrix Moves",
+      "status": "shipped",
+      "evidence": [
+        "docs/mutator-native-verification.md",
+        "mutators/matrix-modern/README.md"
+      ],
+      "remaining": "Original mod excludes Assault/Onslaught; multiplayer prediction and all engine-version combinations are not validated."
+    },
+    {
+      "id": "source-preservation",
+      "request": "Preserve recovered source on GitHub",
+      "status": "partial",
+      "evidence": [
+        "docs/mutator-original-fingerprints.json",
+        "mutators/monkey-matrix-moves/preserve.py"
+      ],
+      "remaining": "Authored source, recovery tools and original source hashes are public. Recovered original class texts/defaults remain local; publishing those texts has not been completed."
+    },
+    {
+      "id": "parallel-sol",
+      "request": "Implement with GPT-6.1 Sol subagents in parallel",
+      "status": "shipped",
+      "scope": "Current engine, terrain and mesh work is delegated to existing Sol agents."
+    },
+    {
+      "id": "autostart",
+      "request": "Automatically start the engine and reach the main menu",
+      "status": "shipped",
+      "evidence": [
+        "runtime/collection/startup-policy.mjs",
+        "runtime/collection/startup-data.mjs"
+      ],
+      "scope": "After unlocking the protected deployment. Audio can still require a trusted user gesture."
+    },
+    {
+      "id": "touch-controls",
+      "request": "Capability-dependent touch controls, especially iPhone",
+      "status": "partial",
+      "evidence": [
+        "runtime/collection/menu-touch.mjs",
+        "runtime/collection/pad-native-routing.js",
+        "delivery/native/evidence/deployed-touch.json"
+      ],
+      "remaining": "Browser touch emulation and WebKit checks exist; physical iPhone performance, memory limits, multitouch and sustained gameplay remain hardware checks."
+    },
+    {
+      "id": "metal-efficiency",
+      "request": "Focus on Metal for best performance per watt",
+      "status": "partial",
+      "evidence": [
+        "delivery/metal.md"
+      ],
+      "remaining": "WebGL through browser-selected ANGLE Metal was observed on the tested Mac. No native Metal backend, direct Metal control, or measured power-per-frame claim."
+    },
+    {
+      "id": "encrypted-cloudflare",
+      "request": "Passphrase-protected full deployment with no application hints before unlock",
+      "status": "shipped",
+      "scope": "Opaque encrypted content and neutral locked shell; unauthenticated route checks passed. Private origin, credentials and passphrase stay out of public repository."
+    },
+    {
+      "id": "unbreakable-wasm-envelope",
+      "request": "Decryption inside WASM so no reverse engineering can reveal content or its identity",
+      "status": "infeasible-as-stated",
+      "remaining": "WASM cannot hide a decryption key/plaintext from an authorized client or prevent guesses of a weak passphrase. Do not describe obfuscation or encryption as an absolute reverse-engineering guarantee."
+    },
+    {
+      "id": "passphrase-length-ui",
+      "request": "Require eight characters except the chosen shorter passphrase",
+      "status": "shipped",
+      "scope": "Server-side length and derived-verifier checks accept the configured shorter passphrase or an authenticated passphrase of at least eight characters. The neutral client does not reveal the exception."
+    },
+    {
+      "id": "double-tap-lock",
+      "request": "Double-tap an enemy to aim at them while visible in the viewport",
+      "status": "shipped",
+      "evidence": [
+        "runtime/collection/assist-client.js",
+        "mutators/local-assist/README.md"
+      ],
+      "scope": "Also requires a living enemy and unobstructed aim/muzzle path; loss of visibility releases the lock."
+    },
+    {
+      "id": "aim-default-and-weapon",
+      "request": "Full auto-aim on by default as an add-on; correct weapon angles and crosshair",
+      "status": "shipped",
+      "evidence": [
+        "mutators/local-assist/README.md"
+      ]
+    },
+    {
+      "id": "third-person-default",
+      "request": "Third person by default",
+      "status": "superseded",
+      "replacement": "Later request: first person normally, third person during wallruns and sideways rolls."
+    },
+    {
+      "id": "matrix-controls",
+      "request": "Unlimited adrenaline, first person default, temporary third person during wallrun/roll, automatic wallrun on moving jump, Y toggle/hold option",
+      "status": "shipped",
+      "evidence": [
+        "mutators/local-assist/README.md"
+      ],
+      "remaining": "Broad map/device coverage remains separate from the tested native scenarios."
+    },
+    {
+      "id": "target-and-damage-ui",
+      "request": "Large red circular enemy lock marker and directional damage indicators",
+      "status": "shipped",
+      "evidence": [
+        "mutators/local-assist/README.md"
+      ]
+    },
+    {
+      "id": "health-regeneration",
+      "request": "Halo-inspired regeneration as a default-enabled mod",
+      "status": "shipped",
+      "evidence": [
+        "mutators/local-recovery/README.md"
+      ],
+      "scope": "Five damage-free seconds then 20 HP per gameplay second; separate health mod, not a full Halo shields/damage-system reproduction."
+    },
+    {
+      "id": "global-gore",
+      "request": "Blood and gore off globally, not only in the add-on",
+      "status": "shipped",
+      "evidence": [
+        "runtime/collection/startup-data.mjs",
+        "runtime/collection/README.md"
+      ]
+    },
+    {
+      "id": "occluded-lock-crash",
+      "request": "Fix WASM out-of-bounds crash when a locked opponent goes around a corner",
+      "status": "shipped",
+      "evidence": [
+        "mutators/local-assist/README.md",
+        "tools/check-assist-source.py"
+      ],
+      "scope": "Native callback recursion and stale target/owner/HUD references corrected; moving-target, firing, occlusion and map-travel soaks passed. This does not prove absence of every intermittent native crash."
+    },
+    {
+      "id": "honest-loading",
+      "request": "Subtle progress with transferred MB versus expected MB and separate decoding/unpacking",
+      "status": "shipped",
+      "evidence": [
+        "runtime/collection/loading-progress.mjs",
+        "runtime/collection/transfer-telemetry.mjs"
+      ],
+      "scope": "Actual observed encoded transfer and verified decode counts; expected phase totals are forecasts, not the whole collection or a guaranteed final byte count."
+    },
+    {
+      "id": "startup-working-set",
+      "request": "Audit startup and match dependencies, defer unnecessary reads and reduce cold latency",
+      "status": "partial",
+      "evidence": [
+        "runtime/collection/phase-bundles.mjs",
+        "runtime/collection/tiny-bundle.mjs",
+        "mutators/deferred-menu/README.md"
+      ],
+      "remaining": "Menu and Rankin demand measured; exhaustive working-set and native compatibility coverage of all 861 maps is not complete."
+    },
+    {
+      "id": "full-corpus-compression",
+      "request": "Apply modern lossy codecs to in-game textures, audio and music, not just menu assets",
+      "status": "shipped",
+      "evidence": [
+        "docs/browser-asset-profile.json",
+        "runtime/collection/asset-profile.md"
+      ],
+      "scope": "Previous active profile 3,977,789,262 bytes. Unsupported/unprofitable items retained; this is not a whole-corpus perceptual-transparency claim."
+    },
+    {
+      "id": "music-choice",
+      "request": "Mono VBR quality 0, preserving original sample rate",
+      "status": "shipped",
+      "evidence": [
+        "tools/audio/README.md"
+      ],
+      "scope": "Supersedes 64 kbps stereo and the proposed lower sample rate. Existing smaller/unsupported originals are retained."
+    },
+    {
+      "id": "size-audit",
+      "request": "Subagent audit of all 8.5 GB and explanation of remaining ~4 GB / 2.35 GB maps",
+      "status": "shipped",
+      "evidence": [
+        "docs/browser-asset-profile.json",
+        "docs/remaining-asset-work.json"
+      ],
+      "remaining": "Refresh category totals after the current work. Raw export bytes must not be presented as compressed category sizes."
+    },
+    {
+      "id": "maps-200mb",
+      "request": "Reduce maps to about 200 MB",
+      "status": "open",
+      "remaining": "Current selected map bases are 1,720,023,813 bytes plus shared payloads; 200 MB is not achieved."
+    },
+    {
+      "id": "whole-game-200mb",
+      "request": "Fit the game around 200 MB / another 100\u2013200 MB for the residual assets",
+      "status": "open",
+      "remaining": "Not achieved; do not equate a small first-match working set with the entire game."
+    },
+    {
+      "id": "geometry-tenth",
+      "request": "Model, mesh and terrain at 10% of current size or smaller",
+      "status": "in-progress",
+      "evidence": [
+        "docs/remaining-asset-work.json"
+      ],
+      "remaining": "Validated candidate reduces the full active collection from 3,977,789,262 to 3,350,065,331 bytes; map bases to 1,720,023,813 bytes. The requested 10% ratio has not been reached."
+    },
+    {
+      "id": "missed-asset-types",
+      "request": "Capture all missed asset work",
+      "status": "in-progress",
+      "evidence": [
+        "docs/remaining-asset-work.json"
+      ],
+      "scope": "Embedded map sounds, Model lightmap textures and shadow masks, mesh-instance lighting, terrain arrays, retained texture payloads, animation/static-mesh framing and unsupported media."
+    },
+    {
+      "id": "commit-merge-deploy",
+      "request": "Commit, push, merge to remote main; update protected Cloudflare game and GitHub Pages",
+      "status": "in-progress",
+      "scope": "Prior baseline released; current compression branch is not published. Only validated improvements should enter a new release, with measured sizes and unresolved targets reported."
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import assert from'node:assert/strict';import{readUe2TextureLayout,readUe2Package}from'./ue2-texture-layout.mjs';
+import assert from'node:assert/strict';import{readUe2TextureLayout,readUe2Package,Ue2Reader}from'./ue2-texture-layout.mjs';
 function compact(n){const sign=n<0?128:0;let v=Math.abs(n),a=[(v&63)|sign];v=Math.floor(v/64);if(v)a[0]|=64;while(v){const b=v&127;v=Math.floor(v/128);a.push(b|(v?128:0));}return Buffer.from(a);}
 const i32=n=>{const b=Buffer.alloc(4);b.writeInt32LE(n);return b;};
 function fixture(emptyFirst=false){const names=['None','Core','Class','Engine','Texture','test','Format','bMasked','Vector','Unused'];const nt=Buffer.concat(names.map(n=>Buffer.concat([compact(n.length+1),Buffer.from(n+'\0'),i32(0)]))),imports=Buffer.concat([compact(1),compact(2),i32(0),compact(4)]),offset=64+nt.length+imports.length;
@@ -12,3 +12,9 @@ let bad=Buffer.from(raw);bad.writeInt32LE(texture.mips[0].skipEnd+1,texture.mips
 console.log('UE2 synthetic grammar, compact refs, bool+struct properties, exact mip spans, corruption/bounds PASS');
 
 const legacy=Buffer.from(raw);legacy.writeUInt16LE(69,4);legacy.writeUInt16LE(0,6);assert.equal(readUe2Package(legacy).exports.length,1);assert.throws(()=>readUe2TextureLayout(legacy),/legacy texture/);
+
+// Full signed 32-bit FCompactIndex range; reference/count callers still bound values.
+for(const value of [-2147483648,-2147483647,-1,0,1,2147483647])assert.equal(new Ue2Reader(compact(value)).compact(),value);
+assert.throws(()=>new Ue2Reader(compact(2147483648)).compact(),/overflow/);
+assert.throws(()=>new Ue2Reader(compact(-2147483649)).compact(),/overflow/);
+assert.throws(()=>new Ue2Reader(Buffer.from([0x40,0x80,0x80,0x80,0x80])).compact(),/Invalid/);
