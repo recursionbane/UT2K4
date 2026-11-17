@@ -12,6 +12,8 @@ cp mutators/local-assist/System/LocalAim.u mutators/local-assist/System/LocalAim
 cp mutators/local-recovery/System/LocalRecovery.u mutators/local-recovery/System/LocalRecovery.ucl "$site_dir/compat/"
 cp mutators/menu-profile/System/MenuProfile.u "$site_dir/compat/"
 cp mutators/deferred-menu/System/DeferredMenu.u "$site_dir/compat/"
+mkdir -p "$site_dir/docs"
+cp docs/browser-asset-profile.json docs/remaining-asset-work.json docs/request-checklist.json "$site_dir/docs/"
 
 # Publish reusable authored runtime code, not a plaintext game distribution.
 # The existing data-source launcher does not activate this profile automatically.
@@ -30,6 +32,10 @@ mkdir -p "$runtime_dir/codecs/opus"
 for asset in decoder.mjs opus_decoder.wasm LICENSE NOTICE BUILD.md build.json; do
   [ -f "runtime/collection/codecs/opus/$asset" ] || continue
   cp "runtime/collection/codecs/opus/$asset" "$runtime_dir/codecs/opus/"
+done
+mkdir -p "$runtime_dir/codecs/brotli"
+for asset in brotli-decoder.mjs brotli-decoder.wasm LICENSE BUILD.md build.json; do
+  cp "runtime/collection/codecs/brotli/$asset" "$runtime_dir/codecs/brotli/"
 done
 python3 - "$runtime_dir" <<'PYBUILD'
 import json,pathlib,sys
