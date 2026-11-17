@@ -18,9 +18,14 @@ def encode(item):
         packed=f.read(frame['length'])
     n=frame['rawLength']
     if n<1 or n>1048576 or len(packed)!=frame['length']:raise ValueError('Invalid frame extent')
-    output=ctypes.create_string_buffer(n)
-    if zstd.ZSTD_decompress(output,n,packed,len(packed))!=n:raise ValueError('Zstd size mismatch')
-    raw=output.raw
+    if frame.get('codec')=='xz':
+        raw=lzma.decompress(packed,memlimit=8*1048576)
+        if len(raw)!=n:raise ValueError('XZ input size mismatch')
+    elif not frame.get('codec'):
+        output=ctypes.create_string_buffer(n)
+        if zstd.ZSTD_decompress(output,n,packed,len(packed))!=n:raise ValueError('Zstd size mismatch')
+        raw=output.raw
+    else:raise ValueError('Unrecognized input frame codec')
     if hashlib.sha256(raw).hexdigest()!=frame['sha256']:raise ValueError('Frame identity mismatch')
     encoded=lzma.compress(raw,format=lzma.FORMAT_XZ,check=lzma.CHECK_CRC32,filters=[{'id':lzma.FILTER_LZMA2,'preset':7,'dict_size':262144}])
     if lzma.decompress(encoded,memlimit=8*1048576)!=raw:raise ValueError('XZ round trip failed')
@@ -49,7 +54,7 @@ def main():
         for entry in m.values():
             if not entry.get('jit'):continue
             name=entry['path']+'.jit';idx=json.loads(locate(name+'.json').read_text());file=locate(name)
-            if idx['format']!='zstd-pages-v1':raise ValueError('Expected source Zstd frames')
+            if idx['format'] not in ('zstd-pages-v1','mixed-pages-v1'):raise ValueError('Unknown source framing')
             for frame in idx['blocks']:
                 if frame['sha256'] not in known:
                     known.add(frame['sha256']);todo.append((file,frame))

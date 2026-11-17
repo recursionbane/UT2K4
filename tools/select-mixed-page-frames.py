@@ -34,7 +34,7 @@ def main():
         for logical,e in manifest.items():
             if not e.get('jit') or (args.only and logical not in args.only):continue
             name=e['path']+'.jit';idxname=name+'.json';idxbytes=locate(idxname).read_bytes();idx=json.loads(idxbytes)
-            if idx['format']!='zstd-pages-v1':raise ValueError('Only plain Zstd source profile supported')
+            if idx['format'] not in ('zstd-pages-v1','mixed-pages-v1'):raise ValueError('Unsupported source profile')
             file=locate(name);old=file.read_bytes()
             if len(old)!=idx['containerSize'] or sha(old)!=idx['containerSha256']:raise ValueError('Source container identity')
             blocks=[];parts=[];offset=0;chosen=0;new_cache=[]
