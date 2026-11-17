@@ -90,7 +90,7 @@ export async function buildRawPackage({logical,entry,raw,output,policy=DEFAULT_P
    const ready=precompressed.get(n);
    if(ready?.sha256===rawHash)frame=ready.bytes;
    const previous=base?.index?.blocks?.[n];
-   if(!frame&&base?.index?.blockSize===policy.blockSize&&base.index.level===policy.level&&previous?.sha256===rawHash&&previous.rawLength===bytes.length&&Number.isSafeInteger(previous.offset)&&Number.isSafeInteger(previous.length)&&previous.offset>=0&&previous.length>0&&previous.offset+previous.length<=base.container.length)frame=base.container.subarray(previous.offset,previous.offset+previous.length);
+   if(!frame&&previous?.codec===undefined&&base?.index?.blockSize===policy.blockSize&&base.index.level===policy.level&&previous?.sha256===rawHash&&previous.rawLength===bytes.length&&Number.isSafeInteger(previous.offset)&&Number.isSafeInteger(previous.length)&&previous.offset>=0&&previous.length>0&&previous.offset+previous.length<=base.container.length)frame=base.container.subarray(previous.offset,previous.offset+previous.length);
    if(frame)reusedFrames++;
    else frame=await compress(bytes,{params:{[zlib.constants.ZSTD_c_compressionLevel]:policy.level}});
    if(!zlib.zstdDecompressSync(frame).equals(bytes))throw Error('Raw skeleton frame round-trip failed');

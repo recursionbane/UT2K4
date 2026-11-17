@@ -20,6 +20,14 @@ if include not in text:
         raise SystemExit("Unrecognized emitter source")
     text = text.replace(definition, include + newline * 2 + definition)
     text = text.replace(load, load + newline + call)
+# A new position can legitimately yield no emission surface. Return before
+# sampling an empty list, including after moving from a nonempty search area.
+old_empty = newline.join([b"    if ( prevCnt == 0 )", b"        return;", b"", b"    if ( cachedTriIndex.Num()==0 )", b"        cachedTriIndex.Add( prevCnt );"])
+safe_empty = newline.join([b"    if (prevCnt == 0 || cachedTriIndex.Num() == 0)", b"        return;"])
+if old_empty in text:
+    text = text.replace(old_empty, safe_empty)
+elif safe_empty not in text:
+    raise SystemExit("Unexpected particle selection source")
 (directory / "compact-emitter-mesh.inc").write_bytes(Path(__file__).with_name("compact-emitter-mesh.inc").read_bytes())
 temp = source.with_suffix(".cpp.part")
 temp.write_bytes(text)

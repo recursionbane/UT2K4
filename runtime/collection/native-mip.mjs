@@ -6,7 +6,7 @@ export function createNativeMipDecoder({decodeZstd,maxBytes=4*1024*1024}={}) {
   const sha=async b=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',b)),x=>x.toString(16).padStart(2,'0')).join('');
   function shape(region){
     const p=region?.params,format=p?.nativeFormat;
-    if(region?.codec!=='native-mip-zstd'||!['BC1','BC2','BC3','BGRA8'].includes(format))throw Error('Unsupported native mip codec');
+    if(!['native-mip-zstd','visual-mip-zstd'].includes(region?.codec)||!['BC1','BC2','BC3','BGRA8'].includes(format))throw Error('Unsupported native mip codec');
     const {width,height,encodedWidth:sw,encodedHeight:sh}=p;
     if(![width,height,sw,sh].every(Number.isSafeInteger)||sw<1||sh<1||width<sw||height<sh||width>4096||height>4096||sw>512||sh>512)throw Error('Invalid native mip dimensions');
     for(const ratio of [width/sw,height/sh])if(!Number.isInteger(ratio)||(ratio&(ratio-1)))throw Error('Native mip scale must be a power of two');

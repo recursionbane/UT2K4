@@ -21,6 +21,6 @@ export function createCodecReconstructor({baseURL,fetcher=fetch,onEvent=()=>{},m
   const terrain=async(encoded,params,region)=>(await getTerrainPrediction())(region,encoded);
   terrain.decodeRange=async(encoded,params,region,offset,length)=>(await getTerrainPrediction()).decodeRange(region,encoded,offset,length);
   const readEncoded=createPhaseBundleReader({baseURL,fetcher});
-  const cache=createRegionCache({baseURL,fetcher,readEncoded,onEvent,maxBytes,decoders:{'opus-pcm-v1':opus,'basis-bc1':texture,'basis-bc2':texture,'basis-bc3':texture,'basis-bgra8':texture,'native-mip-zstd':native,'terrain-grid-residual-zstd':terrain}});
+  const cache=createRegionCache({baseURL,fetcher,readEncoded,onEvent,maxBytes,decoders:{'opus-pcm-v1':opus,'basis-bc1':texture,'basis-bc2':texture,'basis-bc3':texture,'basis-bgra8':texture,'native-mip-zstd':native,'visual-mip-zstd':native,'terrain-grid-residual-zstd':terrain}});
   const reconstruct=args=>cache.overlay(args);reconstruct.cache=cache;return reconstruct;
 }
