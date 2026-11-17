@@ -1,6 +1,6 @@
 {
   "format": "user-request-checklist-v1",
-  "reviewed": "2026-11-16",
+  "reviewed": "2026-11-17",
   "purpose": "Capture earlier requests and missed work without treating implementation, measured validation and deployment as interchangeable.",
   "releaseBaseline": "99b88116895c6213a94de0ac2f1eee76a3054b52",
   "statuses": {
@@ -20,7 +20,7 @@
         ".github/workflows",
         "README.md"
       ],
-      "remaining": "Update both public launcher and protected release after the current compression candidate passes validation."
+      "scope": "Implementation merged to main and GitHub Pages workflow passed; protected game updated and live verified."
     },
     {
       "id": "demo",
@@ -180,7 +180,8 @@
       "evidence": [
         "runtime/collection/startup-data.mjs",
         "runtime/collection/README.md"
-      ]
+      ],
+      "scope": "Verified against actual 3369 GameInfo: NoBlood is true at GoreLevel=0; xPawn and gib groups use that gate. Engine localization maps 0 to No Gore, 1 to Reduced, 2 to Full. The obsolete bLowGore flag is not needed."
     },
     {
       "id": "occluded-lock-crash",
@@ -221,7 +222,7 @@
         "docs/browser-asset-profile.json",
         "runtime/collection/asset-profile.md"
       ],
-      "scope": "Previous active profile 3,977,789,262 bytes. Unsupported/unprofitable items retained; this is not a whole-corpus perceptual-transparency claim."
+      "scope": "Current active profile 3,350,065,331 bytes, down from 3,977,789,262. Unsupported/unprofitable items retained; no whole-corpus perceptual-transparency claim."
     },
     {
       "id": "music-choice",
@@ -240,7 +241,7 @@
         "docs/browser-asset-profile.json",
         "docs/remaining-asset-work.json"
       ],
-      "remaining": "Refresh category totals after the current work. Raw export bytes must not be presented as compressed category sizes."
+      "remaining": "Current categories refreshed after the combined audit. Raw export bytes remain separate from compressed transport totals."
     },
     {
       "id": "maps-200mb",
@@ -257,7 +258,7 @@
     {
       "id": "geometry-tenth",
       "request": "Model, mesh and terrain at 10% of current size or smaller",
-      "status": "in-progress",
+      "status": "partial",
       "evidence": [
         "docs/remaining-asset-work.json"
       ],
@@ -266,17 +267,18 @@
     {
       "id": "missed-asset-types",
       "request": "Capture all missed asset work",
-      "status": "in-progress",
+      "status": "shipped",
       "evidence": [
         "docs/remaining-asset-work.json"
       ],
-      "scope": "Embedded map sounds, Model lightmap textures and shadow masks, mesh-instance lighting, terrain arrays, retained texture payloads, animation/static-mesh framing and unsupported media."
+      "scope": "All identified missed categories are captured with measurements and remaining actions. Selected profiles shipped; experimental or unsupported cases remain explicit in the asset ledger."
     },
     {
       "id": "commit-merge-deploy",
       "request": "Commit, push, merge to remote main; update protected Cloudflare game and GitHub Pages",
-      "status": "in-progress",
-      "scope": "Prior baseline released; current compression branch is not published. Only validated improvements should enter a new release, with measured sizes and unresolved targets reported."
+      "status": "shipped",
+      "scope": "PR5 merged into main; GitHub Pages published; protected Cloudflare game deployed and live verified. Size targets remain open independently of successful deployment."
     }
-  ]
+  ],
+  "latestImplementationRelease": "3c00ada440b6251d50e42ba0c15cc9e014122445"
 }

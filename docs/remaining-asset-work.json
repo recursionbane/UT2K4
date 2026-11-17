@@ -50,7 +50,7 @@
       "rawBytesWhereKnown": 1644498627,
       "owner": "playground",
       "work": "Separate vertex colors, shadow masks, and control fields; compact visual data",
-      "status": "in-progress",
+      "status": "selected-profile-published",
       "candidateBytes": null,
       "nativeValidation": "Controlled Rankin fixed-camera render and movement passed for RGB4. Aggressive block1024/shadow flattening rejected for visible darkening and lost lighting detail.",
       "rawBreakdown": {
@@ -78,7 +78,7 @@
       "rawBytesWhereKnown": 949704816,
       "owner": "mutator",
       "work": "Separate terrain layers, lighting and native arrays; preserve height/collision semantics",
-      "status": "candidate-validated",
+      "status": "selected-profile-published",
       "candidateBytes": null,
       "nativeValidation": "All 617 actors hash/range exact in Chrome and WebKit. Native Torlan rendered with owned MatrixPawn; normal movement input sent, no quantified displacement claim.",
       "currentProfileComparison": {
@@ -94,7 +94,7 @@
       "rawBytesWhereKnown": 850510181,
       "owner": "playground",
       "work": "Review residual vertex data, instance reuse and framing",
-      "status": "in-progress",
+      "status": "open-further-work",
       "candidateBytes": null,
       "nativeValidation": "pending"
     },
@@ -104,7 +104,7 @@
       "rawBytesWhereKnown": 191601638,
       "owner": "root",
       "work": "2,770 non-UAX/U packages scanned, including all 861 maps; measure 832 Opus candidates against current merged package frames, with payload deduplication. Retain malformed RIFF and bounded-decoder exceptions.",
-      "status": "in-progress",
+      "status": "selected-profile-published",
       "candidateBytes": null,
       "nativeValidation": "Combined candidate: automatic main menu, owned Rankin match and Tintagel map render passed without native/page errors. All five newly encoded Tintagel sound regions, including the new 8013 Hz shape, were decoded on demand; native audio was running with nonzero output.",
       "candidatePackages": 167,
@@ -172,9 +172,9 @@
       "rawBytesWhereKnown": null,
       "owner": "playground",
       "work": "Use smaller original/synchronous Zstd encoding per 256 KiB mesh/animation frame; preserve granularity, raw hashes and existing codec regions.",
-      "status": "candidate-validated",
+      "status": "selected-profile-published",
       "candidateBytes": null,
-      "nativeValidation": "Actual bounded browser Zstd decoder passed Chrome/WebKit page and worker fixtures; final native integration pending.",
+      "nativeValidation": "Actual bounded browser Zstd decoder page/worker checks and final Chrome/WebKit native gameplay passed; protected live release verified.",
       "currentProfileComparison": {
         "packagesEvaluatedAfterMerge": 188,
         "packagesImproved": 121,
@@ -208,7 +208,7 @@
       "rawBytesWhereKnown": null,
       "owner": "root",
       "work": "Review 57 texture serialization failures, localized texture extensions, 18 music originals and unsupported audio; retain any still-unvalidated data",
-      "status": "in-progress",
+      "status": "open-further-work",
       "candidateBytes": null,
       "nativeValidation": "pending"
     },
@@ -217,7 +217,7 @@
       "description": "Two baked texture mip arrays inside Model exports, missed by Texture-export-only conversion",
       "rawBytesWhereKnown": 1371176960,
       "owner": "engine",
-      "status": "strict-current-profile-candidate-native-tested",
+      "status": "selected-profile-published",
       "work": "All 861 maps / 341,971 Models parsed to exact end; native DLL confirms two FStaticLightMapTexture mips. Strict paired cap 128 reconstruction uses existing Basis BC1/BC2 codecs; source metadata and geometry remain unchanged.",
       "candidateBytes": null,
       "nativeValidation": "Controlled Rankin fixed-camera render and movement passed. Combined strict audio+Model normal Tintagel render also passed without errors; relaxed Tintagel 26 dB / alpha 64 fixed-camera comparison remains pending.",
@@ -319,7 +319,7 @@
       "currentCompressedBaseBytes": 310928781,
       "originalCompressedBaseBytes": 236072215,
       "owner": "playground",
-      "status": "in-progress",
+      "status": "open-further-work",
       "work": "Measure lossless framing/encoder changes separately from semantic animation encoding; no keyframe reduction assumed safe.",
       "candidateBytes": null,
       "nativeValidation": "pending"
@@ -331,7 +331,7 @@
     "All missed categories are tracked even when an encoding is unsupported or unprofitable",
     "Wire compression preserves native logical asset layouts; it does not imply corresponding reductions in native engine allocations."
   ],
-  "reviewed": "2026-11-16",
+  "reviewed": "2026-11-17",
   "requestChecklist": "request-checklist.json",
   "accountingNotes": [
     "New semantic subcategories overlap their parent Model/instance totals; do not sum every item.",
@@ -355,8 +355,9 @@
     "ratioRemaining": 0.8421927634536412,
     "mapsRetained": 861,
     "requestedTenPercentTargetMet": false,
-    "nativeValidation": "Final frozen Chrome/WebKit automatic menu and native gameplay passed; WebKit owned Deck17 travel; native Torlan and all 617 terrain actors exact in both browser decoders.",
-    "deployment": "pending",
-    "mapBaseBytes": 1720023813
+    "nativeValidation": "Final frozen Chrome/WebKit automatic menu and native gameplay passed; WebKit owned Deck17 travel; native Torlan and all 617 terrain actors exact in both browser decoders. Live release menu/Rankin/Deck17/audio and five authenticated file identities verified; 28 locked probes passed.",
+    "deployment": "Protected Cloudflare game published and live verified; implementation merged to main and GitHub Pages workflow passed.",
+    "mapBaseBytes": 1720023813,
+    "implementationCommit": "3c00ada440b6251d50e42ba0c15cc9e014122445"
   }
 }

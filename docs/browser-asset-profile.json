@@ -1,6 +1,6 @@
 {
   "format": "collection-codec-aggregate-v1",
-  "status": "native-validated-release-candidate",
+  "status": "published-and-live-verified",
   "scope": {
     "originalLogicalAssets": 6911,
     "activeLogicalAssets": 6924,
@@ -390,11 +390,10 @@
       "Controlled Rankin native lighting comparison: RGB4 accepted, aggressive flattened lighting rejected",
       "Combined audio/lightmap candidate: automatic menu, owned Rankin gameplay and Tintagel render/audio passed without native/page errors",
       "Current gameplay source retains the prior release camera/reference safety fixes and its longer regression evidence",
-      "Final frozen candidate: Chrome and WebKit automatic main menus and owned Rankin input/auto-aim stress passed with no native/page errors; WebKit also verified owned Deck17 travel, and Chrome verified Deck17 render. Final terrain modules match the 617-actor browser corpus and native Torlan proofs."
+      "Final frozen candidate: Chrome and WebKit automatic main menus and owned Rankin input/auto-aim stress passed with no native/page errors; WebKit also verified owned Deck17 travel, and Chrome verified Deck17 render. Final terrain modules match the 617-actor browser corpus and native Torlan proofs.",
+      "Protected live release: automatic menu, owned Rankin play, owned Deck17 travel and audio passed with no native/page errors. Authenticated manifest, both terrain modules, and Rankin/Torlan indexes match the frozen candidate hashes; 28 unauthenticated GET/HEAD checks reveal no application content."
     ],
-    "pending": [
-      "Protected Cloudflare and GitHub Pages deployment verification"
-    ],
+    "pending": [],
     "limits": [
       "No claim of perceptual losslessness.",
       "Complete inventory coverage does not mean every retained map and gameplay mode has been playtested.",
@@ -403,7 +402,12 @@
       "Geometry acceptance counts refer to candidate package decisions, not a promise of equivalent percentage savings across entire packages.",
       "Two-map browser coverage does not prove absence of every intermittent fault or physical-iPhone compatibility.",
       "The requested 90% reduction of current model/mesh/terrain transport was not achieved. Native logical allocation sizes remain unchanged by same-layout transport compression."
-    ]
+    ],
+    "liveObservation": {
+      "automaticMenuMs": 58208,
+      "ownedRankinMsFromNavigation": 132025,
+      "basis": "One cold live run; not a controlled before/after performance benchmark. Short live spawn had no eligible auto-aim target; targeting was exercised in frozen local native tests."
+    }
   },
   "nativeSafety": {
     "cameraGetter": "cached scalar/vector calculations only; no collision/render queries or enemy-pawn field reads",
@@ -415,5 +419,6 @@
     "commit": "99b88116895c6213a94de0ac2f1eee76a3054b52",
     "savedBytes": 627723931,
     "reductionPercent": 15.7807
-  }
+  },
+  "implementationCommit": "3c00ada440b6251d50e42ba0c15cc9e014122445"
 }
