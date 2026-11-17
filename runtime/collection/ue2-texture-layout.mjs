@@ -9,7 +9,7 @@ export class Ue2Reader {
  f32(){this.need(4);const n=this.view.getFloat32(this.pos,true);this.pos+=4;if(!Number.isFinite(n))throw Error('Nonfinite UE2 float');return n;}
  u32(){this.need(4);const n=this.view.getUint32(this.pos,true);this.pos+=4;return n;}
  i32(){this.need(4);const n=this.view.getInt32(this.pos,true);this.pos+=4;return n;}
- compact(){const a=this.u8();let n=a&63,mul=64,b=a;if(a&64){for(let i=1;i<5;i++){b=this.u8();n+=(b&127)*mul;if(!(b&128))break;if(i===4)throw Error('Invalid UE2 compact index');mul*=128;}}if(n>2147483647)throw Error('UE2 compact index overflow');return a&128?-n:n;}
+ compact(){const a=this.u8();let n=a&63,mul=64,b=a;if(a&64){for(let i=1;i<5;i++){b=this.u8();n+=(b&127)*mul;if(!(b&128))break;if(i===4)throw Error('Invalid UE2 compact index');mul*=128;}}if(n>((a&128)?2147483648:2147483647))throw Error('UE2 compact index overflow');return a&128?-n:n;}
  skip(n){this.need(n);this.pos+=n;}
  string(){const n=this.compact();if(!n)return '';const length=Math.abs(n)*(n<0?2:1);this.need(length);const b=this.bytes.subarray(this.pos,this.pos+length);this.pos+=length;if(n>0){if(b.at(-1)!==0)throw Error('Unterminated UE2 name');return new TextDecoder('windows-1252').decode(b.subarray(0,-1));}if(b.at(-1)!==0||b.at(-2)!==0)throw Error('Unterminated UTF16 UE2 name');return new TextDecoder('utf-16le').decode(b.subarray(0,-2));}
 }

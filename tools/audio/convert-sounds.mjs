@@ -6,10 +6,11 @@ export function pcmSpans(bytes){
  const layout=readUe2AudioLayout(bytes);
  return layout.sounds.filter(s=>s.wave?.supported).map(s=>({...s.wave,soundExportIndex:s.exportIndex,soundName:s.name})).sort((a,b)=>a.offset-b.offset);
 }
-export function convertPackage({logical,raw,output,bitrate=96000,bitrateForSound=null,profile='opus-pcm-c10-vbr20-cap16m-profit256-usound-v2',ffmpeg='ffmpeg'}){
+export function convertPackage({logical,raw,output,bitrate=96000,bitrateForSound=null,profile='opus-pcm-c10-vbr20-cap16m-profit256-usound-v2',ffmpeg='ffmpeg',cacheDirectories=[]}){
  fs.mkdirSync(output,{recursive:true});const source=Buffer.from(raw),skeleton=Buffer.from(raw),spans=pcmSpans(raw),sounds=[];let total=0;const begin=performance.now();
  for(const span of spans){if(span.sampleRate<8000||span.sampleRate>48000||span.frames<32||span.length<1024||span.frames*48000/span.sampleRate*span.channels*4>16*1024*1024)continue;
   const selectedBitrate=bitrateForSound?bitrateForSound(logical,span):bitrate;if(!Number.isInteger(selectedBitrate)||selectedBitrate<6000||selectedBitrate>128000)throw Error('Invalid Opus bitrate policy');const pcm=source.subarray(span.offset,span.offset+span.length),key=sha(Buffer.concat([pcm,Buffer.from(JSON.stringify({sampleRate:span.sampleRate,channels:span.channels,bits:span.bits,bitrate:selectedBitrate}))]));const file=key+'.opus',target=path.join(output,file);
+  if(!fs.existsSync(target))for(const directory of cacheDirectories){const cached=path.join(directory,file);if(fs.existsSync(cached)){fs.copyFileSync(cached,target);break;}}
   if(!fs.existsSync(target)){const result=spawnSync(ffmpeg,['-v','error','-f',span.bits===8?'u8':'s16le','-ar',String(span.sampleRate),'-ac',String(span.channels),'-i','pipe:0','-c:a','libopus','-b:a',String(selectedBitrate*span.channels),'-vbr','on','-compression_level','10','-application','audio','-frame_duration','20','-f','opus','-y',target+'.part'],{input:pcm,maxBuffer:8*1024*1024});if(result.status!==0)throw Error(result.stderr.toString());fs.renameSync(target+'.part',target);}
   const encoded=fs.readFileSync(target);const identity=zlib.zstdCompressSync(pcm,{params:{[zlib.constants.ZSTD_c_compressionLevel]:15}});if(encoded.length+256>=identity.length)continue;total+=encoded.length;skeleton.fill(0,span.offset,span.offset+span.length);sounds.push({...span,transportBitratePerChannel:selectedBitrate,opus:{path:file,size:encoded.length,sha256:sha(encoded)}});
  }

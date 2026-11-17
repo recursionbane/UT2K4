@@ -7,8 +7,8 @@
     "mapsRetained": 861,
     "originalExpandedBytes": 24493864755,
     "originalTransportBytes": 8510961043,
-    "activeGameDataBytes": 3977789262,
-    "transportReductionPercent": 53.2627
+    "activeGameDataBytes": 3350065331,
+    "transportReductionPercent": 60.6382
   },
   "accounting": {
     "basis": "Unique active game-data file lengths before HTTP compression. Not a startup download.",
@@ -19,32 +19,32 @@
       "HTTP headers and TLS overhead"
     ],
     "sharedEncodedPools": {
-      "files": 1928,
-      "bytes": 232490322
+      "files": 2801,
+      "bytes": 276708001
     },
     "transportCategories": {
       "original-or-reencoded-file": {
-        "files": 4487,
-        "bytes": 552841252
+        "files": 4479,
+        "bytes": 550227548
       },
       "package-index": {
-        "files": 2437,
-        "bytes": 54741944
+        "files": 2445,
+        "bytes": 57360596
       },
       "package-frames": {
-        "files": 2437,
-        "bytes": 3137715744
+        "files": 2445,
+        "bytes": 2465769186
       },
       "encoded-regions": {
-        "files": 1928,
-        "bytes": 232490322
+        "files": 2801,
+        "bytes": 276708001
       }
     },
     "baseByExtension": [
       {
         "extension": ".ut2",
         "logicalAssets": 861,
-        "baseBytes": 2347440997
+        "baseBytes": 1720023813
       },
       {
         "extension": ".ogg",
@@ -54,17 +54,17 @@
       {
         "extension": ".utx",
         "logicalAssets": 1404,
-        "baseBytes": 334412607
+        "baseBytes": 333945112
       },
       {
         "extension": ".ukx",
         "logicalAssets": 113,
-        "baseBytes": 310928781
+        "baseBytes": 281689715
       },
       {
         "extension": ".usx",
         "logicalAssets": 385,
-        "baseBytes": 285277730
+        "baseBytes": 270459865
       },
       {
         "extension": ".u",
@@ -278,16 +278,26 @@
     "musicTracksScanned": 271,
     "vorbisMusicTracksConverted": 253,
     "musicTracksRetained": 18,
-    "codecRegions": 103259,
+    "codecRegions": 107954,
     "geometryPackagesActivated": 733,
-    "geometryWholePackageFramingRetained": 275
+    "geometryWholePackageFramingRetained": 275,
+    "embeddedAudioPackagesScanned": 2770,
+    "embeddedAudioPackagesActivated": 163,
+    "embeddedAudioRegionsActivated": 828,
+    "modelLightmapPackagesActivated": 431,
+    "modelLightmapRegionsActivated": 3306,
+    "instanceLightingMapsActivated": 731,
+    "terrainPackagesActivated": 373,
+    "terrainActorsVerified": 617,
+    "sameFrameEncoderPackagesImproved": 121
   },
   "codecSettings": {
     "packageTransport": {
       "codec": "Independent Zstandard frames",
       "frameBytes": 262144,
       "level": 15,
-      "lossless": true
+      "lossless": true,
+      "encoderSelection": "Selected mesh/animation frames use the smaller of original and same-size synchronous Zstd output; granularity remains 256 KiB."
     },
     "textures": {
       "transport": "Basis Universal ETC1S plus exact-authored-mip Zstandard supplement",
@@ -338,6 +348,31 @@
       "maximumStaticNormalAngleErrorDegrees": 0.05,
       "maximumAnimationRotationErrorDegrees": 0.005,
       "maximumAnimationLocalTranslationErrorEngineUnits": 0.002
+    },
+    "modelLightmaps": {
+      "transport": "Paired BC1/BC2 mip regions via ETC1S KTX2",
+      "dimensionCap": 128,
+      "minimumRgbPsnrDb": 30,
+      "maximumAlphaMSE": 64,
+      "maximumAlphaError": 34,
+      "geometryCollisionShadowData": "unchanged",
+      "relaxedProfile": "experimental only, not activated"
+    },
+    "instanceLighting": {
+      "rgbBits": 4,
+      "maximumRgbChannelError": 8,
+      "alpha": "bit-exact",
+      "shadowMasks": "bit-exact",
+      "geometryAndCollision": "bit-exact"
+    },
+    "terrain": {
+      "transport": "Grid prediction plus XOR residuals, byte planes and Zstandard",
+      "lossless": true,
+      "heightfieldsAndCollision": "bit-exact",
+      "decodedVerificationChunkBytes": 65536,
+      "codedCacheBytes": 12582912,
+      "decodedChunkCacheBytes": 1048576,
+      "unsupportedGridLayouts": "original retained"
     }
   },
   "proofAndLimits": {
@@ -348,24 +383,37 @@
       "hashesAndSkeletonBoundsVerified": true
     },
     "validated": [
-      "Per-frame roundtrip and hash checks",
-      "Encoded payload and reconstructed-region bounds and integrity",
-      "Representative browser decoder and native menu/match tests on preceding matching codec profiles",
-      "Exact frozen candidate: Chrome and WebKit each completed at least330 seconds of real-bot auto-aim gameplay and owned-pawn Rankin-to-Deck17 travel with no OOB/page errors or manager warnings"
+      "Per-frame roundtrip and source/encoded/decoded hash checks",
+      "All 861 Model and mesh-instance layouts parsed to exact end",
+      "617 terrain actors: all output hashes and unaligned/end ranges match in Chrome and WebKit, using the actual browser Zstd decoder",
+      "All 17 embedded audio sample-rate/channel/bit-depth shapes decode in Chrome and WebKit through WebCodecs and bundled WASM",
+      "Controlled Rankin native lighting comparison: RGB4 accepted, aggressive flattened lighting rejected",
+      "Combined audio/lightmap candidate: automatic menu, owned Rankin gameplay and Tintagel render/audio passed without native/page errors",
+      "Current gameplay source retains the prior release camera/reference safety fixes and its longer regression evidence",
+      "Final frozen candidate: Chrome and WebKit automatic main menus and owned Rankin input/auto-aim stress passed with no native/page errors; WebKit also verified owned Deck17 travel, and Chrome verified Deck17 render. Final terrain modules match the 617-actor browser corpus and native Torlan proofs."
     ],
-    "pending": [],
+    "pending": [
+      "Protected Cloudflare and GitHub Pages deployment verification"
+    ],
     "limits": [
       "No claim of perceptual losslessness.",
       "Complete inventory coverage does not mean every retained map and gameplay mode has been playtested.",
-      "Full active game data remains about four gigabytes; a 100\u2013200 MB whole-collection target was not achieved.",
+      "Full active game data remains about 3.35 gigabytes; a 100\u2013200 MB whole-collection target was not achieved.",
       "Startup traffic depends on requested map, cache state, device and playback path.",
       "Geometry acceptance counts refer to candidate package decisions, not a promise of equivalent percentage savings across entire packages.",
-      "Two-map browser coverage does not prove absence of every intermittent fault or physical-iPhone compatibility."
+      "Two-map browser coverage does not prove absence of every intermittent fault or physical-iPhone compatibility.",
+      "The requested 90% reduction of current model/mesh/terrain transport was not achieved. Native logical allocation sizes remain unchanged by same-layout transport compression."
     ]
   },
   "nativeSafety": {
     "cameraGetter": "cached scalar/vector calculations only; no collision/render queries or enemy-pawn field reads",
     "references": "fresh current-level controller/pawn ownership before retained pawn fields; current-HUD identity before HUD writes",
     "mapTravel": "current-level afterimage manager bound before player tick"
+  },
+  "previousProfile": {
+    "activeGameDataBytes": 3977789262,
+    "commit": "99b88116895c6213a94de0ac2f1eee76a3054b52",
+    "savedBytes": 627723931,
+    "reductionPercent": 15.7807
   }
 }

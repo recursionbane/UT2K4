@@ -1,9 +1,35 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
-import {mergeCodecCandidates,packCodecRegions} from './codec-package-merge.mjs';
+import {mergeCodecCandidates,packCodecRegions,materializePatch,mergeSupplementalRegions} from './codec-package-merge.mjs';
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const source = Buffer.from(Array.from({length:64},(_,i)=>i+1));
+test('supplements preserve independent changes and reject silent overwrites',()=>{
+ const old={offset:4,length:4,codec:'existing'},fresh={offset:16,length:4,codec:'new'};
+ const baseline=Buffer.from(source);baseline.fill(0,4,8);
+ const supplement=Buffer.from(baseline);supplement.fill(0,16,20);
+ const current=Buffer.from(baseline);current.fill(7,40,44);
+ const args={baseline,supplement,current,baselineRegions:[old],supplementRegions:[old,fresh],currentRegions:[old]};
+ const result=mergeSupplementalRegions(args);
+ assert.deepEqual(result.skeleton.subarray(16,20),Buffer.alloc(4));
+ assert.deepEqual(result.skeleton.subarray(40,44),Buffer.alloc(4,7));
+ assert.deepEqual(result.added,[fresh]);assert.deepEqual(current.subarray(16,20),source.subarray(16,20));
+ assert.throws(()=>mergeSupplementalRegions({...args,supplementRegions:[fresh]}),/omitted/);
+ assert.throws(()=>mergeSupplementalRegions({...args,supplementRegions:[{...old,codec:'other'},fresh]}),/replaced/);
+ assert.throws(()=>mergeSupplementalRegions({...args,currentRegions:[old,fresh]}),/overlaps/);
+ assert.throws(()=>mergeSupplementalRegions({...args,currentRegions:[]}),/baseline descriptor/);
+ const bad=Buffer.from(supplement);bad[30]=0;
+ assert.throws(()=>mergeSupplementalRegions({...args,supplement:bad}),/outside/);
+ const changed=Buffer.from(current);changed[16]=0;
+ assert.throws(()=>mergeSupplementalRegions({...args,current:changed}),/current transformation/);
+});
+test('packed offline patches enforce slice bounds and independent hashes',()=>{
+ const file=Buffer.from([9,8,7,6,5,4]);const patch={offset:4,length:3,fileOffset:2,derivedSha256:sha(file.subarray(2,5))};
+ const result=materializePatch(patch,file);assert.deepEqual([...result.bytes],[7,6,5]);file.fill(0);assert.deepEqual([...result.bytes],[7,6,5]);
+ assert.throws(()=>materializePatch(patch,file),/integrity/);
+ assert.throws(()=>materializePatch({...patch,fileOffset:5},file),/bounds/);
+ assert.throws(()=>materializePatch({...patch,derivedSha256:null},file),/hash/);
+});
 function candidate(offset, length=8) {
   const skeleton = Buffer.from(source); skeleton.fill(0,offset,offset+length);
   return {sourceSha256:sha(source),size:source.length,skeleton,

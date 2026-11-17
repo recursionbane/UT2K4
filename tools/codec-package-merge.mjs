@@ -2,6 +2,19 @@
 import crypto from 'node:crypto';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 
+/** Materialize one checked slice from an offline patch file. */
+export function materializePatch(patch,fileBytes) {
+  const file=Buffer.from(fileBytes.buffer,fileBytes.byteOffset,fileBytes.byteLength),start=patch.fileOffset??0;
+  if(!Number.isSafeInteger(start)||start<0||!Number.isSafeInteger(patch.length)||patch.length<1||
+     !Number.isSafeInteger(start+patch.length)||start+patch.length>file.length)
+    throw Error('Invalid packed patch bounds');
+  if(patch.fileOffset===undefined&&file.length!==patch.length)throw Error('Patch file length mismatch');
+  if(patch.fileOffset!==undefined&&!/^[a-f0-9]{64}$/.test(patch.derivedSha256||''))throw Error('Packed patch requires derived hash');
+  const bytes=Buffer.from(file.subarray(start,start+patch.length));
+  if(patch.derivedSha256&&sha(bytes)!==patch.derivedSha256)throw Error('Patch slice integrity mismatch');
+  return {...patch,bytes};
+}
+
 export function mergeCodecCandidates({source, candidates, patches=[]}) {
   const original = Buffer.from(source), sourceSha256 = sha(original), regions = [];
   for (const candidate of candidates) {
@@ -43,6 +56,43 @@ export function mergeCodecCandidates({source, candidates, patches=[]}) {
     skeleton.set(bytes,patch.offset);
   }
   return {sourceSha256, size:original.length, skeleton, skeletonSha256:sha(skeleton), regions};
+}
+
+/** Rebase an independently built supplemental region set onto a newer skeleton.
+ * A supplement may only zero its declared new regions; existing transformations
+ * and descriptors must remain intact. Inputs are already hash-verified by caller. */
+export function mergeSupplementalRegions({baseline,supplement,current,baselineRegions=[],supplementRegions=[],currentRegions=[]}) {
+  const original=Buffer.from(baseline),candidate=Buffer.from(supplement),merged=Buffer.from(current);
+  if(original.length!==candidate.length||original.length!==merged.length)throw Error('Supplement size mismatch');
+  const key=r=>`${r.offset}:${r.length}`,prior=new Map(baselineRegions.map(r=>[key(r),r]));
+  if(prior.size!==baselineRegions.length)throw Error('Duplicate baseline regions');
+  const active=new Map(currentRegions.map(r=>[key(r),r]));
+  for(const [id,r] of prior)if(JSON.stringify(active.get(id))!==JSON.stringify(r))
+    throw Error('Current profile dropped or replaced a baseline descriptor');
+  const seen=new Set(),added=[];
+  for(const region of supplementRegions) {
+    const id=key(region);
+    if(seen.has(id))throw Error('Duplicate supplemental region');seen.add(id);
+    if(prior.has(id)) {
+      if(JSON.stringify(region)!==JSON.stringify(prior.get(id)))throw Error('Supplement replaced an existing descriptor');
+    } else added.push(structuredClone(region));
+  }
+  if([...prior.keys()].some(id=>!seen.has(id)))throw Error('Supplement omitted existing regions');
+  const regions=[...currentRegions.map(r=>structuredClone(r)),...added].sort((a,b)=>a.offset-b.offset);
+  let end=0;
+  for(const r of regions) {
+    if(!Number.isSafeInteger(r.offset)||!Number.isSafeInteger(r.length)||r.length<1||r.offset<end||r.offset+r.length>merged.length)
+      throw Error('Supplement overlaps current regions or has invalid bounds');
+    end=r.offset+r.length;
+  }
+  const expected=Buffer.from(original);
+  for(const r of added) {
+    const end=r.offset+r.length;
+    if(!merged.subarray(r.offset,end).equals(original.subarray(r.offset,end)))throw Error('Supplement replaces a current transformation');
+    expected.fill(0,r.offset,end);merged.fill(0,r.offset,end);
+  }
+  if(!expected.equals(candidate))throw Error('Supplement changed bytes outside declared new regions');
+  return {skeleton:merged,regions,added};
 }
 
 /** Pack encoded regions into range-addressable objects; decoded payloads stay lazy. */
