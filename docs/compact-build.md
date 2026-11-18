@@ -87,3 +87,30 @@ benchmark.
 
 See the [engine build notes](../tools/engine/README.md) for the source hooks
 and native music validation procedure.
+
+## Streaming the main menu
+
+The gateway's first remote cold run reached the native menu in 183.1 seconds.
+The browser recorded 1,867 requests and 49.3 MB of encoded response bodies to
+that point. The player joined Rankin at 262.9 seconds after initial navigation.
+This exposed network round trips as a separate cost from package size.
+
+The updated worker combines previously observed nearby ranges within one
+package. Each grouped read starts on demand, covers at most 256 KiB and can
+bridge a gap of up to 4 KiB. The worker reserves at most 8 MiB for this cache
+including in-flight reads. The JIT and region decoders check each original
+frame or payload. An unexpected server response falls back to the ordinary
+range read. Reads outside the measured intervals use the ordinary path.
+
+Replaying the recorded menu trace through the cache model reduced 1,703
+eligible HTTP range requests to 561. Those requests accounted for 18.57 MB
+before grouping and 18.52 MB in the replay. The measured encrypted artifact
+with the updated worker is 1,574,467,395 bytes before the Pages routing file.
+The range hints and worker add 21,108 bytes. The package bodies are shared.
+
+Operators can regenerate the worker using the original worker and a matching
+native-ready menu trace. The output must be a new path.
+
+```sh
+node tools/attach-menu-range-cache.mjs ufront-cache-worker.js requests.json phase-report.json worker-with-menu-cache.js
+```
