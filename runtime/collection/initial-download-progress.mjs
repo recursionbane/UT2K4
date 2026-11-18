@@ -1,0 +1,15 @@
+// Serializable, memory-only UI for the bounded encoded initial payload.
+export function initialDownloadProgress(scope=globalThis,record={}){
+ const doc=scope.document;if(!doc)return null;
+ const total=Number(record.size);let loaded=0,phase='downloading',root,bar,label,count,live,done=false;
+ const phases={downloading:'Downloading game',verifying:'Checking download',preparing:'Preparing game',starting:'Starting game'};
+ const mb=n=>(n/1000000).toFixed(1);
+ function mount(){if(root||done||!doc.body)return;root=doc.createElement('section');root.id='initial-bundle-status';root.setAttribute('aria-label','Initial game download');root.style.cssText='position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 12px);transform:translateX(-50%);box-sizing:border-box;width:min(440px,calc(100vw - 24px));z-index:2147483646;padding:14px 16px;border:1px solid #52677e;border-radius:7px;background:#111d29f5;color:#edf6ff;font:14px/1.5 system-ui;pointer-events:none';label=doc.createElement('strong');label.id='initial-download-label';count=doc.createElement('div');count.style.cssText='font-variant-numeric:tabular-nums';bar=doc.createElement('progress');bar.setAttribute('aria-labelledby',label.id);bar.style.cssText='display:block;width:100%;height:8px;margin-top:8px;accent-color:#73b9ee';live=doc.createElement('span');live.setAttribute('role','status');live.setAttribute('aria-live','polite');live.style.cssText='position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)';root.append(label,count,bar,live);doc.body.append(root);render(true);}
+ function render(announce=false){if(!root)return;label.textContent=phases[phase]||'Download failed';count.textContent=Number.isFinite(total)&&total>0?mb(loaded)+' MB / '+mb(total)+' MB downloaded':mb(loaded)+' MB downloaded';if(Number.isFinite(total)&&total>0){bar.max=total;bar.value=loaded;}else bar.removeAttribute('value');bar.setAttribute('aria-valuetext',count.textContent);if(announce)live.textContent=label.textContent;}
+ function transfer(event){const d=event.detail||{};if(!Number.isFinite(d.loaded)||d.loaded<loaded||d.loaded<0||(Number.isFinite(total)&&d.loaded>total))return;loaded=d.loaded;render();}
+ function change(event){const next=event.detail?.phase;if(!Object.hasOwn(phases,next))return;phase=next;render(true);}
+ function cleanup(){for(const[type,handler]of listeners)scope.removeEventListener(type,handler);doc.removeEventListener('DOMContentLoaded',mount);}
+ function ready(){done=true;root?.remove();cleanup();}
+ function error(event){phase='error';render(true);if(root){const message=String(event.detail?.message||'Please reload to try again.');live.textContent='Download failed. '+message;const hint=doc.createElement('div');hint.textContent='Please reload to try again.';root.append(hint);}cleanup();}
+ const listeners=[['collection-initial-transfer',transfer],['collection-initial-phase',change],['collection-initial-ready',ready],['collection-initial-error',error]];for(const[type,handler]of listeners)scope.addEventListener(type,handler);mount();if(!root)doc.addEventListener('DOMContentLoaded',mount,{once:true});return{destroy:ready};
+}

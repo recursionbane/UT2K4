@@ -4,7 +4,7 @@ export function installTransferTelemetry(scope,options={}) {
   const main=!!scope.document,origin=scope.location?.origin,workers=new Set(),readyWorkers=new WeakSet(),records=[],active=new Map(),decodeJobs=new Map(),jobAssignments=new Map();
   const prefix=scope.crypto?.randomUUID?.()||String(Math.random()).slice(2),now=()=>scope.performance?.now?.()||0;
   const epoch=()=>Number.isFinite(scope.performance?.timeOrigin)?scope.performance.timeOrigin+now():Date.now();
-  let serial=0,phaseSerial=1,stage={stageId:'menu-1',stage:'menu'},lastActivity=now(),readyHint=false,finished=false,queryPending=false;
+  let serial=0,phaseSerial=1,stage={stageId:'menu-1',stage:'menu'},lastActivity=now(),readyHint=false,finished=false,queryPending=false,menuPage=null,menuOpening=false;
   const history=[{at:epoch(),stage:{...stage}}],originalFetch=scope.fetch?.bind(scope),originalWorker=scope.Worker,seenObjects=new WeakSet(),standaloneSeen=new Set();
   const resource=(url,range='')=>{const u=new URL(url,scope.location.href);return u.pathname+u.search+'|'+range;};
   const assignedAt=at=>{for(let i=history.length-1;i>=0;i--)if(history[i].at<=at)return history[i].stage;return history[0].stage;};
@@ -16,6 +16,7 @@ export function installTransferTelemetry(scope,options={}) {
     if(['complete','failed','cancelled'].includes(event.state)){decodeJobs.delete(id);jobAssignments.delete(raw);}else{decodeJobs.set(id,assigned.stageId);jobAssignments.set(raw,{id,stage:{...assigned},at:startedAt});}if(assigned.stageId===stage.stageId)lastActivity=now();send({...event,...(['failed','cancelled'].includes(event.state)?{loadedBytes:0}:{}),jobId:id,jobStartedAt:startedAt},assigned);
   }
   function phase(kind,map=''){
+    menuOpening=false;
     stage={stageId:kind+'-'+(++phaseSerial),stage:kind,label:map||undefined};history.push({at:epoch(),stage:{...stage}});if(history.length>64)history.shift();readyHint=false;finished=false;lastActivity=now();
     const forecast=options.forecasts?.[kind==='menu'?'menu':map.toLowerCase()];send({type:'phase',state:'start',...(forecast?{forecastTransferBytes:forecast.transferBytes,forecastDecodeBytes:forecast.decodeBytes}:{})});
     for(const worker of workers)if(readyWorkers.has(worker))worker.postMessage({__collectionLoadingStage:{...stage}});
@@ -64,10 +65,22 @@ export function installTransferTelemetry(scope,options={}) {
   };
   if(!main){scope.addEventListener('message',e=>{if(!e.data?.__collectionLoadingStage)return;e.stopImmediatePropagation();stage={...e.data.__collectionLoadingStage};for(const worker of workers)if(readyWorkers.has(worker))worker.postMessage(e.data);});scope.postMessage({__collectionTelemetryReady:true});}
   const api={tracksFetch:!!originalFetch,emit,observeLog,phase,snapshot:()=>({stage:{...stage},active:countCurrent(active),activeAll:active.size,decodes:countCurrent(decodeJobs),readyHint,finished}),performanceEntry};scope.__collectionTransferTelemetry=api;
-  if(main){send({type:'phase',state:'start',...(options.forecasts?.menu?{forecastTransferBytes:options.forecasts.menu.transferBytes,forecastDecodeBytes:options.forecasts.menu.decodeBytes}:{})});scope.setInterval(async()=>{
-    if(finished)return;const queriedStage=stage.stageId;
-    if(stage.stage==='menu'&&!queryPending&&typeof scope.ueExecResult==='function'&&scope.ufrontConfig?.launchState?.engineRunning){queryPending=true;try{const result=await scope.ueExecResult('getall GUIController ActivePage',1500);if(stage.stageId===queriedStage&&stage.stage==='menu'&&result?.ok&&/ActivePage\s*=\s*UT2k4MainMenu'/i.test(result.output||''))readyHint=true;}catch{}finally{queryPending=false;}}
-    if(readyHint&&!countCurrent(active)&&!countCurrent(decodeJobs)&&now()-lastActivity>=300){finished=true;send({type:'plan',discoveryComplete:true});send({type:'ready'});}
+  if(main){
+    // Begin before the native GUI handles the trusted activation. Subsequent
+    // worker reads belong to this stage even while native page creation blocks.
+    const activation=e=>{
+      if(!finished||stage.stage!=='menu'||menuPage!=='ut2k4mainmenu')return;
+      if(e.type==='keydown'&&!['Enter',' '].includes(e.key))return;
+      if(e.type!=='keydown'&&(e.target!==scope.Module?.canvas||(e.button!==undefined&&e.button!==0)))return;
+      if(e.type!=='keydown'){const r=scope.Module.canvas.getBoundingClientRect?.();if(!r?.width||!r?.height)return;const x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;if(x<0.43||x>0.70||y<0.62||y>0.71)return;}
+      phase('menu','Opening Instant Action');menuOpening=true;
+    };
+    scope.addEventListener('pointerdown',activation,{capture:true});
+    scope.addEventListener('keydown',activation,{capture:true});
+    send({type:'phase',state:'start',...(options.forecasts?.menu?{forecastTransferBytes:options.forecasts.menu.transferBytes,forecastDecodeBytes:options.forecasts.menu.decodeBytes}:{})});scope.setInterval(async()=>{
+    const queriedStage=stage.stageId;
+    if(stage.stage==='menu'&&!queryPending&&typeof scope.ueExecResult==='function'&&scope.ufrontConfig?.launchState?.engineRunning){queryPending=true;try{const result=await scope.ueExecResult('getall GUIController ActivePage',1500);if(stage.stageId===queriedStage&&stage.stage==='menu'&&result?.ok){const page=/ActivePage\s*=\s*(\w+)'/i.exec(result.output||'')?.[1]?.toLowerCase();menuPage=page||null;if(menuOpening){if(page&&page!=='ut2k4mainmenu')readyHint=true;}else if(page==='ut2k4mainmenu')readyHint=true;}}catch{}finally{queryPending=false;}}
+    if(!finished&&readyHint&&!countCurrent(active)&&!countCurrent(decodeJobs)&&now()-lastActivity>=300){finished=true;send({type:'plan',discoveryComplete:true});send({type:'ready'});}
   },500);}
   return api;
 }
