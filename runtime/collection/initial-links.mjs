@@ -40,7 +40,7 @@ export async function restoreInitialLinks(api, base) {
         if (manifest[prop]) manifest[prop] = new URL(manifest[prop], url).href;
       }
       for (const item of [...(manifest.icons || []), ...(manifest.screenshots || [])]) {
-        if (item.src) item.src = new URL(item.src, url).href;
+        if (item.src) item.src = await assetURL(new URL(item.src, url).href);
       }
       link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'}));
     } else {
