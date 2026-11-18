@@ -29,7 +29,12 @@ export function installMenuStartup(scope,args){
   const dialog=doc.getElementById('capability-dialog');
   if(!dialog||acknowledged.has(dialog))return;
   const rows=Array.from(dialog.querySelectorAll('[data-capability]'));
-  if(!rows.length||!rows.every(n=>['indexedDb','opfsSyncAccess'].includes(n.getAttribute('data-capability'))))return;
+  const touchLook=scope.navigator?.maxTouchPoints>0||scope.matchMedia?.('(pointer: coarse)').matches;
+  const canContinue=rows.length>0&&rows.every(row=>{
+   const name=row.getAttribute('data-capability');
+   return name==='indexedDb'||name==='opfsSyncAccess'||(name==='pointerLock'&&touchLook);
+  });
+  if(!canContinue)return;
   const button=doc.getElementById('capability-continue');
   if(!button||button.disabled)return;
   acknowledged.add(dialog);scope.__privateStartupPolicy.storageAcknowledgements++;

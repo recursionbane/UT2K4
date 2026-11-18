@@ -36,13 +36,16 @@ export function readUe2Properties(p,name){const props={};let tags=0;
   }
  return props;
 }
+/** Font glyph pages are contained by typed UFont objects (UnTex.h/UFont::Serialize).
+ * Keep this semantic ownership, independent of arbitrary page names/LODSet=0. */
+export function isFontPageExport(pkg,exp){let id=exp.outer;const seen=new Set();while(id){if(seen.has(id))throw Error('Cyclic font outer chain');seen.add(id);const owner=pkg.object(id);if(!owner)throw Error('Invalid font outer reference');const type=owner.className||pkg.object(owner.classIndex)?.name;if(type==='Font'||type==='MultiFont')return true;id=owner.outer;}return false;}
 export function readUe2TextureLayout(input){
  const pkg=readUe2Package(input),{bytes,version,licensee,flags,nameCount,exportCount,exports,object,name}=pkg;
  const textures=[];
  for(const exp of exports){const cls=object(exp.classIndex);if(cls?.name!=='Texture'||!exp.size)continue;if(version<100)throw Error('Unsupported legacy texture serialization profile');if(exp.flags&0x02000000)throw Error('Texture state-stack serialization unsupported');const p=pkg.reader(exp),props=readUe2Properties(p,name);
   const format=props.Format??0,mipCount=p.compact();if(mipCount<0||mipCount>16)throw Error('Invalid UE2 texture mip count');const mips=[];let previous;
   for(let mip=0;mip<mipCount;mip++){const lazyHeader=p.pos,skipEnd=p.i32(),length=p.compact(),offset=p.pos;if(length<0)throw Error('Negative UE2 mip length');p.skip(length);if(skipEnd!==p.pos&&!(skipEnd===0&&length===0))throw Error('UE2 lazy array end mismatch');const width=p.i32(),height=p.i32(),uBits=p.u8(),vBits=p.u8();if(width<1||height<1||width>16384||height>16384||width!==2**uBits||height!==2**vBits)throw Error('Unsupported UE2 mip dimensions');if(previous&&(width!==Math.max(1,previous.width>>1)||height!==Math.max(1,previous.height>>1)))throw Error('Invalid UE2 mip chain');let expected;if([3,7,8].includes(format))expected=Math.max(1,Math.ceil(width/4))*Math.max(1,Math.ceil(height/4))*(format===3?8:16);else if([0,9].includes(format))expected=width*height;else if([2,10].includes(format))expected=width*height*2;else if([1,5].includes(format))expected=width*height*4;else if(format===4)expected=width*height*3;if(length!==0&&expected!==undefined&&length!==expected)throw Error('UE2 mip byte length differs from declared format: '+exp.name+' mip='+mip+' format='+format+' dimensions='+width+'x'+height+' actual='+length+' expected='+expected);previous={width,height};mips.push({mip,offset,length,width,height,lazyHeader,skipEnd,missing:length===0});}
-  if(p.pos!==p.end)throw Error('Unrecognized UE2 texture trailing serialization');textures.push({name:exp.name,path:pkg.objectPath(exp.index),exportIndex:exp.index,exportOffset:exp.offset,exportLength:exp.size,format,formatName:FORMAT_NAMES[format]??'UNKNOWN',properties:props,mips});
+  if(p.pos!==p.end)throw Error('Unrecognized UE2 texture trailing serialization');textures.push({name:exp.name,path:pkg.objectPath(exp.index),fontPage:isFontPageExport(pkg,exp),exportIndex:exp.index,exportOffset:exp.offset,exportLength:exp.size,format,formatName:FORMAT_NAMES[format]??'UNKNOWN',properties:props,mips});
  }
  return {format:'ue2-texture-layout-v1',version,licensee,size:bytes.length,flags,names:nameCount,exports:exportCount,classes:exports.reduce((a,e)=>{const type=e.classIndex===0?'Class':object(e.classIndex)?.name||'Unknown';a[type]=(a[type]||0)+1;return a;},{}),textures};
 }

@@ -52,13 +52,23 @@ A further random-access compression experiment on 34 packages saved
 15,511 bytes with the cold-read safeguard enabled. Its decoder and delivery
 variants added 16,612 bytes. The sealed build uses the existing frame reader.
 
-The original local installation and the complete mirrored collection differ
-substantially in scope. The installed full-game folder has 131 matching maps.
-The mirror contains 861 maps across stock and community content. A static
-dependency comparison for the 131 matched maps, all tracks and requested
-mutators accounted for 544 MB of active files on the measured intermediate
-profile. That comparison is a separate scope estimate. The full-collection
-figures in the table include all 861 maps.
+## Two playable inventories
+
+| Retained content | Maps | Music tracks | Encrypted directory before the 43-byte Pages routing file |
+|---|---:|---:|---:|
+| Locally installed full game, matching dependencies and default mods | 131 | 271 | 592,282,371 bytes |
+| Complete mirror, including community maps and total conversions | 861 | 271 | 1,576,894,072 bytes |
+
+The installed edition includes 119 regular match maps and 12 entry, training,
+cinematic and example maps. The native cache listed its expected 126 menu
+records. The complete mirror adds 730 maps. Both editions keep the original
+font pages and automatically open the native menu after unlock.
+
+The menu starts with the profile's original NoIntro bootstrap. It initializes
+Deathmatch and selects DM-Rankin for Instant Action. The match loads the four
+default gameplay mutators. The font repair restores 372 lossy glyph regions in
+two packages. The texture cooker now checks which font owns a texture page
+even when its name and level-of-detail group look like ordinary world art.
 
 ## What changed
 
@@ -104,9 +114,15 @@ range read. Reads outside the measured intervals use the ordinary path.
 
 Replaying the recorded menu trace through the cache model reduced 1,703
 eligible HTTP range requests to 561. Those requests accounted for 18.57 MB
-before grouping and 18.52 MB in the replay. The measured encrypted artifact
-with the updated worker is 1,574,467,395 bytes before the Pages routing file.
-The range hints and worker add 21,108 bytes. The package bodies are shared.
+before grouping and 18.52 MB in the replay. The intermediate encrypted artifact
+with the updated worker was 1,574,467,395 bytes before the Pages routing file.
+The range hints and worker added 21,108 bytes. The package bodies are shared.
+
+A second cold Cloudflare run reached the menu in 167.5 s using 857 startup
+requests, down from 1,867. The player joined Rankin in 224.4 s, compared
+with 262.9 s in the initial run. Encoded startup bytes were 49.13 MB and
+49.25 MB, respectively. Each timing is from one run before the final font
+and menu-bootstrap fixes.
 
 Operators can regenerate the worker using the original worker and a matching
 native-ready menu trace. The output must be a new path.

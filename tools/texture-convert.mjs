@@ -4,7 +4,7 @@ import {readUe2TextureLayout}from'../runtime/collection/ue2-texture-layout.mjs';
 import BASIS from'../runtime/collection/codecs/basis/basis-transcoder.mjs';
 import {upscaleBcRange,upscaleBgraRange}from'../runtime/collection/bcn-upscale.mjs';
 import {createBasisTextureDecoder}from'../runtime/collection/basis-texture.mjs';
-import{textureResolutionCap,validateTextureCaps}from'./texture-resolution-policy.mjs';
+import{textureResolutionCap,validateTextureCaps,isFontGlyphTexture}from'./texture-resolution-policy.mjs';
 import{upscaleBcNativeFast,upscaleBgraNativeFast}from'./texture-native-upscale-fast.mjs';
 import{verifyTextureCandidate}from'./texture-candidate-verify.mjs';import{readSharedTextureEncoding,writeSharedTextureEncoding}from'./texture-shared-cache.mjs';
 import {buildPackage,DEFAULT_POLICY}from'../runtime/collection/jit-packages.mjs';
@@ -23,6 +23,7 @@ export async function convertTextures({input,logical,output,encoder,qualityLevel
  fs.mkdirSync(path.join(output,'texture-regions'),{recursive:true});fs.mkdirSync(path.join(output,'work'),{recursive:true});
  const module=await BASIS({wasmBinary:fs.readFileSync(new URL('../runtime/collection/codecs/basis/basis_transcoder.wasm',import.meta.url))});module.initializeBasis();const decode=createBasisTextureDecoder({moduleFactory:async()=>module});
  for(const texture of layout.textures){
+  if(isFontGlyphTexture({logical,texture})){for(const mip of texture.mips)skipped.push({texture:texture.path||texture.name,mip:mip.mip,reason:'Native font glyph atlas preserved'});continue;}
   const preview=allowPreviews&&/^QuickScreenshots\//i.test(logical);
   const protectedName=resolutionCap?/(normal|bump|height|displac|font|glyph|interface|crosshair|icon|reticle|scope|screen|water|glass|hair|fur|leaf|fence|grate|lookup|bone|weights|vertexdata)/i:/(normal|bump|height|displac|mask|shadow|alpha|specular|specmap|lightmap|font|glyph|interface|crosshair|icon|reticle|scope|screen|water|glass|hair|fur|fence|grate|smoke|flame|corona|portal)/i;
   if(conservative&&!preview&&(texture.properties.LODSet===5||(!resolutionCap&&texture.properties.bAlphaTexture)||protectedName.test(texture.path||texture.name))){skipped.push({texture:texture.name,reason:'Conservative non-color/interface exclusion'});continue;}
