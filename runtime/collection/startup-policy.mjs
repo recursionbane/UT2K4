@@ -23,10 +23,26 @@ export function menuLaunch(prior='/v/ut2004/',{bootstrapMutator}={}){
 export function installMenuStartup(scope,args){
  if(!scope.document)return;
  const doc=scope.document;let started=false,configured=false;
- scope.__privateStartupPolicy={mode:'menu-first',configured:false,started:false};
- const timer=scope.setInterval(()=>{
+ scope.__privateStartupPolicy={mode:'menu-first',configured:false,started:false,storageAcknowledgements:0};
+ const acknowledged=new WeakSet();
+ function acknowledgeStorageWarning(){
   const dialog=doc.getElementById('capability-dialog');
-  if(dialog){const rows=Array.from(dialog.querySelectorAll('[data-capability]'));if(rows.length&&rows.every(n=>['indexedDb','opfsSyncAccess'].includes(n.getAttribute('data-capability'))))doc.getElementById('capability-continue')?.click();}
+  if(!dialog||acknowledged.has(dialog))return;
+  const rows=Array.from(dialog.querySelectorAll('[data-capability]'));
+  if(!rows.length||!rows.every(n=>['indexedDb','opfsSyncAccess'].includes(n.getAttribute('data-capability'))))return;
+  const button=doc.getElementById('capability-continue');
+  if(!button||button.disabled)return;
+  acknowledged.add(dialog);scope.__privateStartupPolicy.storageAcknowledgements++;
+  button.click();
+ }
+ // The capability probe may finish after the launcher has started the engine.
+ // Only observe DOM changes; no repeating gameplay timer is needed.
+ if(scope.MutationObserver&&doc.documentElement){
+  const observer=new scope.MutationObserver(acknowledgeStorageWarning);
+  observer.observe(doc.documentElement,{childList:true,subtree:true});
+ }
+ const timer=scope.setInterval(()=>{
+  acknowledgeStorageWarning();
   const button=doc.getElementById('start-btn');
   if(!started&&button&&!button.disabled&&button.getBoundingClientRect().width>0&&scope.ufrontConfig?.launchState?.ready&&!scope.__ufrontLaunch?.started&&!doc.getElementById('capability-dialog')){
    if(!configured&&typeof scope.launchEngine==='function'){const original=scope.launchEngine;scope.launchEngine=function(nativeArgs){const merged=Array.isArray(nativeArgs)?nativeArgs.slice():[];for(const arg of args)if(!merged.includes(arg))merged.push(arg);return original.call(this,merged);};configured=true;scope.__privateStartupPolicy.configured=true;}

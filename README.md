@@ -62,11 +62,11 @@ python3 mutators/monkey-matrix-moves/preserve.py
 (cd mutators/monkey-matrix-moves/local/source-text && shasum -a 256 -c ../../source-sha256.txt)
 ```
 
-The public recovery tool, hashes, and provenance identify the original texts. A second recovery using Epic’s UCC exported all 66 classes with serialized default properties. The exact toolchain and per-file digests are in the [source fingerprints](docs/mutator-original-fingerprints.json). Their release includes no source republication grant. Full game data and the compiled native engine are imported on each player's device under their respective terms. The MIT license for rgnv’s integration covers its original harnesses and shell. [Mutator research](docs/mutator-research.md) · [Engine notice](https://github.com/rgnv/ut2004-wasm/blob/v0.2.0/NOTICE.md)
+The public recovery tool, hashes, and provenance identify the original texts. A second recovery using Epic’s UCC exported all 66 classes with serialized default properties. The exact toolchain and per-file digests are in the [source fingerprints](docs/mutator-original-fingerprints.json). The two recovered trees are backed up as an encrypted GitHub draft release for the repository owner. Full game data and the compiled native engine are imported on each player's device under their respective terms. The MIT license for rgnv’s integration covers its original harnesses and shell. [Mutator research](docs/mutator-research.md) · [Engine notice](https://github.com/rgnv/ut2004-wasm/blob/v0.2.0/NOTICE.md)
 
 ## Build and test
 
-The [request checklist](docs/request-checklist.json) records shipped behavior,
+The [compact build measurements](docs/compact-build.md) cover the encrypted browser edition and its cold-start transfer. The [request checklist](docs/request-checklist.json) records shipped behavior,
 superseded choices, and outstanding validation. The [remaining asset work](docs/remaining-asset-work.json)
 tracks the current compression candidates; requested size targets are not measured results.
 

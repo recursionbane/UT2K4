@@ -16,10 +16,41 @@ self-contained encrypted deployment.
 Later refinements retain 27 legacy texture packages with validated lower mips,
 derive collision bounds from the original triangles with exact exceptions,
 recreate wireframe edges on demand, pack quaternion rotations and add a typed
-BSP representation. The first fully sealed result including those changes was
-**1,574,445,497 bytes**, 574,445,497 bytes over target. Its gateway checks
-verified 188 encrypted chunks, 9,570 authenticated files and 9,568 ranges.
-It has not replaced production.
+BSP representation. The complete encrypted build with the corrected startup
+dialog occupies **1,574,446,287 bytes**, including the gateway, index and all
+188 encrypted chunks. It exceeds the decimal target by 574,446,287 bytes.
+The gateway passed 28 locked-route checks and served 9,570 authenticated
+files and 9,568 ranges with the expected contents.
+
+On a cold desktop Chrome run against the sealed gateway on loopback, the
+native menu appeared at 36.7 s. The menu phase counted 64.0 MB of transferred
+HTTP body data. Starting Rankin transferred another 10.0 MB. The world
+rendered at 50.3 s and a normal mouse click joined the match at 55.0 s
+from initial navigation. Movement and jumping changed the owned pawn's
+physics state. The storage-only launcher dialog was dismissed once.
+The run recorded zero page, native or worker setup errors.
+
+### Where the game data went
+
+These decimal MB figures count each active file once before the final
+encrypted packing step. A file referenced by packages of multiple types
+appears in the shared row. The map row includes terrain embedded in maps.
+
+| Package family | Previous published profile (MB) | Compact profile (MB) |
+|---|---:|---:|
+| Maps | 1,801.5 | 784.0 |
+| Texture packages | 428.3 | 255.2 |
+| Static meshes | 270.8 | 133.0 |
+| Animation packages | 281.9 | 131.5 |
+| Music tracks (.ogg) | 367.2 | 92.4 |
+| Sound packages | 87.2 | 53.9 |
+| Files shared across package types | 44.0 | 109.8 |
+| All remaining files | 69.2 | 60.5 |
+| **Total** | **3,350.1** | **1,620.4** |
+
+A further random-access compression experiment on 34 packages saved
+15,511 bytes with the cold-read safeguard enabled. Its decoder and delivery
+variants added 16,612 bytes. The sealed build uses the existing frame reader.
 
 The original local installation and the complete mirrored collection differ
 substantially in scope. The installed full-game folder has 131 matching maps.

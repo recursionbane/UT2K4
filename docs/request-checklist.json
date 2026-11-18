@@ -62,12 +62,12 @@
     {
       "id": "source-preservation",
       "request": "Preserve recovered source on GitHub",
-      "status": "partial",
+      "status": "shipped",
       "evidence": [
         "docs/mutator-original-fingerprints.json",
         "mutators/monkey-matrix-moves/preserve.py"
       ],
-      "remaining": "Authored source, recovery tools and original source hashes are public. Recovered original class texts/defaults remain local; publishing those texts has not been completed."
+      "scope": "The repository owner has an encrypted GitHub draft release containing both 66-class recovery trees. Each recovered file was verified against its existing SHA-256 fingerprint and the downloaded archive digest was verified. Public assets contain the authored tooling and fingerprints."
     },
     {
       "id": "parallel-sol",
