@@ -80,3 +80,10 @@ test('HTTP304 revalidation uses cached body even when ResourceTiming reports its
 test('Worker timing clock anomalies alone do not turn a known network body into a cache hit',()=>{
  const f=fixture();f.api.performanceEntry({name:'https://fixture.invalid/worker.js',startTime:100,responseEnd:90,duration:0,initiatorType:'other',encodedBodySize:40000,decodedBodySize:40000,transferSize:40300,deliveryType:''});assert.equal(f.model.snapshot().transfer.loadedBytes,40000);assert.equal(f.model.snapshot().cachedResources,0);
 });
+test('Instant Action mouse, touch pointer and keyboard activation show progress before native page changes',async()=>{
+ for(const event of [{type:'pointerdown',pointerType:'mouse',button:0,clientX:680,clientY:600},{type:'pointerdown',pointerType:'touch',button:0,clientX:680,clientY:600},{type:'keydown',key:'Enter'}]){
+  const f=fixture();let page='UT2k4MainMenu';const canvas={getBoundingClientRect:()=>({left:0,top:0,width:1280,height:900})};f.scope.Module={canvas};f.scope.ufrontConfig={launchState:{engineRunning:true}};f.scope.ueExecResult=async()=>({ok:true,output:`ActivePage = ${page}'Package.Page'`});f.advance(500);await f.intervals[0]();assert.equal(f.model.snapshot().ready,true);
+  f.listeners.get('pointerdown')({type:'pointerdown',button:0,clientX:10,clientY:10,target:canvas});f.listeners.get('keydown')({type:'keydown',key:'Escape',target:canvas});assert.equal(f.model.snapshot().ready,true,'unrelated input does not open a progress stage');
+  f.listeners.get(event.type)({...event,target:canvas});assert.equal(f.model.snapshot().ready,false);assert.equal(f.model.snapshot().label,'Opening Instant Action');f.advance(500);await f.intervals[0]();assert.equal(f.model.snapshot().ready,false,'old main menu does not complete opening');page='UT2K4GamePageSP';await f.intervals[0]();assert.equal(f.model.snapshot().ready,true);
+ }
+});

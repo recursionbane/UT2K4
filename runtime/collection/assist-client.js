@@ -172,29 +172,8 @@
     const listeners=[['pointerdown',down],['pointermove',move],['pointerup',up],['pointercancel',cancel],['lostpointercapture',cancel],['dblclick',doubleClick]];
     for(const[type,handler]of listeners)doc.addEventListener(type,handler,{capture:true,passive:true});
     let ui=null;
-    function mount(){
-      if(!doc.body||ui)return;
-      const panel=doc.createElement('details');panel.setAttribute('data-private-aim-ui','');panel.id='private-aim-settings';
-      panel.style.cssText='position:fixed;top:8px;left:8px;z-index:2147483646;max-width:min(320px,calc(100vw - 90px));background:#15191fee;color:#e8edf4;border:1px solid #697483;border-radius:7px;padding:8px;font:14px system-ui;touch-action:manipulation';
-      const summary=doc.createElement('summary');summary.textContent='Matrix settings';summary.style.cursor='pointer';panel.appendChild(summary);
-      const check=(id,text)=>{const label=doc.createElement('label');label.style.cssText='display:block;padding:8px 0';const input=doc.createElement('input');input.type='checkbox';input.checked=true;input.id=id;label.append(input,doc.createTextNode(' '+text));panel.appendChild(label);return input;};
-      const checkbox=check('private-aim-auto','Full auto aim (single-player bots)');
-      const camera=check('private-matrix-camera','Third-person camera');
-      const wallrun=check('private-matrix-wallrun','Automatic wallrun (jump + move near a wall)');
-      const timeMode=check('private-matrix-time-mode','Toggle bullet time with Y');
-      const clear=doc.createElement('button');clear.type='button';clear.textContent='Clear selected enemy';clear.disabled=true;clear.style.cssText='font:inherit;padding:6px';panel.appendChild(clear);
-      const help=doc.createElement('p');help.textContent='Y follows the option above; TIME always toggles bullet time. Double-tap an enemy to select it.';help.style.cssText='margin:8px 0;line-height:1.4';panel.appendChild(help);
-      const status=doc.createElement('p');status.setAttribute('role','status');status.setAttribute('aria-live','polite');status.style.cssText='margin:8px 0 0;line-height:1.4';panel.appendChild(status);
-      const time=doc.createElement('button');time.type='button';time.id='private-matrix-time';time.setAttribute('data-private-aim-ui','');time.setAttribute('aria-label','Toggle bullet time');time.setAttribute('aria-pressed','false');time.title='Toggle bullet time (Y)';time.textContent='TIME';time.style.cssText='position:fixed;top:8px;left:148px;z-index:2147483646;min-width:60px;padding:8px;background:#15191fee;color:#e8edf4;border:1px solid #697483;border-radius:7px;font:14px system-ui;touch-action:manipulation';
-      time.addEventListener('click',toggleTime);
-      time.addEventListener('keydown',event=>{if(event.repeat&&(event.key==='Enter'||event.key===' '))event.preventDefault();});
-      checkbox.addEventListener('change',()=>{state.wantedAuto=checkbox.checked;show();applySettings();});
-      camera.addEventListener('change',()=>{state.wantedThirdPerson=camera.checked;show();applySettings();});
-      wallrun.addEventListener('change',()=>{state.wantedWallrun=wallrun.checked;show();applySettings();});
-      timeMode.addEventListener('change',()=>{state.wantedTimeToggle=timeMode.checked;show();applySettings();});
-      clear.addEventListener('click',()=>send('mutate mmAim clear','clear'));
-      doc.body.append(panel,time);ui={panel,auto:checkbox,camera,wallrun,timeMode,time,clear,status};show();
-    }
+    // Native defaults and telemetry remain active without extra game chrome.
+    function mount(){}
     function tick(){
       if(destroyed)return;mount();
       if(ui){let pad=false;try{pad=!!scope.__ufrontTouchPad?.state?.().visible;}catch{}const top=pad?Math.ceil(.30*Math.min(scope.innerWidth,scope.innerHeight)):8;if(ui.panel.style.top!==top+'px')ui.panel.style.top=top+'px';ui.time.style.top=top+'px';ui.time.style.left=Math.max(8,Math.min(ui.panel.getBoundingClientRect().right+8,scope.innerWidth-ui.time.getBoundingClientRect().width-8))+'px';}
