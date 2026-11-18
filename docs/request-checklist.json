@@ -285,14 +285,14 @@
   "compactCollection": {
     "maps": 861,
     "tracks": 271,
-    "activeGameDataBytes": 1620352246,
+    "activeGameDataBytes": 1622657830,
     "sealedWithGroupedRangesBytes": 1574467395,
     "pagesRoutingBytes": 43,
     "targetBytes": 1000000000,
     "targetMet": false,
     "evidence": "docs/compact-build.md",
-    "sealedFullEditionBytes": 1576946774,
-    "sealedInstalledEditionBytes": 592335056,
+    "sealedFullEditionBytes": 1576986009,
+    "sealedInstalledEditionBytes": 592374279,
     "installedEditionMaps": 131,
     "installedEditionTracks": 271,
     "installedEditionTargetMet": true
