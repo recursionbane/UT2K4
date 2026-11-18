@@ -28,3 +28,9 @@ c.i.handle=(type,touches)=>{assert.equal(type,'touchcancel');for(const touch of 
 c.r={cancel(){cancelled++;}};
 c.s({type:'touchend',changedTouches:[{identifier:5}]});assert.equal(foreign.size,0);assert.equal(cancelled,1);
 console.log('Menu touch end clears held gameplay contact bookkeeping.');
+// Emscripten consumes Module.arguments; the explicit menu-first launch policy
+// remains authoritative until a real Browse or live native guiActive replaces it.
+const consumed={Module:{canvas:{},arguments:[],print(){}},__privateStartupPolicy:{mode:'menu-first',started:true},setTimeout(){},clearTimeout(){}};installMenuTouch(consumed);assert.equal(consumed.__privateNativeMenuActive(),true);consumed.Module.print('Log: Browse: DM-Deck17?Game=XGame.xDeathMatch');assert.equal(consumed.__privateNativeMenuActive(),false);consumed.__privateAimBridge={status:()=>({ready:true,telemetry:{guiActive:'1'}})};assert.equal(consumed.__privateNativeMenuActive(),true);
+const unknown={Module:{arguments:[],print(){}},setTimeout(){},clearTimeout(){}};installMenuTouch(unknown);assert.equal(!!unknown.__privateNativeMenuActive(),false);
+const directGame={Module:{arguments:[],print(){}},location:{search:'?map=DM-Rankin'},__privateStartupPolicy:{mode:'menu-first',started:true},setTimeout(){},clearTimeout(){}};installMenuTouch(directGame);assert.equal(directGame.__privateNativeMenuActive(),false);
+console.log('Consumed arguments retain explicit menu-first detection; direct gameplay and live GUI state take precedence.');
