@@ -41,7 +41,7 @@
       "id": "orion-kagi",
       "request": "Search ut2k4 wasm using Kagi in Orion",
       "status": "open",
-      "remaining": "Exact requested browser/search-provider workflow is not established by the retained evidence."
+      "remaining": "The Mac was locked during the attempt to open Orion for the requested Kagi search."
     },
     {
       "id": "full-game-local",
@@ -227,11 +227,12 @@
     {
       "id": "music-choice",
       "request": "Mono VBR quality 0, preserving original sample rate",
-      "status": "shipped",
+      "status": "superseded",
       "evidence": [
-        "tools/audio/README.md"
+        "tools/audio/README.md",
+        "docs/compact-build.md"
       ],
-      "scope": "Supersedes 64 kbps stereo and the proposed lower sample rate. Existing smaller/unsupported originals are retained."
+      "scope": "The earlier public release used mono VBR quality 0. The user subsequently approved a lower bitrate while keeping every track. The compact edition spans all 271 tracks and uses 92,407,345 active bytes for the .ogg files."
     },
     {
       "id": "size-audit",
@@ -247,7 +248,7 @@
       "id": "maps-200mb",
       "request": "Reduce maps to about 200 MB",
       "status": "open",
-      "remaining": "Current selected map bases are 1,720,023,813 bytes plus shared payloads; 200 MB is not achieved."
+      "remaining": "The compact full collection uses 784,018,523 bytes in files attributable exclusively to map packages before sealing. Files shared with other types are counted separately. The full 861-map set exceeds 200 MB."
     },
     {
       "id": "whole-game-200mb",
@@ -262,7 +263,7 @@
       "evidence": [
         "docs/remaining-asset-work.json"
       ],
-      "remaining": "Validated candidate reduces the full active collection from 3,977,789,262 to 3,350,065,331 bytes; map bases to 1,720,023,813 bytes. The requested 10% ratio has not been reached."
+      "remaining": "Compact BSP, animation and mesh encodings are verified on representative maps. The current evidence does not establish 10% for each requested geometry family."
     },
     {
       "id": "missed-asset-types",
@@ -280,5 +281,20 @@
       "scope": "PR5 merged into main; GitHub Pages published; protected Cloudflare game deployed and live verified. Size targets remain open independently of successful deployment."
     }
   ],
-  "latestImplementationRelease": "3c00ada440b6251d50e42ba0c15cc9e014122445"
+  "latestImplementationRelease": "3c00ada440b6251d50e42ba0c15cc9e014122445",
+  "compactCollection": {
+    "maps": 861,
+    "tracks": 271,
+    "activeGameDataBytes": 1620352246,
+    "sealedWithGroupedRangesBytes": 1574467395,
+    "pagesRoutingBytes": 43,
+    "targetBytes": 1000000000,
+    "targetMet": false,
+    "evidence": "docs/compact-build.md",
+    "sealedFullEditionBytes": 1576894072,
+    "sealedInstalledEditionBytes": 592282371,
+    "installedEditionMaps": 131,
+    "installedEditionTracks": 271,
+    "installedEditionTargetMet": true
+  }
 }

@@ -43,5 +43,17 @@ test('autostart acknowledges a late storage warning once and preserves mixed war
   observeChanges();
   observeChanges();
   assert.equal(acknowledgements, 1);
-  assert.equal(scope.__privateStartupPolicy.storageAcknowledgements, 1);
+  dialog = warning('indexedDb', 'pointerLock');
+  observeChanges();
+  assert.equal(acknowledgements, 1);
+
+  scope.navigator = { maxTouchPoints: 0 };
+  scope.matchMedia = query => ({ matches: query === '(pointer: coarse)' });
+  dialog = warning('webgl2', 'pointerLock');
+  observeChanges();
+  assert.equal(acknowledgements, 1);
+  dialog = warning('indexedDb', 'pointerLock');
+  observeChanges();
+  assert.equal(acknowledgements, 2);
+  assert.equal(scope.__privateStartupPolicy.storageAcknowledgements, 2);
 });
