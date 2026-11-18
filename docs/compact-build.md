@@ -56,8 +56,8 @@ variants added 16,612 bytes. The sealed build uses the existing frame reader.
 
 | Retained content | Maps | Music tracks | Encrypted directory before the 43-byte Pages routing file |
 |---|---:|---:|---:|
-| Locally installed full game, matching dependencies and default mods | 131 | 271 | 592,282,371 bytes |
-| Complete mirror, including community maps and total conversions | 861 | 271 | 1,576,894,072 bytes |
+| Locally installed full game, matching dependencies and default mods | 131 | 271 | 592,335,056 bytes |
+| Complete mirror, including community maps and total conversions | 861 | 271 | 1,576,946,774 bytes |
 
 The installed edition includes 119 regular match maps and 12 entry, training,
 cinematic and example maps. The native cache listed its expected 126 menu
@@ -69,6 +69,13 @@ Deathmatch and selects DM-Rankin for Instant Action. The match loads the four
 default gameplay mutators. The font repair restores 372 lossy glyph regions in
 two packages. The texture cooker now checks which font owns a texture page
 even when its name and level-of-detail group look like ordinary world art.
+
+The final input fix uses the patched virtual gamepad for touch buttons and
+sticks. A remote touch test of the preceding revision joined successfully and
+jumped, but Chromium reported four pointer-capture errors in the vendor
+script. The release process now compares the actual served script and its
+compressed representations against the patch applied to the original source.
+The small incremental update reuses encrypted chunks already on the host.
 
 ## What changed
 
