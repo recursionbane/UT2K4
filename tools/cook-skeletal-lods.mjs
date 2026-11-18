@@ -1,0 +1,26 @@
+// Native-compatible authored skeletal LOD selection. Never invent skin weights,
+// alter reference bones/collision, or erase global data used by authentication.
+import {readUe2Package} from '../runtime/collection/ue2-texture-layout.mjs';
+import {readUe2SkeletalLayout} from '../runtime/collection/ue2-skeletal-layout.mjs';
+import {compactSize,rewriteExportSizes} from './ue2-export-rewrite.mjs';
+export function cookSkeletalLods(source,{nearFaceRatio=.4}={}){
+ if(!Number.isFinite(nearFaceRatio)||nearFaceRatio<=0||nearFaceRatio>=1)throw Error('Invalid skeletal LOD ratio');
+ const pkg=readUe2Package(source),layout=readUe2SkeletalLayout(source),output=Buffer.from(source),sizes=new Map(),changes=[],meshes=[];
+ for(const mesh of layout.meshes){
+  if(!mesh.lods.length||!mesh.lods[0].renderable){meshes.push({name:mesh.name,retained:true,reason:'No valid authored base LOD'});continue;}
+  const baseFaces=mesh.lods[0].faces,lower=mesh.lods.map((l,i)=>({l,i})).filter(x=>x.i>0&&x.l.renderable&&x.l.faces<baseFaces);let first=lower.find(x=>x.l.faces<=baseFaces*nearFaceRatio)?.i??lower.at(-1)?.i??0;
+  const keep=mesh.lods.map((l,i)=>({l,i})).filter(x=>x.i>=first&&x.l.renderable);if(!keep.length)throw Error('Skeletal selection became empty');
+  const parts=[];let position=mesh.offset;const append=b=>{parts.push(Buffer.from(b));position+=b.length;};
+  append(source.subarray(mesh.offset,mesh.lodCountOffset));append(compactSize(keep.length));
+  for(const{l}of keep){append(source.subarray(l.start,l.raw[0].start));for(const raw of l.raw){const empty=Buffer.alloc(5);empty.writeInt32LE(position+5);append(empty);}append(source.subarray(l.characteristics,l.end));}
+  append(source.subarray(mesh.defaultRefMeshStart,mesh.globalRaw[0].start));
+  for(const raw of mesh.globalRaw){const exact=Buffer.from(source.subarray(raw.start,raw.end));exact.writeInt32LE(position+exact.length);append(exact);}
+  append(source.subarray(mesh.authenticationOffset,mesh.offset+mesh.length));const derived=Buffer.concat(parts),newSize=derived.length;if(newSize>=mesh.length){meshes.push({name:mesh.name,retained:true,reason:'No representation shrink'});continue;}
+  derived.copy(output,mesh.offset);output.fill(0,mesh.offset+newSize,mesh.offset+mesh.length);sizes.set(mesh.exportIndex,newSize);changes.push({offset:mesh.offset,length:mesh.length});meshes.push({name:mesh.name,exportIndex:mesh.exportIndex,oldBytes:mesh.length,newBytes:newSize,selectedOriginalLods:keep.map(x=>x.i),oldFaces:mesh.lods.map(l=>l.faces),selectedFaces:keep.map(x=>x.l.faces),perLodReimportBytesRemoved:mesh.lods.reduce((n,l)=>n+l.raw.reduce((n,r)=>n+r.length,0),0)-keep.length*20,globalReimportDataPreserved:true,referenceBones:mesh.skeleton.bones.length});
+ }
+ if(!sizes.size)return{bytes:source,changed:false,meshes,unsupported:layout.unsupported,ranges:[]};const table=rewriteExportSizes(source,output,sizes);changes.push({offset:table.offset,length:table.length});const checked=readUe2SkeletalLayout(output);if(checked.unsupported.some(x=>sizes.has(x.exportIndex)))throw Error('Rewritten skeletal mesh failed strict native parse');
+ const equal=(a,b,label)=>{if(!Buffer.from(a).equals(Buffer.from(b)))throw Error('Protected skeletal data changed: '+label);};
+ for(const old of layout.meshes.filter(m=>sizes.has(m.exportIndex))){const next=checked.meshes.find(m=>m.exportIndex===old.exportIndex),record=meshes.find(m=>m.exportIndex===old.exportIndex);equal(source.subarray(old.offset,old.lodCountOffset),output.subarray(next.offset,next.lodCountOffset),'primitive/legacy/bones/attachments');equal(source.subarray(old.defaultRefMeshStart,old.globalRaw[0].start),output.subarray(next.defaultRefMeshStart,next.globalRaw[0].start),'reference mesh');equal(source.subarray(old.authenticationOffset,old.offset+old.length),output.subarray(next.authenticationOffset,next.offset+next.length),'authentication and bone collision');if(old.globalRaw.length!==next.globalRaw.length)throw Error('Global raw array count changed');for(let i=0;i<old.globalRaw.length;i++)equal(source.subarray(old.globalRaw[i].start+4,old.globalRaw[i].end),output.subarray(next.globalRaw[i].start+4,next.globalRaw[i].end),'global raw auth/reimport payload');for(let i=0;i<next.lods.length;i++){const a=old.lods[record.selectedOriginalLods[i]],b=next.lods[i];equal(source.subarray(a.start,a.raw[0].start),output.subarray(b.start,b.raw[0].start),'authored compiled LOD');equal(source.subarray(a.characteristics,a.end),output.subarray(b.characteristics,b.end),'LOD characteristics');if(b.raw.some(r=>r.count!==0))throw Error('Per-LOD reimport data retained');}}
+ for(const exp of pkg.exports)if(exp.size&&!sizes.has(exp.index))equal(source.subarray(exp.offset,exp.offset+exp.size),output.subarray(exp.offset,exp.offset+exp.size),'unrelated export '+exp.name);
+ return{bytes:output,changed:true,meshes,unsupported:layout.unsupported,ranges:changes,removedExportBytes:meshes.reduce((n,m)=>n+(m.oldBytes?m.oldBytes-m.newBytes:0),0),guarantees:{authoredCompiledSkinningAndIndicesExact:true,referenceSkeletonAndAttachmentsExact:true,boneCollisionAndAuthenticationExact:true,globalRawCountsAndPayloadExact:true,unrelatedExportsIncludingAnimationExact:true,canonicalExportSizes:true,allRetainedLazyAbsoluteEndsVerified:true,packageNativeExtentUnchanged:true}};
+}

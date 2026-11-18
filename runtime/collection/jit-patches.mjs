@@ -19,7 +19,7 @@ export function patchJitGlue(source,{engineCacheBytes=32*1024*1024}={}){
     }
     `;
  source=once(source,'    const unservable = /* @__PURE__ */ new Set();',cache+regionRead+'const unservable = /* @__PURE__ */ new Set();','worker sparse cache');
- source=once(source,'      read(file, buffer, length, offset) {\n        const f = resolve(file);','      read(file, buffer, length, offset) {\n        const f = resolve(file);\n        if (!f.data && f.jit && f.jit.format === "zstd-pages-v1") return f.jit.regions ? regionRead(file,f,buffer,length,offset) : jitRead(file,f,buffer,length,offset);','worker read');
+ source=once(source,'      read(file, buffer, length, offset) {\n        const f = resolve(file);','      read(file, buffer, length, offset) {\n        const f = resolve(file);\n        if (!f.data && f.jit && ["mixed-pages-v1","zstd-pages-v1"].includes(f.jit.format)) return f.jit.regions ? regionRead(file,f,buffer,length,offset) : jitRead(file,f,buffer,length,offset);','worker read');
  return source;
 }
 export function patchJitCacheWorker(source,{readAheadPages=1}={}){
@@ -32,9 +32,11 @@ export function patchJitCacheWorker(source,{readAheadPages=1}={}){
     const modernEvents=e=>{try{globalThis.__collectionTransferTelemetry?.emit(e);}catch{}};
     const decodeZstd=async(bytes,expectedSize)=>{const decoder=await getDecoder({name:'zstd',ext:'.zst'});if(!decoder)throw Error('JIT decoder unavailable');return decoder(bytes,expectedSize);};
     const reconstruct=async request=>{codecRegions??=import(pageUrl('runtime/collection/codec-regions.mjs',pageBase)).then(m=>m.createCodecReconstructor({baseURL:pageBase||self.location.href,onEvent:modernEvents,decodeZstd}));return (await codecRegions)(request);};
+    let xzLoader;
+    const decodeXZ=async(bytes,size)=>{xzLoader??=import(pageUrl('runtime/collection/codecs/xz/decoder.mjs',pageBase)).then(m=>m.createXzFrameDecoder());return(await xzLoader)(bytes,size);};
 ${jitIndexFetchSource}
-    const jit = __createPrivateJitCache({fetcher:jitIndexFetch,baseURL:pageBase||self.location.href,readAheadPages:${readAheadPages},reconstruct,onEvent:modernEvents,decode:decodeZstd,onProgress:stats=>{try{postMessage({ufrontJitProgress:stats});}catch{}}});\n    const readHold = createReadHold();`,'cache reader init');
- source=once(source,'      const off = req.off | 0;','      const off = req.off | 0;\n      if(req.jit&&req.jit.format===\'zstd-pages-v1\'&&!unsupportedRegionPackages.has(req.path)){if(!req.url)return {needUrl:true};try{return await jit.read(req,window);}catch(error){if(error&&error.code===\'UNSUPPORTED_REGION_CODEC\'){unsupportedRegionPackages.add(req.path);console.warn(\'[PackageCache] codec unavailable, using original package: \'+req.path);}else return {error:\'JIT read failed: \'+String(error&&error.message||error)};}}','cache range read');
+    const jit = __createPrivateJitCache({fetcher:jitIndexFetch,baseURL:pageBase||self.location.href,decodeXZ,readAheadPages:${readAheadPages},reconstruct,onEvent:modernEvents,decode:decodeZstd,onProgress:stats=>{try{postMessage({ufrontJitProgress:stats});}catch{}}});\n    const readHold = createReadHold();`,'cache reader init');
+ source=once(source,'      const off = req.off | 0;','      const off = req.off | 0;\n      if(req.jit&&[\'mixed-pages-v1\',\'zstd-pages-v1\'].includes(req.jit.format)&&!unsupportedRegionPackages.has(req.path)){if(!req.url)return {needUrl:true};try{return await jit.read(req,window);}catch(error){if(error&&error.code===\'UNSUPPORTED_REGION_CODEC\'){unsupportedRegionPackages.add(req.path);console.warn(\'[PackageCache] codec unavailable, using original package: \'+req.path);}else return {error:\'JIT read failed: \'+String(error&&error.message||error)};}}','cache range read');
  return source;
 }
 export function patchReadTelemetry(source){

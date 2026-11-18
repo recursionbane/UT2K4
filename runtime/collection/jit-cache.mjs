@@ -1,5 +1,5 @@
 // Browser cache-worker implementation; RAM only, same-origin, bounded verified pages.
-export function createJitCache({fetcher=fetch,decode,baseURL=globalThis.location?.href,maxBytes=32*1024*1024,maxIndexBytes=8*1024*1024,onProgress=()=>{},onEvent=()=>{},reconstruct=null,sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms)),attempts=4,readAheadPages=1,readBudgetMs=100000}={}){
+export function createJitCache({fetcher=fetch,decode,decodeXZ=null,baseURL=globalThis.location?.href,maxBytes=32*1024*1024,maxIndexBytes=8*1024*1024,onProgress=()=>{},onEvent=()=>{},reconstruct=null,sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms)),attempts=4,readAheadPages=1,readBudgetMs=100000}={}){
  if(!Number.isSafeInteger(readAheadPages)||readAheadPages<1||readAheadPages>4)throw Error('Read ahead must be 1–4 pages');
  if(!Number.isSafeInteger(readBudgetMs)||readBudgetMs<1||readBudgetMs>110000)throw Error('Invalid native read budget');
  if(!Number.isSafeInteger(maxIndexBytes)||maxIndexBytes<1)throw Error('Invalid metadata cache budget');
@@ -47,13 +47,13 @@ export function createJitCache({fetcher=fetch,decode,baseURL=globalThis.location
    if(indexSizes.has(key)){forgetIndex(key);stats.indexEvictions++;}
   }
  }
- async function index(url,size,blockSize){
+ async function index(url,size,blockSize,format){
   if(indices.has(url)){const value=indices.get(url);indices.delete(url);indices.set(url,value);return value;}
   if(!indices.has(url))indices.set(url,retry(async()=>{
    stats.indexRequests++;const r=await response(suffix(url,'.jit.json'),{},200),bytes=await body(r,4*1024*1024);stats.indexBytes+=bytes.length;
    const data=JSON.parse(new TextDecoder().decode(bytes));
-   if(data.format!=='zstd-pages-v1'||data.size!==size||data.blockSize!==blockSize||!Array.isArray(data.blocks)||data.blocks.length!==Math.ceil(size/blockSize))throw Error('JIT index identity mismatch');
-   let at=0;for(let n=0;n<data.blocks.length;n++){const b=data.blocks[n],raw=Math.min(blockSize,size-n*blockSize);if(![b.offset,b.length,b.rawLength].every(Number.isSafeInteger)||b.offset!==at||b.length<=0||b.length>blockSize*2+65536||b.rawLength!==raw||!/^[a-f0-9]{64}$/.test(b.sha256))throw Error('Invalid JIT frame descriptor');at+=b.length;}
+   if(data.format!==format||data.size!==size||data.blockSize!==blockSize||!Array.isArray(data.blocks)||data.blocks.length!==Math.ceil(size/blockSize))throw Error('JIT index identity mismatch');
+   let at=0;for(let n=0;n<data.blocks.length;n++){const b=data.blocks[n],raw=Math.min(blockSize,size-n*blockSize);if((b.codec!==undefined&&(format!=='mixed-pages-v1'||b.codec!=='xz'))||![b.offset,b.length,b.rawLength].every(Number.isSafeInteger)||b.offset!==at||b.length<=0||b.length>blockSize*2+65536||b.rawLength!==raw||!/^[a-f0-9]{64}$/.test(b.sha256))throw Error('Invalid JIT frame descriptor');at+=b.length;}
    if(at!==data.containerSize)throw Error('JIT container length mismatch');keepIndex(url,bytes.length);return data;
   }).catch(e=>{forgetIndex(url);throw e;}));return indices.get(url);
  }
@@ -69,7 +69,9 @@ export function createJitCache({fetcher=fetch,decode,baseURL=globalThis.location
    try{
    for(let n=first;n<=last;n++){
     const b=data.blocks[n],frame=packed.subarray(b.offset-start,b.offset-start+b.length);let raw;
-    try{raw=new Uint8Array(await decode(frame,b.rawLength));}catch{throw retryError('JIT frame could not be decoded');}
+    const decodeFrame=b.codec==='xz'?decodeXZ:decode;
+    if(typeof decodeFrame!=='function')throw Error('Requested frame decoder unavailable');
+    try{raw=new Uint8Array(await decodeFrame(frame,b.rawLength));}catch{throw retryError('JIT frame could not be decoded');}
     if(raw.length!==b.rawLength||await hash(raw)!==b.sha256)throw retryError('JIT decoded frame checksum mismatch');
     found.set(n,raw);
    }
@@ -80,14 +82,14 @@ export function createJitCache({fetcher=fetch,decode,baseURL=globalThis.location
   for(let n=first;n<=last;n++){const k=key(url,n);const p=loading.then(map=>map.get(n)).finally(()=>pending.delete(k));p.catch(()=>{});pending.set(k,p);}
  }
  async function read(req,destination){
-  if(!req.jit||req.jit.format!=='zstd-pages-v1')throw Error('Missing explicit JIT declaration');
+  if(!req.jit||!['mixed-pages-v1','zstd-pages-v1'].includes(req.jit.format))throw Error('Missing explicit JIT declaration');
   if(!Number.isSafeInteger(req.max)||req.max<0||!Number.isSafeInteger(req.off)||req.off<0||!Number.isSafeInteger(req.size)||req.size<0||!Number.isSafeInteger(req.jit.blockSize)||req.jit.blockSize<65536||req.jit.blockSize>1024*1024)throw Error('Invalid JIT read');
   const n=Math.min(destination.length,req.max,Math.max(0,req.size-req.off));if(n<=0)return 0;
   const clock=()=>globalThis.performance?.now?.()??Date.now(),controller=new AbortController(),deadline=clock()+readBudgetMs,expired=()=>Error('JIT read deadline exceeded');
   const check=()=>{if(controller.signal.aborted||clock()>=deadline)throw expired();};
   const work=async()=>{
   const view=new Uint8Array(n);
-  const url=absolute(req.url).href,data=await index(url,req.size,req.jit.blockSize),first=Math.floor(req.off/data.blockSize),last=Math.floor((req.off+n-1)/data.blockSize),current=new Map(),waiting=new Map();check();
+  const url=absolute(req.url).href,data=await index(url,req.size,req.jit.blockSize,req.jit.format),first=Math.floor(req.off/data.blockSize),last=Math.floor((req.off+n-1)/data.blockSize),current=new Map(),waiting=new Map();check();
   const prior=lastDemand.get(url),sequence=prior&&first===prior.end+1?prior.sequence+1:1;
   lastDemand.set(url,{end:last,sequence});
   const ahead=sequence>=2?Math.min(readAheadPages,Math.max(1,Math.floor(1048576/data.blockSize))):1;

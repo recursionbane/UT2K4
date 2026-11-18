@@ -20,9 +20,27 @@ export function auditRuntimeProfile({manifest,readFile,originalManifest=manifest
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href){
  const args=process.argv.slice(2),get=(k,d)=>{const i=args.indexOf('--'+k);return i<0?d:args[i+1];};
  const overlay=path.resolve(get('overlay','.local-runtime/modern-release-candidate')),base=path.resolve(get('base','.local-runtime/collection/files')),jit=path.resolve(get('jit','.local-runtime/jit'));
- const locate=name=>{if(name.startsWith('/')||name.split('/').includes('..'))throw Error('Unsafe profile path');for(const root of [overlay,base,jit]){const p=path.join(root,name);if(fs.existsSync(p))return p;}throw Error('Missing profile asset: '+name);};
+ const overlays=args.flatMap((arg,i)=>arg==='--overlay'?[path.resolve(args[i+1])]:[]);
+ const roots=[...new Set([overlay,...overlays,base,jit])],resolved=new Map();
+ function locate(name){
+   if(typeof name!=='string'||path.isAbsolute(name)||name.includes('\\')||name.split('/').some(part=>part==='..'||part==='.'))throw Error('Unsafe profile path');
+   if(resolved.has(name))return resolved.get(name);
+   for(const root of roots){
+     const file=path.join(root,name);
+     if(fs.existsSync(file)){resolved.set(name,file);return file;}
+   }
+   throw Error('Missing profile asset: '+name);
+ }
  const cache=new Map();
- const readFile=name=>{if(name.startsWith('/')||name.split('/').includes('..'))throw Error('Unsafe profile path');if(cache.has(name))return cache.get(name);for(const root of [overlay,base,jit]){const filename=path.join(root,name);if(fs.existsSync(filename)){const data=fs.readFileSync(filename);if(data.length<=8*1024*1024){if(cache.size>=4)cache.delete(cache.keys().next().value);cache.set(name,data);}return data;}}throw Error('Missing profile asset: '+name);};
+ function readFile(name){
+   if(cache.has(name))return cache.get(name);
+   const data=fs.readFileSync(locate(name));
+   if(data.length<=8*1024*1024){
+     if(cache.size>=4)cache.delete(cache.keys().next().value);
+     cache.set(name,data);
+   }
+   return data;
+ }
  const result=auditRuntimeProfile({manifest:JSON.parse(readFile('file-manifest.json')),originalManifest:JSON.parse(fs.readFileSync(path.join(base,'file-manifest.json'))),readFile,sizeOf:name=>fs.statSync(locate(name)).size});
  const filename=path.resolve(get('output',path.join(overlay,'active-profile-audit.json')));fs.writeFileSync(filename,JSON.stringify(result,null,2));console.log(JSON.stringify({logicalPackages:result.logicalPackages,uniqueFiles:result.uniqueFiles,activeBytes:result.activeBytes,categories:result.categories}));
 }
