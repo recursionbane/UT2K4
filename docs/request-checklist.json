@@ -291,8 +291,8 @@
     "targetBytes": 1000000000,
     "targetMet": false,
     "evidence": "docs/compact-build.md",
-    "sealedFullEditionBytes": 1576894072,
-    "sealedInstalledEditionBytes": 592282371,
+    "sealedFullEditionBytes": 1576946774,
+    "sealedInstalledEditionBytes": 592335056,
     "installedEditionMaps": 131,
     "installedEditionTracks": 271,
     "installedEditionTargetMet": true
