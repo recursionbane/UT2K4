@@ -1,3 +1,4 @@
+import { installTouchPointerMode } from './touch-pointer-mode.mjs';
 // Menu-first, session-only settings through the source launcher's normal controls.
 export const LOW_MEMORY_ARGS = [
  '-ini:System:[SDL2Drv.SDL2Client]:TextureDetailWorld=Low',
@@ -56,7 +57,10 @@ export function installMenuStartup(scope,args){
   }
  },250);
 }
-export function startupClient({lowMemory=true,mutators=[]}={}){const args=[...(lowMemory?LOW_MEMORY_ARGS:[]),...(mutators.length?menuMutatorArgs(mutators):[])];return '('+installMenuStartup.toString()+')(globalThis,'+JSON.stringify(args)+');';}
+export function menuStartupScript(args) {
+ return '('+installTouchPointerMode.toString()+')(globalThis);\n('+installMenuStartup.toString()+')(globalThis,'+JSON.stringify(args)+');';
+}
+export function startupClient({lowMemory=true,mutators=[]}={}){const args=[...(lowMemory?LOW_MEMORY_ARGS:[]),...(mutators.length?menuMutatorArgs(mutators):[])];return menuStartupScript(args);}
 // Packaging-time alternative when the engine's CLI INI override support is unknown.
 // Preserve other keys/comments; replace only the selected keys in the native GUI sections.
 export function menuUserIni(source,mutators,{map='DM-Rankin'}={}){

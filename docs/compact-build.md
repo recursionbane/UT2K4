@@ -39,14 +39,14 @@ appears in the shared row. The map row includes terrain embedded in maps.
 | Package family | Previous published profile (MB) | Compact profile (MB) |
 |---|---:|---:|
 | Maps | 1,801.5 | 784.0 |
-| Texture packages | 428.3 | 255.2 |
+| Texture packages | 428.3 | 257.5 |
 | Static meshes | 270.8 | 133.0 |
 | Animation packages | 281.9 | 131.5 |
 | Music tracks (.ogg) | 367.2 | 92.4 |
 | Sound packages | 87.2 | 53.9 |
 | Files shared across package types | 44.0 | 109.8 |
 | All remaining files | 69.2 | 60.5 |
-| **Total** | **3,350.1** | **1,620.4** |
+| **Total** | **3,350.1** | **1,622.7** |
 
 A further random-access compression experiment on 34 packages saved
 15,511 bytes with the cold-read safeguard enabled. Its decoder and delivery
@@ -56,8 +56,8 @@ variants added 16,612 bytes. The sealed build uses the existing frame reader.
 
 | Retained content | Maps | Music tracks | Encrypted directory before the 43-byte Pages routing file |
 |---|---:|---:|---:|
-| Locally installed full game, matching dependencies and default mods | 131 | 271 | 592,335,056 bytes |
-| Complete mirror, including community maps and total conversions | 861 | 271 | 1,576,946,774 bytes |
+| Locally installed full game, matching dependencies and default mods | 131 | 271 | 592,374,279 bytes |
+| Complete mirror, including community maps and total conversions | 861 | 271 | 1,576,986,009 bytes |
 
 The installed edition includes 119 regular match maps and 12 entry, training,
 cinematic and example maps. The native cache listed its expected 126 menu
@@ -75,6 +75,11 @@ sticks. A remote touch test of the preceding revision joined successfully and
 jumped, but Chromium reported four pointer-capture errors in the vendor
 script. The release process now compares the actual served script and its
 compressed representations against the patch applied to the original source.
+The startup script also releases mouse pointer lock during touch gameplay
+and restores it for a real mouse. On a Chrome touch-emulated browser, the
+left stick moved the native player, the right stick turned the view, the
+trigger joined the match and the jump button changed the pawn to falling.
+The test recorded zero browser errors.
 The small incremental update reuses encrypted chunks already on the host.
 
 ## What changed
