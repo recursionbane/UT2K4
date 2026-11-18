@@ -1,7 +1,7 @@
 export function installMenuTouch(scope){
- const bypass=new WeakSet();let pending=null,menuWorld=true;
+ const bypass=new WeakSet();let pending=null,menuWorld=null;
  const originalPrint=scope.Module?.print;if(typeof originalPrint==='function')scope.Module.print=function(...args){const m=args.map(String).join(' ').match(/(?:^|\n)(?:Log: )?Browse:\s+([^?\s]+)/);if(m)menuWorld=/^(NoIntro|Index|Entry)(?:\.ut2)?$/i.test(m[1]);return originalPrint.apply(this,args);};
- const menu=()=>{const b=scope.__privateAimBridge?.status?.();return b?.ready?b.telemetry?.guiActive==='1':menuWorld&&scope.Module?.arguments?.some(x=>/^NoIntro(?:\?|$)/i.test(String(x)))===true;};
+ const menu=()=>{const b=scope.__privateAimBridge?.status?.();if(b?.ready)return b.telemetry?.guiActive==='1';if(menuWorld!==null)return menuWorld;const args=scope.Module?.arguments||[],arg=args.find(x=>/^[A-Za-z][A-Za-z0-9_-]*(?:\.ut2)?(?:\?|$)/i.test(String(x))),query=String(scope.location?.search||'').match(/[?&]map=([^&]+)/i),map=arg?String(arg).split('?')[0]:query?decodeURIComponent(query[1]):null;if(map!==null)return /^(NoIntro|Index|Entry)(?:\.ut2)?$/i.test(map);return scope.__privateStartupPolicy?.mode==='menu-first'&&(scope.__privateStartupPolicy.started===true||scope.__ufrontLaunch?.started===true);};
  // The source virtual pad owns transparent zones even in native menus; hide only
  // that overlay while native GUI owns input so the canvas receives real touches.
  if(scope.document&&scope.setInterval){const style=scope.document.createElement('style');style.textContent='#touch-gamepad-overlay[hidden]{display:none!important}';scope.document.head.appendChild(style);scope.setInterval(()=>{const root=scope.document.getElementById('touch-gamepad-overlay');if(root){const hidden=menu();if(root.hidden!==hidden)root.hidden=hidden;}},100);}

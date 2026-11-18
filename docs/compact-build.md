@@ -148,3 +148,7 @@ node tools/attach-menu-range-cache.mjs ufront-cache-worker.js requests.json phas
 After unlock, the complete collection downloads one **40,916,525-byte** game payload containing the engine and the files and byte ranges used by the main menu and Instant Action. The client checks the complete compressed body against its SHA-256 before decompressing it into 61,443,398 bytes of session memory. Match assets outside the startup set continue to stream on demand.
 
 One cold desktop Chrome run on the production hostname reached the native menu in 17.4 seconds. Activating Instant Action opened its native page in 2.1 seconds. The network trace recorded one game-content request through that point. Earlier separate runs measured 101 seconds to the native menu and approximately 29 seconds to Instant Action. Timings depend on the connection and device. The final test joined Rankin, toggled fullscreen in both directions and closed the authenticated session. A separate WebKit landscape touch-emulation run reached the native menu.
+
+### Portrait Instant Action controls
+
+The native Play action uses the map, game type, rules, bots and mutators selected in Instant Action. Double-tapping a selected map name invokes that same action. In portrait, when the browser's visual viewport or safe-area insets clip the native menu canvas, the client fits the menu to the visible rectangle after the native renderer is ready. The native framebuffer and touch coordinates use the same bounds. The fit is released when the player enters the match.
